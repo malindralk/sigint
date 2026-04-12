@@ -5,12 +5,9 @@ import { LEARNING_PHASES } from '@/lib/viz-data';
 import GanttChart from '@/app/components/GanttChart';
 import type { GanttItem } from '@/app/components/GanttChart';
 
-const SECTION_COLORS = ['#39d353', '#58a6ff', '#bc8cff', '#f0883e', '#e3b341'];
-
 export default function LearningGanttChart() {
   const [zoom, setZoom] = useState(1);
 
-  // Convert LEARNING_PHASES to GanttItem format
   const items: GanttItem[] = [];
   for (const phase of LEARNING_PHASES) {
     const [startW, endW] = phase.weeks.split('\u2013').map(Number);
@@ -22,16 +19,12 @@ export default function LearningGanttChart() {
       subtitle: `${phase.hours}h`,
       weekOffset,
       durationWeeks,
-      color: phase.color,
     });
   }
 
-  const totalWeeks = 26;
-  const projectStart = new Date('2026-04-13');
-
   return (
     <div>
-      {/* Zoom controls — desktop only */}
+      {/* Zoom controls */}
       <div className="hidden md:flex items-center justify-end mb-3 gap-2">
         <span className="text-xs text-text-muted font-mono">Zoom:</span>
         {[1, 1.5, 2].map((z) => (
@@ -51,7 +44,7 @@ export default function LearningGanttChart() {
         className="overflow-x-auto"
         style={{ transform: `scale(${zoom})`, transformOrigin: 'top left', minWidth: `${100 * zoom}%` }}
       >
-        <GanttChart items={items} totalWeeks={totalWeeks} projectStart={projectStart} />
+        <GanttChart items={items} totalWeeks={26} projectStart={new Date('2026-04-13')} />
       </div>
     </div>
   );

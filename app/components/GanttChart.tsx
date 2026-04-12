@@ -13,6 +13,8 @@ export interface GanttItem {
 
 const SECTION_COLORS = ['#39d353', '#58a6ff', '#bc8cff', '#f0883e', '#e3b341', '#ff7b72', '#7ee787', '#a5d6ff'];
 
+const LABEL_WIDTH = 208; // px — fixed label column
+
 function buildMonthBands(projectStart: Date, totalWeeks: number) {
   const bands: { label: string; startPct: number; widthPct: number }[] = [];
   const weekMs = 7 * 24 * 60 * 60 * 1000;
@@ -48,19 +50,17 @@ export default function GanttChart({
   items,
   totalWeeks,
   projectStart = new Date('2026-04-13'),
-  labelWidth = 52,
 }: {
   items: GanttItem[];
   totalWeeks: number;
   projectStart?: Date;
-  labelWidth?: number; // percentage width of label column
 }) {
   const [cursorPct, setCursorPct] = useState<number | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
     setCursorPct(pct);
@@ -68,7 +68,6 @@ export default function GanttChart({
 
   const handleMouseLeave = useCallback(() => setCursorPct(null), []);
 
-  // Pre-compute colors per section
   const sections = [...new Set(items.map(i => i.section))];
   const colorMap = new Map<string, string>();
   sections.forEach((s, i) => colorMap.set(s, SECTION_COLORS[i % SECTION_COLORS.length]));
@@ -84,17 +83,16 @@ export default function GanttChart({
   const cursorInfo = cursorPct !== null ? getCursorInfo(cursorPct, totalWeeks, projectStart) : null;
 
   return (
-    <div style={{ minWidth: '900px' }} ref={containerRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+    <div style={{ minWidth: '900px' }}>
       {/* Month/Year axis */}
       <div className="flex items-center gap-0 mb-1">
-        <div className="shrink-0" style={{ width: `${labelWidth}%` }} />
-        <div className="flex-1 flex relative">
+        <div className="shrink-0" style={{ width: LABEL_WIDTH }} />
+        <div className="flex-1 relative">
           {monthBands.map((band, i) => (
             <div
               key={i}
-              className="text-center text-xs font-mono py-2 border-l border-r"
+              className="absolute text-center text-xs font-mono py-2 border-l border-r"
               style={{
-                position: 'absolute',
                 left: `${band.startPct}%`,
                 width: `${band.widthPct}%`,
                 color: '#8b949e',
@@ -104,20 +102,21 @@ export default function GanttChart({
               {band.label}
             </div>
           ))}
-          <div className="flex-1" style={{ height: '32px' }} />
+          <div style={{ height: '32px' }} />
         </div>
       </div>
 
       {/* Week sub-axis */}
-      <div className="flex items-center gap-0 mb-2">
-        <div className="shrink-0" style={{ width: `${labelWidth}%` }} />
-        <div className="flex-1 flex">
+      <div className="flex items-center gap-0 mb-1">
+        <div className="shrink-0" style={{ width: LABEL_WIDTH }} />
+        <div className="flex-1 relative">
           {Array.from({ length: totalWeeks }, (_, i) => (
             <div
               key={i}
-              className="flex-1 text-center text-xs font-mono py-0.5 border-l"
+              className="absolute text-center text-xs font-mono py-0.5 border-l"
               style={{
-                minWidth: 0,
+                left: `${(i / totalWeeks) * 100}%`,
+                width: `${100 / totalWeeks}%`,
                 color: '#484f58',
                 borderColor: '#21262d',
                 fontSize: '9px',
@@ -127,45 +126,40 @@ export default function GanttChart({
               {i + 1}
             </div>
           ))}
+          <div style={{ height: '20px' }} />
         </div>
       </div>
 
-      {/* Chart area */}
-      <div className="relative">
-        {/* Vertical cursor line */}
-        {cursorPct !== null && (
+      {/* Chart rows — single mouse tracking layer */}
+      <div
+        className="relative"
+        ref={trackRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Cursor tooltip */}
+        {cursorInfo && cursorPct !== null && (
           <div
-            className="absolute top-0 bottom-0 pointer-events-none z-10"
+            className="absolute pointer-events-none z-30"
             style={{
               left: `${cursorPct}%`,
-              width: '1px',
-              background: 'rgba(88, 166, 255, 0.4)',
+              transform: 'translateX(-50%)',
+              top: -4,
             }}
-          />
-        )}
-
-        {/* Cursor tooltip on axis */}
-        {cursorInfo && (
-          <div className="mb-2 flex" style={{ paddingLeft: `${labelWidth}%` }}>
-            <div className="relative flex-1">
-              <div
-                className="absolute top-0 text-xs font-mono px-2 py-0.5 rounded pointer-events-none z-20"
-                style={{
-                  left: `${cursorPct}%`,
-                  transform: 'translateX(-50%)',
-                  background: '#161b22',
-                  border: '1px solid #30363d',
-                  color: '#58a6ff',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                W{cursorInfo.weekNum} · {cursorInfo.dateStr}
-              </div>
+          >
+            <div
+              className="text-xs font-mono px-2 py-0.5 rounded whitespace-nowrap"
+              style={{
+                background: '#161b22',
+                border: '1px solid #30363d',
+                color: '#58a6ff',
+              }}
+            >
+              W{cursorInfo.weekNum} · {cursorInfo.dateStr}
             </div>
           </div>
         )}
 
-        {/* Section groups */}
         {grouped.map((group) => (
           <div key={group.section} className="mb-3">
             {/* Section header */}
@@ -173,7 +167,7 @@ export default function GanttChart({
               className="flex items-center gap-0 py-1.5 px-2 rounded mb-0.5 text-xs font-mono font-semibold uppercase tracking-wider"
               style={{ color: group.color, background: `${group.color}0a`, borderLeft: `3px solid ${group.color}` }}
             >
-              <div className="shrink-0" style={{ width: `${labelWidth}%` }}>{group.section}</div>
+              <div className="shrink-0" style={{ width: LABEL_WIDTH }}>{group.section}</div>
             </div>
 
             {/* Items */}
@@ -182,12 +176,9 @@ export default function GanttChart({
               const widthPct = (item.durationWeeks / totalWeeks) * 100;
 
               return (
-                <div
-                  key={idx}
-                  className="flex items-center gap-0 py-0.5 rounded group/item hover:bg-white/[0.02]"
-                >
-                  {/* Label column */}
-                  <div className="shrink-0 pr-3 flex items-baseline gap-2" style={{ width: `${labelWidth}%` }}>
+                <div key={idx} className="flex items-center gap-0 py-0.5 rounded group/item hover:bg-white/[0.02]">
+                  {/* Label */}
+                  <div className="shrink-0 pr-3 flex items-baseline gap-2" style={{ width: LABEL_WIDTH }}>
                     <span className="text-xs font-mono truncate block" style={{ color: '#cdd9e5' }} title={item.label}>
                       {item.label}
                     </span>
@@ -198,9 +189,26 @@ export default function GanttChart({
                     )}
                   </div>
 
-                  {/* Bar column */}
+                  {/* Bar row */}
                   <div className="flex-1 relative h-6">
-                    <div className="absolute inset-y-0 left-0 right-0" style={{ backgroundImage: 'repeating-linear-gradient(90deg, transparent 0px, transparent calc(100% / var(--tw) - 1px), #161b22 calc(100% / var(--tw) - 1px), #161b22 calc(100% / var(--tw)))' }} />
+                    {/* Cursor line */}
+                    {cursorPct !== null && (
+                      <div
+                        className="absolute top-0 bottom-0 pointer-events-none z-10"
+                        style={{ left: `${cursorPct}%`, width: '1px', background: 'rgba(88, 166, 255, 0.35)' }}
+                      />
+                    )}
+
+                    {/* Grid lines */}
+                    {Array.from({ length: totalWeeks + 1 }, (_, i) => (
+                      <div
+                        key={i}
+                        className="absolute top-0 bottom-0 border-l"
+                        style={{ left: `${(i / totalWeeks) * 100}%`, borderColor: '#21262d', opacity: 0.3 }}
+                      />
+                    ))}
+
+                    {/* Bar */}
                     <div
                       className="absolute top-0.5 bottom-0.5 rounded-sm flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden cursor-default"
                       style={{
