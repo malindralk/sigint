@@ -73,23 +73,23 @@ export default function AppSidebar() {
 
   return (
     <Sidebar
-      className="border-r border-border-default"
+      className="border-r border-border"
       style={{
         '--sidebar-width': '15rem',
         '--sidebar-width-mobile': '16rem',
       } as React.CSSProperties}
     >
-      <SidebarHeader className="border-b border-border-default px-4 py-3">
+      <SidebarHeader className="border-b border-border px-4 py-3">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-accent-green font-mono font-bold tracking-tight text-sm">SIGINT</span>
-          <span className="text-text-secondary font-mono text-xs">WIKI</span>
+          <span className="text-sinha-maroon font-mono font-bold tracking-tight text-sm">SIGINT</span>
+          <span className="text-parchment font-mono text-xs">WIKI</span>
         </Link>
       </SidebarHeader>
 
       <SidebarContent>
         {/* Visualizations */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-mono text-text-muted uppercase tracking-widest">
+          <SidebarGroupLabel className="text-xs font-mono text-warm-stone uppercase tracking-widest">
             Visualize
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -115,7 +115,7 @@ export default function AppSidebar() {
 
         {/* Learning — with submenu */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-mono text-text-muted uppercase tracking-widest">
+          <SidebarGroupLabel className="text-xs font-mono text-warm-stone uppercase tracking-widest">
             Articles
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -180,8 +180,8 @@ export default function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border-default px-4 py-2">
-        <p className="text-text-muted text-xs font-mono">Apr 2026</p>
+      <SidebarFooter className="border-t border-border px-4 py-2">
+        <p className="text-warm-stone text-xs font-mono">Apr 2026</p>
       </SidebarFooter>
 
       <SidebarRail />
