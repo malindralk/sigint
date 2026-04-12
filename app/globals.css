@@ -166,8 +166,9 @@ ul, ol { list-style: none; }
   display: flex; align-items: center; gap: 10px;
   padding: 9px 20px; font-family: var(--font-ui); font-size: 13px;
   font-weight: 400; color: var(--text-muted); text-decoration: none;
-  cursor: pointer; position: relative;
+  cursor: pointer; position: relative; width: 100%;
   transition: color var(--transition-fast), background var(--transition-fast);
+  background: none; border: none; text-align: left;
 }
 .sidebar-item:hover { background: rgba(255,255,255,0.03); color: var(--text-secondary); opacity: 1; }
 .sidebar-item.active { background: rgba(44, 95, 138, 0.08); color: var(--text-primary); font-weight: 500; }

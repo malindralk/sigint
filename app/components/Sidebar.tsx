@@ -47,86 +47,55 @@ const wikiGroups = [
   },
 ];
 
-function CollapsibleGroup({ group, pathname }: { group: typeof wikiGroups[number]; pathname: string }) {
-  const [expanded, setExpanded] = useState(pathname.startsWith(`/${group.id}`));
-  const isActive = pathname.startsWith(`/${group.id}`);
-
+function SubItems({ items, basePath }: { items: { slug: string; label: string }[]; basePath: string }) {
+  const pathname = usePathname();
   return (
-    <div>
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className={`sidebar-item ${isActive ? 'active' : ''}`}
-        style={{ justifyContent: 'space-between' }}
-      >
-        <span>{group.label}</span>
-        <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`} style={{ color: 'var(--text-muted)', flexShrink: 0 }}>&#x203a;</span>
-      </button>
-      {expanded && (
-        <ul className="ml-4 mt-0.5 space-y-0.5 border-l pl-3" style={{ borderColor: 'var(--border)' }}>
-          {group.items.map((item) => {
-            const href = `/${group.id}/${item.slug}`;
-            const active = pathname === href || pathname === `${href}/`;
-            return (
-              <li key={item.slug}>
-                <Link
-                  href={href}
-                  className="block px-2 py-1 rounded text-xs transition-colors truncate"
-                  style={{
-                    color: active ? 'var(--text-primary)' : 'var(--text-muted)',
-                    ...(active ? { background: 'rgba(44, 95, 138, 0.08)', fontWeight: 500 } : {}),
-                  }}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+    <div style={{ marginLeft: '20px', borderLeft: '1px solid var(--border)', paddingLeft: '8px', marginTop: '4px' }}>
+      {items.map((item) => {
+        const href = `${basePath}/${item.slug}`;
+        const active = pathname === href || pathname === `${href}/`;
+        return (
+          <Link
+            key={item.slug}
+            href={href}
+            className="block text-xs transition-colors"
+            style={{
+              color: active ? 'var(--text-primary)' : 'var(--text-muted)',
+              fontWeight: active ? 500 : 400,
+              padding: '5px 8px',
+              borderRadius: 'var(--radius-sm)',
+            }}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
     </div>
   );
 }
 
-function LearningGroup({ pathname }: { pathname: string }) {
-  const [expanded, setExpanded] = useState(pathname.startsWith('/learning'));
-  const isActive = pathname.startsWith('/learning');
-
+function GroupToggle({ label, expanded, onToggle }: { label: string; expanded: boolean; onToggle: () => void }) {
   return (
-    <div>
-      <div className="flex items-center">
-        <Link href="/learning" className={`sidebar-item ${isActive ? 'active' : ''}`} style={{ flex: 1 }}>
-          Learning Path
-        </Link>
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="w-5 h-5 flex items-center justify-center mr-1"
-          style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
-        >
-          <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`}>&#x203a;</span>
-        </button>
-      </div>
-      {expanded && (
-        <ul className="ml-4 mt-0.5 space-y-0.5 border-l pl-3" style={{ borderColor: 'var(--border)' }}>
-          <li>
-            <Link
-              href="/learning/coursera-sigint"
-              className="block px-2 py-1 rounded text-xs transition-colors truncate"
-              style={{
-                color: pathname.startsWith('/learning/coursera-sigint') ? 'var(--text-primary)' : 'var(--text-muted)',
-                ...(pathname.startsWith('/learning/coursera-sigint') ? { background: 'rgba(44, 95, 138, 0.08)', fontWeight: 500 } : {}),
-              }}
-            >
-              Coursera Path
-            </Link>
-          </li>
-        </ul>
-      )}
-    </div>
+    <button
+      onClick={onToggle}
+      className="sidebar-item"
+      style={{ justifyContent: 'space-between', width: '100%', background: 'none', border: 'none' }}
+    >
+      <span>{label}</span>
+      <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`} style={{ color: 'var(--text-muted)', flexShrink: 0 }}>&#x203a;</span>
+    </button>
   );
 }
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    learning: pathname.startsWith('/learning'),
+    'em-sca': pathname.startsWith('/em-sca'),
+    sigint: pathname.startsWith('/sigint'),
+  });
+
+  const toggle = (key: string) => setOpenGroups(prev => ({ ...prev, [key]: !prev[key] }));
 
   return (
     <aside className="sidebar hidden lg:flex">
@@ -136,7 +105,7 @@ export default function Sidebar() {
         <span className="t-muted" style={{ fontSize: '10px' }}>SIGINT</span>
       </Link>
 
-      {/* Nav */}
+      {/* Nav items — flat, no nesting */}
       <nav className="flex-1 overflow-y-auto">
         {/* Visualize */}
         <div className="sidebar-section">Visualize</div>
@@ -152,13 +121,23 @@ export default function Sidebar() {
         {/* Articles */}
         <div className="sidebar-section">Articles</div>
 
-        {/* Learning */}
-        <LearningGroup pathname={pathname} />
+        {/* Learning Path — flat toggle + sub-items */}
+        <GroupToggle label="Learning Path" expanded={!!openGroups.learning} onToggle={() => toggle('learning')} />
+        {openGroups.learning && (
+          <SubItems items={[{ slug: 'coursera-sigint', label: 'Coursera Path' }]} basePath="/learning" />
+        )}
 
-        {/* Wiki groups */}
-        {wikiGroups.map((group) => (
-          <CollapsibleGroup key={group.id} group={group} pathname={pathname} />
-        ))}
+        {/* EM Side-Channel — flat toggle + sub-items */}
+        <GroupToggle label="EM Side-Channel" expanded={!!openGroups['em-sca']} onToggle={() => toggle('em-sca')} />
+        {openGroups['em-sca'] && (
+          <SubItems items={wikiGroups[0].items} basePath="/em-sca" />
+        )}
+
+        {/* SIGINT — flat toggle + sub-items */}
+        <GroupToggle label="SIGINT" expanded={!!openGroups.sigint} onToggle={() => toggle('sigint')} />
+        {openGroups.sigint && (
+          <SubItems items={wikiGroups[1].items} basePath="/sigint" />
+        )}
       </nav>
 
       {/* Footer */}
