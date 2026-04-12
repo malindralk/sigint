@@ -19,12 +19,15 @@ function transformHref(href: string | undefined, category: string): string | und
   return `/${category}/${slug}`;
 }
 
-function MermaidDiagram({ code, chartType }: { code: string; chartType: string }) {
+const ZOOM_LEVELS = [1, 1.5, 2] as const;
+
+function MermaidDiagram({ code }: { code: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [svgContent, setSvgContent] = useState<string | null>(null);
+  const [zoomIdx, setZoomIdx] = useState(0);
 
   useEffect(() => {
-    if (!containerRef.current) return;
     let cancelled = false;
 
     async function render() {
@@ -39,13 +42,9 @@ function MermaidDiagram({ code, chartType }: { code: string; chartType: string }
         const id = `mermaid-${Math.random().toString(36).slice(2, 8)}`;
         const { svg } = await mermaid.render(id, code);
 
-        if (!cancelled && containerRef.current) {
-          containerRef.current.innerHTML = svg;
-          const svgEl = containerRef.current.querySelector('svg');
-          if (svgEl) {
-            svgEl.style.maxWidth = '100%';
-            svgEl.style.height = 'auto';
-          }
+        if (!cancelled) {
+          setSvgContent(svg);
+          setError(null);
         }
       } catch (err) {
         if (!cancelled) {
@@ -59,16 +58,61 @@ function MermaidDiagram({ code, chartType }: { code: string; chartType: string }
     return () => { cancelled = true; };
   }, [code]);
 
+  const cycleZoom = () => setZoomIdx((i) => (i + 1) % ZOOM_LEVELS.length);
+  const zoom = ZOOM_LEVELS[zoomIdx];
+
   if (error) {
     return (
-      <div className="bg-bg-tertiary border border-border-default rounded-lg p-4">
+      <div className="bg-bg-tertiary border border-border-default rounded-lg p-4 mb-4">
         <div className="text-xs font-mono text-accent-red mb-2">Mermaid render error</div>
         <pre className="text-xs text-text-secondary font-mono whitespace-pre-wrap">{code}</pre>
       </div>
     );
   }
 
-  return <div ref={containerRef} className="mermaid-diagram overflow-x-auto" />;
+  return (
+    <div className="my-6">
+      {/* Zoom controls */}
+      <div className="flex items-center justify-end mb-2 gap-2">
+        <span className="text-xs text-text-muted font-mono">Zoom:</span>
+        {ZOOM_LEVELS.map((z) => (
+          <button
+            key={z}
+            onClick={cycleZoom}
+            className={`text-xs px-2.5 py-1 rounded border font-mono transition-colors ${
+              ZOOM_LEVELS[zoomIdx] === z
+                ? 'border-accent-cyan text-accent-cyan bg-accent-cyan/10'
+                : 'border-border-muted text-text-muted hover:text-text-secondary'
+            }`}
+          >
+            {z}x
+          </button>
+        ))}
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border border-border-default bg-bg-secondary">
+        <div
+          className="mermaid-diagram p-4"
+          style={{
+            transform: `scale(${zoom})`,
+            transformOrigin: 'top left',
+            minWidth: `${100 * zoom}%`,
+          }}
+        >
+          {svgContent ? (
+            <div
+              ref={containerRef}
+              dangerouslySetInnerHTML={{ __html: svgContent }}
+            />
+          ) : (
+            <div className="text-text-muted text-sm font-mono animate-pulse py-8 text-center">
+              Rendering diagram...
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function MarkdownRenderer({ content, category }: Props) {
@@ -84,8 +128,7 @@ export default function MarkdownRenderer({ content, category }: Props) {
           code({ className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
             if (match && match[1] === 'mermaid' && typeof children === 'string') {
-              const chartType = children.trim().split('\n')[0]?.trim() || 'diagram';
-              return <MermaidDiagram code={children} chartType={chartType} />;
+              return <MermaidDiagram code={children} />;
             }
             return <code className={className} {...props}>{children}</code>;
           },
