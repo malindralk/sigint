@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { LEARNING_PHASES } from '@/lib/viz-data';
+import GanttChart from '@/app/learning/GanttChart';
 
 export const metadata: Metadata = { title: 'Learning Path' };
 
@@ -34,51 +35,7 @@ export default function LearningPage() {
       {/* Gantt chart */}
       <section className="bg-bg-secondary border border-border-default rounded-lg p-6">
         <div className="text-xs font-mono text-text-muted uppercase tracking-wide mb-6">Gantt Chart — 26 Weeks</div>
-        <div className="space-y-4">
-          {/* Week ruler */}
-          <div className="flex items-center gap-0">
-            <div className="w-40 shrink-0" />
-            <div className="flex-1 flex">
-              {Array.from({ length: 26 }, (_, i) => (
-                <div key={i} className="flex-1 text-center text-xs text-text-muted font-mono border-l border-border-muted py-1"
-                  style={{ minWidth: 0, display: (i + 1) % 4 === 0 || i === 0 ? 'block' : 'none' }}>
-                  {i === 0 ? 'W1' : `W${i + 1}`}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {LEARNING_PHASES.map(phase => {
-            const [startW, endW] = phase.weeks.split('–').map(Number);
-            const startPct = ((startW - 1) / 26) * 100;
-            const widthPct = ((endW - startW + 1) / 26) * 100;
-
-            return (
-              <div key={phase.phase} className="flex items-center gap-0">
-                <div className="w-40 shrink-0 pr-4">
-                  <div className="text-xs font-mono text-text-secondary truncate">Phase {phase.phase}</div>
-                  <div className="text-xs text-text-muted truncate">{phase.title}</div>
-                </div>
-                <div className="flex-1 relative h-8">
-                  <div className="absolute inset-y-0 left-0 right-0 border-l border-border-muted opacity-20"
-                    style={{ backgroundImage: 'repeating-linear-gradient(90deg, #30363d 0px, #30363d 1px, transparent 1px, transparent calc(100%/26))' }} />
-                  <div
-                    className="absolute top-1 bottom-1 rounded flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden"
-                    style={{
-                      left: `${startPct}%`,
-                      width: `${widthPct}%`,
-                      background: `${phase.color}22`,
-                      border: `1px solid ${phase.color}66`,
-                      color: phase.color,
-                    }}
-                  >
-                    {phase.weeks} · {phase.hours}h
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <GanttChart />
       </section>
 
       {/* Phase detail cards */}
