@@ -4,21 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import type { GraphData, GraphNode } from "@/lib/graph-data";
 
 const CATEGORIES = [
+  { key: "all", label: "All", color: "var(--text-primary)" },
   { key: "em-sca", label: "EM-SCA", color: "#7A1E2E" },
   { key: "sigint", label: "SIGINT", color: "#2C5F8A" },
   { key: "reference", label: "Reference", color: "#1E6B52" },
   { key: "learning", label: "Learning", color: "#C4881E" },
   { key: "infrastructure", label: "Infrastructure", color: "#C4881E" },
-] as const;
+];
 
 interface Props { data: GraphData; }
 
 function GraphSkeleton() {
   return (
     <div className="flex items-center justify-center" style={{ height: '100%', minHeight: '400px' }}>
-      <div className="t-muted" style={{ fontFamily: 'var(--font-ui)', fontSize: '13px' }}>
-        Loading knowledge graph...
-      </div>
+      <div className="t-muted" style={{ fontFamily: 'var(--font-ui)', fontSize: '13px' }}>Loading knowledge graph...</div>
     </div>
   );
 }
@@ -45,7 +44,7 @@ export default function KnowledgeGraph({ data }: Props) {
       svgRef.current!.setAttribute("height", String(H));
 
       const colorMap: Record<string, string> = {};
-      CATEGORIES.forEach(c => { colorMap[c.key] = c.color; });
+      CATEGORIES.forEach(c => { colorMap[c.key] = c.key === "all" ? "var(--text-primary)" : c.color; });
 
       const filteredNodes = filter === "all" ? data.nodes : data.nodes.filter((n) => n.category === filter);
       const filteredIds = new Set(filteredNodes.map((n) => n.id));
@@ -103,8 +102,7 @@ export default function KnowledgeGraph({ data }: Props) {
     return () => { cleanup.then((fn) => fn && fn()); };
   }, [data, filter]);
 
-  const totalCount = data.nodes.length;
-  const filteredCount = filter === "all" ? totalCount : data.nodes.filter(n => n.category === filter).length;
+  const filteredCount = filter === "all" ? data.nodes.length : data.nodes.filter(n => n.category === filter).length;
   const edgeCount = filter === "all" ? data.edges.length : data.edges.filter(e => {
     const ids = new Set(data.nodes.filter(n => filter === "all" || n.category === filter).map(n => n.id));
     return ids.has(e.source as string) && ids.has(e.target as string);
@@ -112,55 +110,37 @@ export default function KnowledgeGraph({ data }: Props) {
 
   return (
     <div className="flex flex-col h-full gap-4">
-      {/* Filter bar */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-2">
-          <span className="t-muted" style={{ fontSize: '10px' }}>Filter</span>
-          <div className="h-4" style={{ width: '1px', background: 'var(--border)' }} />
-
-          {/* All button */}
-          <button
-            onClick={() => setFilter("all")}
-            className="text-xs px-3 py-1 rounded-md transition-all"
-            style={{
-              background: filter === "all" ? 'var(--text-primary)' : 'transparent',
-              color: filter === "all" ? 'var(--bg-base)' : 'var(--text-muted)',
-              fontWeight: filter === "all" ? 600 : 400,
-              border: `1px solid ${filter === "all" ? 'var(--text-primary)' : 'var(--border)'}`,
-              fontFamily: 'var(--font-ui)',
-            }}
-          >
-            All
-          </button>
-
-          {/* Category pills */}
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.key}
-              onClick={() => setFilter(cat.key)}
-              className="text-xs px-3 py-1 rounded-md transition-all flex items-center gap-1.5"
-              style={{
-                background: filter === cat.key ? `${cat.color}22` : 'transparent',
-                color: filter === cat.key ? cat.color : 'var(--text-muted)',
-                fontWeight: filter === cat.key ? 600 : 400,
-                border: `1px solid ${filter === cat.key ? cat.color : 'var(--border)'}`,
-                fontFamily: 'var(--font-ui)',
-              }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: cat.color }} />
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Stats */}
-        <div className="flex items-center gap-4">
-          <span className="t-muted" style={{ fontSize: '10px' }}>
-            <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{filteredCount}</span> nodes
-          </span>
-          <span className="t-muted" style={{ fontSize: '10px' }}>
-            <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{edgeCount}</span> edges
-          </span>
+      {/* Tab bar */}
+      <div>
+        <div className="flex items-end gap-0 border-b" style={{ borderColor: 'var(--border)' }}>
+          {CATEGORIES.map(cat => {
+            const active = filter === cat.key;
+            const catColor = cat.key === "all" ? 'var(--text-primary)' : cat.color;
+            return (
+              <button
+                key={cat.key}
+                onClick={() => setFilter(cat.key)}
+                className="px-4 py-2.5 text-xs transition-colors relative"
+                style={{
+                  color: active ? catColor : 'var(--text-muted)',
+                  fontWeight: active ? 600 : 400,
+                  fontFamily: 'var(--font-ui)',
+                  borderBottom: active ? `2px solid ${catColor}` : '2px solid transparent',
+                  marginBottom: '-1px',
+                }}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
+          <div className="ml-auto flex items-center gap-4 px-4 pb-2.5">
+            <span className="t-muted" style={{ fontSize: '10px' }}>
+              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{filteredCount}</span> nodes
+            </span>
+            <span className="t-muted" style={{ fontSize: '10px' }}>
+              <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{edgeCount}</span> edges
+            </span>
+          </div>
         </div>
       </div>
 
