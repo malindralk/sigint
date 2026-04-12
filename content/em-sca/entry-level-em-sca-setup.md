@@ -475,10 +475,3 @@ The democratization of EM-SCA through tools like the RTL-SDR represents a signif
 ---
 
 *This guide is for educational purposes only. Always ensure you have proper authorization before testing any devices, and comply with all applicable laws and regulations.*
----
-
-## Related: Hardware & Research Updates
-
-> **See [sdr-tools-landscape-2026.md](sdr-tools-landscape-2026.md)** for a 2026 hardware survey comparing the RTL-SDR v4 (used here) against HackRF 2.0, LimeSDR 2.0, PlutoSDR, and USRP X440 — useful when planning your next upgrade.
->
-> **See [em-sca-2026-developments.md](em-sca-2026-developments.md)** for the latest attack techniques from top venues that can serve as learning targets for this entry-level setup.

@@ -350,4 +350,3 @@ Success requires navigating complex regulatory environments, balancing innovatio
 *Last updated: April 12, 2026*  
 *Sources: Company financial reports, defense industry analysis, regulatory documents, expert interviews*  
 *Note: Revenue estimates based on public data, industry analysis, and market sizing models*
-> **See also:** [contacts.md](contacts.md) — individual researchers | [organizations.md](organizations.md) — all companies, institutions & standards bodies

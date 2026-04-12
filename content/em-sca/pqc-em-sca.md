@@ -204,11 +204,3 @@ The gap between PQC deployment and PQC SCA resistance validation represents a si
 ---
 
 *Created to fill the gap identified across the EM-SCA wiki: post-quantum cryptography is mentioned as a future direction in several files but had no dedicated analysis page. This page synthesizes 2024–2026 research gathered via Brave API search.*
-
----
-
-## Related: Implementation Attack Details
-
-> **See [pqc-implementation-security-2026.md](pqc-implementation-security-2026.md)** for a deep technical breakdown of published attacks on all four NIST standards — Kyber/ML-KEM, Dilithium/ML-DSA, SPHINCS+/SLH-DSA, and FALCON/FN-DSA — with trace counts, platforms, and open-source mitigation libraries (pqm4, liboqs, CIRCL).
->
-> **See [em-sca-2026-developments.md](em-sca-2026-developments.md)** for 2026 EM attack advances including NTT single-trace attacks, AI accelerator model extraction, and hybrid SCA+fault injection techniques.

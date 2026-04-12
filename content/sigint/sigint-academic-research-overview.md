@@ -508,15 +508,3 @@ The **RF fingerprinting** (SEI) community and the **[EM-SCA](electromagnetic-sid
 ---
 
 *This page synthesizes the current SIGINT academic research landscape based on Brave API searches of IEEE, arXiv, MDPI, Springer, and defense publications. For EM-SCA-specific academic research see [electromagnetic-side-channel-analysis.md](electromagnetic-side-channel-analysis.md). For commercial company profiles see [sigint-private-companies-em-intelligence.md](sigint-private-companies-em-intelligence.md).*
-
----
-
-## Related: Applied & Implementation Articles
-
-> **See [rf-fingerprinting-device-identification.md](rf-fingerprinting-device-identification.md)** for a dedicated deep-dive into SEI/RF fingerprinting — physical features, deep learning architectures, few-shot learning, adversarial attacks, and GDPR/ECPA legal framework.
->
-> **See [sigint-machine-learning-pipeline.md](sigint-machine-learning-pipeline.md)** for a complete end-to-end ML pipeline — IQ preprocessing, AMC, foundation models (RadioGPT, SpectrumFM), edge deployment with TensorRT/ONNX, and synthetic dataset generation.
->
-> **See [sdr-tools-landscape-2026.md](sdr-tools-landscape-2026.md)** for a hardware survey of RTL-SDR v4, HackRF 2.0, LimeSDR 2.0, USRP X440, and the GNU Radio 3.11 / SigDigger software ecosystem.
-
-> **See also:** [contacts.md](contacts.md) — individual researchers | [organizations.md](organizations.md) — all companies, institutions & standards bodies

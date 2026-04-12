@@ -352,4 +352,3 @@ The electromagnetic side‑channel analysis (EM‑SCA) market features a mix of 
 *Last updated: April 12, 2026*  
 *Sources: Company financial reports, Crunchbase, PitchBook, industry interviews*  
 *Note: Revenue estimates based on public data, industry multiples, and market sizing models*
-> **See also:** [contacts.md](contacts.md) — individual researchers | [organizations.md](organizations.md) — all companies, institutions & standards bodies

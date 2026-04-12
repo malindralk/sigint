@@ -293,10 +293,3 @@ The field continues to advance rapidly, with 2026 research showing particularly 
 ---
 
 *This research was conducted using Brave API academic search capabilities, focusing on peer-reviewed publications from 2024-2026. The content represents a synthesis of current academic understanding and should not be construed as endorsement of any specific attack methodology.*
----
-
-## Related: 2025-2026 Updates
-
-> **See [em-sca-2026-developments.md](em-sca-2026-developments.md)** for the latest research from IEEE S&P, CCS, USENIX, and CHES — including EMFormer (Vision Transformers), TEMA transient analysis, AI accelerator attacks, and active EM fault injection advances.
->
-> **See [pqc-implementation-security-2026.md](pqc-implementation-security-2026.md)** for a detailed breakdown of published side-channel attacks on all four NIST PQC standards (ML-KEM, ML-DSA, SLH-DSA, FN-DSA) with trace counts and platforms.
