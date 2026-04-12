@@ -5,7 +5,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
-import { Maximize2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import 'highlight.js/styles/github-dark.css';
 
 interface Props {
@@ -20,39 +19,17 @@ function transformHref(href: string | undefined, category: string): string | und
   return `/${category}/${slug}`;
 }
 
-function ZoomControls({ zoom, onZoomIn, onZoomOut }: { zoom: number; onZoomIn: () => void; onZoomOut: () => void }) {
-  return (
-    <div className="flex items-center gap-1 shrink-0">
-      <button
-        onClick={onZoomOut}
-        className="h-7 w-7 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground"
-        aria-label="Zoom out"
-      >
-        <ZoomOut className="h-3.5 w-3.5" />
-      </button>
-      <span className="text-xs font-mono text-muted-foreground w-10 text-center">
-        {Math.round(zoom * 100)}%
-      </span>
-      <button
-        onClick={onZoomIn}
-        className="h-7 w-7 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground"
-        aria-label="Zoom in"
-      >
-        <ZoomIn className="h-3.5 w-3.5" />
-      </button>
-    </div>
-  );
-}
-
 function MermaidDiagram({ code }: { code: string }) {
-  const [svgContent, setSvgContent] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(1);
-  const [dialogZoom, setDialogZoom] = useState(1);
   const [open, setOpen] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [ready, setReady] = useState(false);
+  const mermaidSvgRef = useRef<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    setReady(false);
 
     async function render() {
       try {
@@ -67,8 +44,8 @@ function MermaidDiagram({ code }: { code: string }) {
         const { svg } = await mermaid.render(id, code);
 
         if (!cancelled) {
-          setSvgContent(svg);
-          setError(null);
+          mermaidSvgRef.current = svg;
+          setReady(true);
         }
       } catch (err) {
         if (!cancelled) {
@@ -82,7 +59,7 @@ function MermaidDiagram({ code }: { code: string }) {
     return () => { cancelled = true; };
   }, [code]);
 
-  // Lock body scroll when dialog is open
+  // Lock body scroll when open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -94,97 +71,128 @@ function MermaidDiagram({ code }: { code: string }) {
 
   // Close on Escape
   useEffect(() => {
+    if (!open) return;
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape' && open) setOpen(false);
+      if (e.key === 'Escape') setOpen(false);
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const zoomIn = () => setZoom((z) => Math.min(z + 0.25, 3));
-  const zoomOut = () => setZoom((z) => Math.max(z - 0.25, 0.5));
-  const dialogZoomIn = () => setDialogZoom((z) => Math.min(z + 0.25, 3));
-  const dialogZoomOut = () => setDialogZoom((z) => Math.max(z - 0.25, 0.5));
+  const renderSVG = () => {
+    if (!mermaidSvgRef.current) return null;
+    // Remove fixed width/height from mermaid SVG so it scales with zoom
+    let svg = mermaidSvgRef.current
+      .replace(/width="[^"]*"/g, 'width="100%"')
+      .replace(/height="[^"]*"/g, '');
+    return svg;
+  };
 
   if (error) {
     return (
-      <div className="my-6 bg-muted/30 border border-border rounded-lg p-4">
-        <div className="text-xs font-mono text-destructive mb-2">Mermaid render error</div>
-        <pre className="text-xs text-muted-foreground font-mono whitespace-pre-wrap">{code}</pre>
+      <div className="my-6 border border-border rounded-lg p-4" style={{ background: '#0d1117' }}>
+        <div className="text-xs font-mono mb-2" style={{ color: '#f85149' }}>Mermaid render error</div>
+        <pre className="text-xs font-mono whitespace-pre-wrap" style={{ color: '#8b949e' }}>{code}</pre>
       </div>
     );
   }
 
-  const renderDiagram = (currentZoom: number) => (
-    <div
-      className="transition-transform duration-200 ease-out"
-      style={{
-        transform: `scale(${currentZoom})`,
-        transformOrigin: 'top center',
-      }}
-    >
-      {svgContent ? (
-        <div
-          dangerouslySetInnerHTML={{ __html: svgContent }}
-          className="mermaid-svg"
-        />
-      ) : (
-        <div className="text-muted-foreground text-sm font-mono animate-pulse py-8 text-center">
-          Rendering diagram...
-        </div>
-      )}
-    </div>
-  );
+  if (!ready) {
+    return (
+      <div className="my-6 border border-border rounded-lg p-8 text-center" style={{ background: '#0d1117' }}>
+        <div className="text-sm font-mono animate-pulse" style={{ color: '#6e7681' }}>Rendering diagram...</div>
+      </div>
+    );
+  }
 
   return (
     <>
       {/* Inline preview */}
       <div className="my-6">
         <div className="flex items-center justify-between mb-2">
-          <ZoomControls zoom={zoom} onZoomIn={zoomIn} onZoomOut={zoomOut} />
           <button
-            onClick={() => { setOpen(true); setDialogZoom(zoom); }}
-            className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+            onClick={() => { setOpen(true); setZoom(1); }}
+            className="text-xs px-3 py-1.5 rounded border transition-colors cursor-pointer"
+            style={{
+              borderColor: '#30363d',
+              color: '#8b949e',
+              background: 'transparent',
+            }}
           >
-            <Maximize2 className="h-3.5 w-3.5" />
-            Expand
+            <span style={{ marginRight: 6 }}>Expand</span>
+            &#x2922;
           </button>
-        </div>
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <div className="p-4 max-h-[400px] overflow-auto">
-            {renderDiagram(zoom)}
+          <div className="text-xs font-mono" style={{ color: '#6e7681' }}>
+            {code.split('\n').length} lines
           </div>
+        </div>
+        <div className="overflow-x-auto rounded-lg border" style={{ borderColor: '#30363d', background: '#0d1117' }}>
+          <div className="p-4" ref={containerRef} dangerouslySetInnerHTML={{ __html: renderSVG() || '' }} />
         </div>
       </div>
 
       {/* Full-screen expanded view */}
       {open && (
         <div
-          className="fixed inset-0 z-[9999] bg-background"
-          onClick={() => setOpen(false)}
+          className="fixed inset-0"
+          style={{ zIndex: 99999, background: '#080b10' }}
         >
-          {/* Header bar */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-background sticky top-0">
-            <span className="text-sm font-medium text-foreground">Diagram</span>
+          {/* Sticky header */}
+          <div
+            className="flex items-center justify-between px-6 py-3 border-b"
+            style={{ borderColor: '#30363d', background: '#080b10', position: 'sticky', top: 0, zIndex: 10 }}
+          >
+            <span className="text-sm font-mono" style={{ color: '#e6edf3' }}>Diagram</span>
             <div className="flex items-center gap-3">
-              <ZoomControls zoom={dialogZoom} onZoomIn={dialogZoomIn} onZoomOut={dialogZoomOut} />
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setZoom((z) => Math.max(z - 0.25, 0.25))}
+                  className="px-2.5 py-1 rounded border text-xs font-mono cursor-pointer transition-colors"
+                  style={{ borderColor: '#30363d', color: '#8b949e', background: 'transparent' }}
+                >
+                  -
+                </button>
+                <span className="text-xs font-mono w-10 text-center" style={{ color: '#8b949e' }}>
+                  {Math.round(zoom * 100)}%
+                </span>
+                <button
+                  onClick={() => setZoom((z) => Math.min(z + 0.25, 5))}
+                  className="px-2.5 py-1 rounded border text-xs font-mono cursor-pointer transition-colors"
+                  style={{ borderColor: '#30363d', color: '#8b949e', background: 'transparent' }}
+                >
+                  +
+                </button>
+              </div>
               <button
                 onClick={() => setOpen(false)}
-                className="h-8 w-8 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground"
-                aria-label="Close"
+                className="h-8 w-8 flex items-center justify-center rounded cursor-pointer transition-colors"
+                style={{ color: '#8b949e' }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#161b22')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
-                <X className="h-5 w-5" />
+                &#x2715;
               </button>
             </div>
           </div>
 
-          {/* Full-screen scrollable body */}
+          {/* Full-screen body */}
           <div
-            className="flex items-start justify-center p-8 overflow-auto"
+            className="flex items-start justify-center overflow-auto"
             style={{ height: 'calc(100vh - 52px)' }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={() => setOpen(false)}
           >
-            {renderDiagram(dialogZoom)}
+            <div
+              className="p-8"
+              style={{
+                transform: `scale(${zoom})`,
+                transformOrigin: 'top center',
+                transition: 'transform 0.15s ease-out',
+                maxWidth: '95vw',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div dangerouslySetInnerHTML={{ __html: renderSVG() || '' }} />
+            </div>
           </div>
         </div>
       )}
