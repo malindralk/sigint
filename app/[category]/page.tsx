@@ -3,9 +3,7 @@ import Link from 'next/link';
 import { categories, getArticles, getCategoryMeta, type Category } from '@/lib/content';
 import type { Metadata } from 'next';
 
-interface Props {
-  params: Promise<{ category: string }>;
-}
+interface Props { params: Promise<{ category: string }>; }
 
 export function generateStaticParams() {
   return categories.map((c) => ({ category: c.id }));
@@ -26,46 +24,44 @@ export default async function CategoryPage({ params }: Props) {
   const articles = getArticles(category as Category);
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
       {/* Header */}
       <div>
-        <div className="font-mono text-text-muted text-sm mb-2">
-          <Link href="/" className="hover:text-accent-cyan">home</Link>
-          <span className="mx-2">/</span>
-          <span style={{ color: meta.accent }}>{meta.id}</span>
+        <div className="t-muted" style={{ fontSize: '12px', marginBottom: 'var(--space-sm)', fontFamily: 'var(--font-ui)' }}>
+          <Link href="/" className="hover:opacity-80" style={{ color: 'var(--info)' }}>home</Link>
+          <span style={{ margin: '0 var(--space-sm)' }}>/</span>
+          <span style={{ color: meta.accent }}>{meta.label}</span>
         </div>
-        <div className="flex items-center gap-4 mb-4">
-          <span className="text-5xl">{meta.icon}</span>
+        <div className="flex items-center gap-4" style={{ marginBottom: 'var(--space-sm)' }}>
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: meta.accent }}>{meta.label}</h1>
-            <p className="text-text-secondary mt-1">{meta.description}</p>
+            <h1 className="t-heading" style={{ color: meta.accent }}>{meta.label}</h1>
+            <p className="t-body" style={{ fontSize: '13px', marginTop: 'var(--space-xs)' }}>{meta.description}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 font-mono text-xs text-text-muted">
-          <span className="border border-border-muted rounded px-2 py-0.5">{articles.length} articles</span>
-        </div>
+        <span className="badge badge-blue">{articles.length} articles</span>
       </div>
 
       {/* Article list */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {articles.map((article, i) => (
           <Link
             key={article.slug}
             href={`/${category}/${article.slug}`}
-            className="group flex items-start gap-4 bg-bg-secondary border border-border-default rounded-lg p-5 hover:bg-bg-hover hover:border-border-default transition-all"
+            className="card group"
+            style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-md)', padding: 'var(--space-md)', textDecoration: 'none' }}
           >
-            <span className="font-mono text-text-muted text-sm mt-0.5 shrink-0 w-6 text-right">
+            <span className="t-muted" style={{ fontFamily: 'var(--font-ui)', fontSize: '11px', minWidth: '20px', textAlign: 'right', marginTop: '2px' }}>
               {String(i + 1).padStart(2, '0')}
             </span>
             <div className="flex-1 min-w-0">
-              <h2 className="text-text-primary font-semibold group-hover:text-white transition-colors mb-1 truncate">
+              <h2 className="t-card-heading" style={{ fontSize: '14px', marginBottom: 'var(--space-xs)' }}>
                 {article.title}
               </h2>
-              <p className="text-text-secondary text-sm leading-relaxed line-clamp-2">
+              <p className="t-muted" style={{ fontSize: '12px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {article.description}
               </p>
             </div>
-            <span className="text-text-muted text-xl shrink-0 mt-1">›</span>
+            <span className="t-muted" style={{ fontSize: '16px', marginTop: '2px', flexShrink: 0 }}>&#x203a;</span>
           </Link>
         ))}
       </div>

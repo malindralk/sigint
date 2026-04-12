@@ -2,26 +2,10 @@
 
 import { useState } from 'react';
 
-interface Company {
-  name: string;
-  tier: number;
-  sector: string;
-  revenue: number;
-  hq: string;
-  focus: string;
-}
+interface Company { name: string; tier: number; sector: string; revenue: number; hq: string; focus: string; }
 
-const SECTOR_COLORS: Record<string, string> = {
-  'sigint': '#58a6ff',
-  'em-sca': '#39d353',
-  'space-sigint': '#bc8cff',
-};
-
-const SECTOR_LABELS: Record<string, string> = {
-  'sigint': 'SIGINT Defense',
-  'em-sca': 'EM-SCA',
-  'space-sigint': 'Space SIGINT',
-};
+const SECTOR_COLORS: Record<string, string> = { 'sigint': '#2C5F8A', 'em-sca': '#7A1E2E', 'space-sigint': '#C4881E' };
+const SECTOR_LABELS: Record<string, string> = { 'sigint': 'SIGINT Defense', 'em-sca': 'EM-SCA', 'space-sigint': 'Space SIGINT' };
 
 function formatRevenue(r: number) {
   if (r >= 1000) return `$${(r / 1000).toFixed(1)}B`;
@@ -39,46 +23,49 @@ export default function CompanyGrid({ companies }: { companies: Company[] }) {
     .sort((a, b) => sort === 'revenue' ? b.revenue - a.revenue : a.name.localeCompare(b.name));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Filters */}
       <div className="flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-text-muted font-mono">Sector:</span>
+          <span className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>Sector:</span>
           {['all', 'sigint', 'em-sca', 'space-sigint'].map(s => (
             <button key={s} onClick={() => setSector(s)}
               className="text-xs px-2.5 py-1 rounded border font-mono transition-colors"
               style={{
-                borderColor: sector === s ? (SECTOR_COLORS[s] ?? '#e6edf3') : '#30363d',
-                color: sector === s ? (SECTOR_COLORS[s] ?? '#e6edf3') : '#6e7681',
-                background: sector === s ? `${SECTOR_COLORS[s] ?? '#e6edf3'}11` : 'transparent',
+                borderColor: sector === s ? (SECTOR_COLORS[s] ?? '#EDE0C4') : '#4A4B54',
+                color: sector === s ? (SECTOR_COLORS[s] ?? '#EDE0C4') : '#6B6254',
+                background: sector === s ? `${SECTOR_COLORS[s] ?? '#EDE0C4'}11` : 'transparent',
+                fontFamily: 'var(--font-ui)',
               }}>
               {s === 'all' ? 'All' : SECTOR_LABELS[s]}
             </button>
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-text-muted font-mono">Tier:</span>
+          <span className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>Tier:</span>
           {['all', '1', '2', '3'].map(t => (
             <button key={t} onClick={() => setTier(t)}
               className="text-xs px-2.5 py-1 rounded border font-mono transition-colors"
               style={{
-                borderColor: tier === t ? '#e6edf3' : '#30363d',
-                color: tier === t ? '#e6edf3' : '#6e7681',
-                background: tier === t ? '#e6edf311' : 'transparent',
+                borderColor: tier === t ? '#EDE0C4' : '#4A4B54',
+                color: tier === t ? '#EDE0C4' : '#6B6254',
+                background: tier === t ? '#EDE0C411' : 'transparent',
+                fontFamily: 'var(--font-ui)',
               }}>
               {t === 'all' ? 'All' : `Tier ${t}`}
             </button>
           ))}
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-xs text-text-muted font-mono">Sort:</span>
+          <span className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>Sort:</span>
           {(['revenue', 'name'] as const).map(s => (
             <button key={s} onClick={() => setSort(s)}
               className="text-xs px-2.5 py-1 rounded border font-mono transition-colors"
               style={{
-                borderColor: sort === s ? '#e6edf3' : '#30363d',
-                color: sort === s ? '#e6edf3' : '#6e7681',
-                background: sort === s ? '#e6edf311' : 'transparent',
+                borderColor: sort === s ? '#EDE0C4' : '#4A4B54',
+                color: sort === s ? '#EDE0C4' : '#6B6254',
+                background: sort === s ? '#EDE0C411' : 'transparent',
+                fontFamily: 'var(--font-ui)',
               }}>
               {s}
             </button>
@@ -86,35 +73,28 @@ export default function CompanyGrid({ companies }: { companies: Company[] }) {
         </div>
       </div>
 
-      <div className="text-xs text-text-muted font-mono">{filtered.length} organizations</div>
+      <div className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>{filtered.length} organizations</div>
 
       {/* Cards */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map(c => (
-          <div key={c.name} className="bg-bg-secondary border border-border-default rounded-lg p-4 space-y-3">
-            <div className="flex items-start justify-between gap-2">
-              <div className="font-semibold text-text-primary text-sm leading-tight">{c.name}</div>
-              <span className="text-xs font-mono px-1.5 py-0.5 rounded border shrink-0"
-                style={{ borderColor: SECTOR_COLORS[c.sector], color: SECTOR_COLORS[c.sector] }}>
+          <div key={c.name} className="card" style={{ padding: 'var(--space-md)' }}>
+            <div className="flex items-start justify-between gap-2" style={{ marginBottom: 'var(--space-sm)' }}>
+              <div className="t-card-heading" style={{ fontSize: '14px', lineHeight: 1.3 }}>{c.name}</div>
+              <span className="text-xs px-1.5 py-0.5 rounded border" style={{ borderColor: SECTOR_COLORS[c.sector], color: SECTOR_COLORS[c.sector], fontFamily: 'var(--font-ui)' }}>
                 T{c.tier}
               </span>
             </div>
-
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-text-muted">{c.hq}</span>
-              <span className="font-mono font-bold" style={{ color: SECTOR_COLORS[c.sector] }}>
+            <div className="flex items-center justify-between text-xs" style={{ marginBottom: 'var(--space-sm)' }}>
+              <span className="t-muted">{c.hq}</span>
+              <span className="font-mono font-bold" style={{ color: SECTOR_COLORS[c.sector], fontFamily: 'var(--font-ui)' }}>
                 {formatRevenue(c.revenue)}
               </span>
             </div>
-
-            <div className="text-xs text-text-secondary leading-relaxed">{c.focus}</div>
-
-            <div className="pt-1">
-              <span className="text-xs font-mono px-2 py-0.5 rounded"
-                style={{ background: `${SECTOR_COLORS[c.sector]}15`, color: SECTOR_COLORS[c.sector] }}>
-                {SECTOR_LABELS[c.sector]}
-              </span>
-            </div>
+            <div className="t-muted" style={{ fontSize: '12px', lineHeight: 1.5, marginBottom: 'var(--space-sm)' }}>{c.focus}</div>
+            <span className="text-xs px-2 py-0.5 rounded" style={{ background: `${SECTOR_COLORS[c.sector]}15`, color: SECTOR_COLORS[c.sector], fontFamily: 'var(--font-ui)' }}>
+              {SECTOR_LABELS[c.sector]}
+            </span>
           </div>
         ))}
       </div>

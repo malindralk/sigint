@@ -4,9 +4,7 @@ import { categories, getArticle, getArticles, getCategoryMeta, type Category } f
 import type { Metadata } from 'next';
 import MarkdownRenderer from '@/app/components/MarkdownRenderer';
 
-interface Props {
-  params: Promise<{ category: string; slug: string }>;
-}
+interface Props { params: Promise<{ category: string; slug: string }>; }
 
 export function generateStaticParams() {
   return categories.flatMap((cat) =>
@@ -33,16 +31,16 @@ export default async function ArticlePage({ params }: Props) {
   const next = articles[currentIdx + 1];
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
       {/* Breadcrumb */}
-      <div className="font-mono text-text-muted text-sm flex items-center gap-2 flex-wrap">
-        <Link href="/" className="hover:text-accent-cyan">home</Link>
+      <div className="t-muted" style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', flexWrap: 'wrap', fontFamily: 'var(--font-ui)' }}>
+        <Link href="/" className="hover:opacity-80" style={{ color: 'var(--info)' }}>home</Link>
         <span>/</span>
-        <Link href={`/${category}`} className="hover:text-white" style={{ color: meta?.accent }}>
+        <Link href={`/${category}`} className="hover:opacity-80" style={{ color: meta?.accent }}>
           {meta?.label}
         </Link>
         <span>/</span>
-        <span className="text-text-secondary truncate">{article.title}</span>
+        <span>{article.title}</span>
       </div>
 
       {/* Article */}
@@ -50,39 +48,32 @@ export default async function ArticlePage({ params }: Props) {
         <MarkdownRenderer content={article.content} category={category} />
       </article>
 
-      {/* Prev / Next navigation */}
+      {/* Prev / Next */}
       {(prev || next) && (
-        <div className="border-t border-border-default pt-6 grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3" style={{ borderTop: '1px solid var(--border)', paddingTop: 'var(--space-lg)' }}>
           {prev ? (
-            <Link
-              href={`/${category}/${prev.slug}`}
-              className="flex flex-col gap-1 bg-bg-secondary border border-border-default rounded-lg p-4 hover:bg-bg-hover transition-all"
-            >
-              <span className="text-text-muted text-xs font-mono">← Previous</span>
-              <span className="text-text-primary text-sm font-medium line-clamp-1">{prev.title}</span>
+            <Link href={`/${category}/${prev.slug}`}
+              className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)', padding: 'var(--space-md)', textDecoration: 'none' }}>
+              <span className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)' }}>← Previous</span>
+              <span className="t-body" style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{prev.title}</span>
             </Link>
           ) : <div />}
           {next ? (
-            <Link
-              href={`/${category}/${next.slug}`}
-              className="flex flex-col gap-1 bg-bg-secondary border border-border-default rounded-lg p-4 hover:bg-bg-hover transition-all text-right"
-            >
-              <span className="text-text-muted text-xs font-mono">Next →</span>
-              <span className="text-text-primary text-sm font-medium line-clamp-1">{next.title}</span>
+            <Link href={`/${category}/${next.slug}`}
+              className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)', padding: 'var(--space-md)', textDecoration: 'none', textAlign: 'right', alignItems: 'flex-end' }}>
+              <span className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)' }}>Next →</span>
+              <span className="t-body" style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{next.title}</span>
             </Link>
           ) : <div />}
         </div>
       )}
 
       {/* Back to category */}
-      <div className="pb-4">
-        <Link
-          href={`/${category}`}
-          className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors font-mono"
-        >
-          ← Back to {meta?.label}
-        </Link>
-      </div>
+      <Link href={`/${category}`}
+        className="t-body hover:opacity-80 transition-opacity"
+        style={{ fontSize: '13px', fontFamily: 'var(--font-ui)', color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
+        ← Back to {meta?.label}
+      </Link>
     </div>
   );
 }

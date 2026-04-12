@@ -15,61 +15,61 @@ const drivers = [
 
 export default function MarketPage() {
   return (
-    <div className="space-y-10">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
       <div>
-        <div className="font-mono text-xs text-text-muted mb-1">&gt; market_intelligence / 2026</div>
-        <h1 className="text-2xl font-bold text-accent-cyan">Market Intelligence</h1>
-        <p className="text-text-secondary text-sm mt-1">
+        <div className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)', marginBottom: 'var(--space-xs)' }}>&gt; market_intelligence / 2026</div>
+        <h1 className="t-heading" style={{ color: 'var(--info)' }}>Market Intelligence</h1>
+        <p className="t-body" style={{ fontSize: '13px', marginTop: 'var(--space-xs)' }}>
           EM-SCA and private SIGINT market analysis — growth projections, segment breakdown, and competitor revenue.
         </p>
       </div>
 
-      {/* Market growth area chart */}
-      <section className="bg-bg-secondary border border-border-default rounded-lg p-6">
-        <div className="text-xs font-mono text-text-muted uppercase tracking-wide mb-1">Market Growth 2022–2035</div>
-        <div className="text-sm text-text-secondary mb-6">EM-SCA (left axis, $M) vs. Private SIGINT (right axis, $B)</div>
+      {/* Market growth */}
+      <section className="card" style={{ padding: 'var(--space-lg)' }}>
+        <div className="t-label">Market Growth 2022–2035</div>
+        <div className="t-muted" style={{ fontSize: '12px', marginBottom: 'var(--space-md)' }}>EM-SCA (left axis, $M) vs. Private SIGINT (right axis, $B)</div>
         <MarketGrowthChart />
-        <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-          <div className="border border-border-muted rounded-lg p-3">
-            <div className="text-accent-green font-mono font-bold">12–18% CAGR</div>
-            <div className="text-text-muted text-xs mt-0.5">EM-SCA market</div>
+        <div className="grid grid-cols-2 gap-3" style={{ marginTop: 'var(--space-md)' }}>
+          <div className="card" style={{ padding: 'var(--space-sm)' }}>
+            <div className="t-stat" style={{ fontSize: '20px', color: 'var(--success)' }}>12–18% CAGR</div>
+            <div className="card-sub">EM-SCA market</div>
           </div>
-          <div className="border border-border-muted rounded-lg p-3">
-            <div className="text-accent-cyan font-mono font-bold">~8% CAGR</div>
-            <div className="text-text-muted text-xs mt-0.5">Private SIGINT market</div>
+          <div className="card" style={{ padding: 'var(--space-sm)' }}>
+            <div className="t-stat" style={{ fontSize: '20px', color: 'var(--info)' }}>~8% CAGR</div>
+            <div className="card-sub">Private SIGINT market</div>
           </div>
         </div>
       </section>
 
       {/* Segment and geography pies */}
-      <section className="grid sm:grid-cols-2 gap-4">
-        <div className="bg-bg-secondary border border-border-default rounded-lg p-6">
+      <section className="grid sm:grid-cols-2 gap-3">
+        <div className="card" style={{ padding: 'var(--space-lg)' }}>
           <SegmentPieChart data={EMSCA_SEGMENTS} title="EM-SCA Market by Segment" />
         </div>
-        <div className="bg-bg-secondary border border-border-default rounded-lg p-6">
+        <div className="card" style={{ padding: 'var(--space-lg)' }}>
           <SegmentPieChart data={EMSCA_GEOGRAPHY} title="EM-SCA Market by Geography" />
         </div>
       </section>
 
       {/* Company revenue */}
-      <section className="bg-bg-secondary border border-border-default rounded-lg p-6">
-        <div className="text-xs font-mono text-text-muted uppercase tracking-wide mb-1">Company Revenue Comparison</div>
-        <div className="text-sm text-text-secondary mb-6">
-          <span className="inline-flex items-center gap-1.5 mr-4"><span className="w-2 h-2 rounded-full bg-accent-cyan" />SIGINT Defense</span>
-          <span className="inline-flex items-center gap-1.5 mr-4"><span className="w-2 h-2 rounded-full bg-accent-green" />EM-SCA Vendors</span>
-          <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-accent-purple" />Space SIGINT</span>
+      <section className="card" style={{ padding: 'var(--space-lg)' }}>
+        <div className="t-label">Company Revenue Comparison</div>
+        <div className="t-muted" style={{ fontSize: '12px', marginBottom: 'var(--space-md)' }}>
+          <span className="inline-flex items-center gap-1.5 mr-4"><span className="w-2 h-2 rounded-full" style={{ background: 'var(--info)' }} />SIGINT Defense</span>
+          <span className="inline-flex items-center gap-1.5 mr-4"><span className="w-2 h-2 rounded-full" style={{ background: 'var(--brand-primary)' }} />EM-SCA Vendors</span>
+          <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: 'var(--brand-accent)' }} />Space SIGINT</span>
         </div>
         <CompanyRevenueChart companies={COMPANIES} />
       </section>
 
       {/* Regulatory drivers */}
       <section>
-        <div className="text-xs font-mono text-text-muted uppercase tracking-widest mb-4">/ Regulatory Growth Drivers</div>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="t-eyebrow">/ Regulatory Growth Drivers</div>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" style={{ marginTop: 'var(--space-sm)' }}>
           {drivers.map(d => (
-            <div key={d.label} className="bg-bg-secondary border border-border-default rounded-lg p-4">
-              <div className="font-mono text-accent-orange text-sm font-semibold mb-1">{d.label}</div>
-              <div className="text-text-secondary text-xs leading-relaxed">{d.desc}</div>
+            <div key={d.label} className="card" style={{ padding: 'var(--space-sm)' }}>
+              <div className="t-card-heading" style={{ fontSize: '13px', color: 'var(--brand-accent)', marginBottom: 'var(--space-xs)' }}>{d.label}</div>
+              <div className="t-muted" style={{ fontSize: '11px', lineHeight: 1.5 }}>{d.desc}</div>
             </div>
           ))}
         </div>

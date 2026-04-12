@@ -11,9 +11,7 @@ export interface GanttItem {
   subtitle?: string;
 }
 
-const SECTION_COLORS = ['#39d353', '#58a6ff', '#bc8cff', '#f0883e', '#e3b341', '#ff7b72', '#7ee787', '#a5d6ff'];
-
-const LABEL_WIDTH = 208; // px — fixed label column
+const BRAND_COLORS = ['#7A1E2E', '#2C5F8A', '#C4881E', '#1E6B52', '#A8293C'];
 
 function buildMonthBands(projectStart: Date, totalWeeks: number) {
   const bands: { label: string; startPct: number; widthPct: number }[] = [];
@@ -51,16 +49,16 @@ export default function GanttChart({
   totalWeeks,
   projectStart = new Date('2026-04-13'),
 }: {
-  items: GanttItem[];
-  totalWeeks: number;
+  items?: GanttItem[];
+  totalWeeks?: number;
   projectStart?: Date;
 }) {
   const [cursorPct, setCursorPct] = useState<number | null>(null);
-  const chartRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!chartRef.current) return;
-    const rect = chartRef.current.getBoundingClientRect();
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
     setCursorPct(pct);
@@ -68,172 +66,101 @@ export default function GanttChart({
 
   const handleMouseLeave = useCallback(() => setCursorPct(null), []);
 
-  const sections = [...new Set(items.map(i => i.section))];
-  const colorMap = new Map<string, string>();
-  sections.forEach((s, i) => colorMap.set(s, SECTION_COLORS[i % SECTION_COLORS.length]));
+  const weekCount = totalWeeks ?? 26;
+  const monthBands = buildMonthBands(projectStart, weekCount);
 
-  const monthBands = buildMonthBands(projectStart, totalWeeks);
+  // Build items from LEARNING_PHASES if not provided
+  const rows = items ?? [
+    { label: 'DSP Foundations', subtitle: '130h', weekOffset: 0, durationWeeks: 8, color: BRAND_COLORS[0] },
+    { label: 'Hardware Security', subtitle: '17.5h', weekOffset: 8, durationWeeks: 2, color: BRAND_COLORS[1] },
+    { label: 'RF Engineering', subtitle: '70h', weekOffset: 12, durationWeeks: 5, color: BRAND_COLORS[2] },
+    { label: 'ML for Signals', subtitle: '30h', weekOffset: 19, durationWeeks: 2, color: BRAND_COLORS[3] },
+    { label: 'Supplementary', subtitle: '85h', weekOffset: 24, durationWeeks: 2, color: BRAND_COLORS[4] },
+  ];
 
-  const grouped = sections.map(sec => ({
-    section: sec,
-    color: colorMap.get(sec)!,
-    items: items.filter(i => i.section === sec),
-  }));
-
-  const cursorInfo = cursorPct !== null ? getCursorInfo(cursorPct, totalWeeks, projectStart) : null;
+  const cursorInfo = cursorPct !== null ? getCursorInfo(cursorPct, weekCount, projectStart) : null;
 
   return (
-    <div style={{ minWidth: '900px' }}>
-      {/* Unified chart area — single mouse tracking ref */}
-      <div
-        className="relative select-none"
-        ref={chartRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* Cursor overlay — full height vertical line */}
-        {cursorPct !== null && (
-          <div
-            className="absolute top-0 bottom-0 pointer-events-none z-30"
-            style={{
-              left: `${cursorPct}%`,
-              width: '1px',
-              background: 'rgba(88, 166, 255, 0.4)',
-            }}
-          />
-        )}
-
-        {/* Cursor tooltip */}
-        {cursorInfo && cursorPct !== null && (
-          <div
-            className="absolute pointer-events-none z-40"
-            style={{
-              left: `${cursorPct}%`,
-              transform: 'translateX(-50%)',
-              top: 2,
-            }}
-          >
-            <div
-              className="text-xs font-mono px-2 py-0.5 rounded whitespace-nowrap"
-              style={{
-                background: '#161b22',
-                border: '1px solid #30363d',
-                color: '#58a6ff',
-              }}
-            >
-              W{cursorInfo.weekNum} · {cursorInfo.dateStr}
-            </div>
-          </div>
-        )}
-
-        {/* Month/Year axis */}
-        <div className="flex items-center gap-0 mb-1">
-          <div className="shrink-0" style={{ width: LABEL_WIDTH }} />
-          <div className="flex-1 relative">
-            {monthBands.map((band, i) => (
-              <div
-                key={i}
-                className="absolute text-center text-xs font-mono py-2 border-l border-r"
-                style={{
-                  left: `${band.startPct}%`,
-                  width: `${band.widthPct}%`,
-                  color: '#8b949e',
-                  borderColor: '#21262d',
-                }}
-              >
-                {band.label}
-              </div>
-            ))}
-            <div style={{ height: '32px' }} />
-          </div>
-        </div>
-
-        {/* Week sub-axis */}
-        <div className="flex items-center gap-0 mb-1">
-          <div className="shrink-0" style={{ width: LABEL_WIDTH }} />
-          <div className="flex-1 relative">
-            {Array.from({ length: totalWeeks }, (_, i) => (
-              <div
-                key={i}
-                className="absolute text-center text-xs font-mono py-0.5 border-l"
-                style={{
-                  left: `${(i / totalWeeks) * 100}%`,
-                  width: `${100 / totalWeeks}%`,
-                  color: '#484f58',
-                  borderColor: '#21262d',
-                  fontSize: '9px',
-                  display: (i + 1) % 2 === 0 ? 'block' : 'none',
-                }}
-              >
-                {i + 1}
-              </div>
-            ))}
-            <div style={{ height: '20px' }} />
-          </div>
-        </div>
-
-        {/* Chart rows */}
-        <div className="relative">
-          {grouped.map((group) => (
-            <div key={group.section} className="mb-3">
-              {/* Section header */}
-              <div
-                className="flex items-center gap-0 py-1.5 px-2 rounded mb-0.5 text-xs font-mono font-semibold uppercase tracking-wider"
-                style={{ color: group.color, background: `${group.color}0a`, borderLeft: `3px solid ${group.color}` }}
-              >
-                <div className="shrink-0" style={{ width: LABEL_WIDTH }}>{group.section}</div>
-              </div>
-
-              {/* Items */}
-              {group.items.map((item, idx) => {
-                const leftPct = (item.weekOffset / totalWeeks) * 100;
-                const widthPct = (item.durationWeeks / totalWeeks) * 100;
-
-                return (
-                  <div key={idx} className="flex items-center gap-0 py-0.5 rounded group/item hover:bg-white/[0.02]">
-                    {/* Label */}
-                    <div className="shrink-0 pr-3 flex items-baseline gap-2" style={{ width: LABEL_WIDTH }}>
-                      <span className="text-xs font-mono truncate block" style={{ color: '#cdd9e5' }} title={item.label}>
-                        {item.label}
-                      </span>
-                      {item.subtitle && (
-                        <span className="text-xs font-mono shrink-0" style={{ color: '#484f58' }}>
-                          {item.subtitle}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Bar */}
-                    <div className="flex-1 relative h-6">
-                      {/* Grid lines */}
-                      {Array.from({ length: totalWeeks + 1 }, (_, i) => (
-                        <div
-                          key={i}
-                          className="absolute top-0 bottom-0 border-l"
-                          style={{ left: `${(i / totalWeeks) * 100}%`, borderColor: '#21262d', opacity: 0.3 }}
-                        />
-                      ))}
-
-                      <div
-                        className="absolute top-0.5 bottom-0.5 rounded-sm flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden cursor-default"
-                        style={{
-                          left: `${leftPct}%`,
-                          width: `${Math.max(widthPct, 3)}%`,
-                          minWidth: '32px',
-                          background: `${item.color ?? group.color}18`,
-                          border: `1px solid ${item.color ?? group.color}55`,
-                          color: item.color ?? group.color,
-                        }}
-                      >
-                        <span className="truncate">{item.durationWeeks}w</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+    <div style={{ minWidth: '900px' }} ref={trackRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+      {/* Month/Year axis */}
+      <div className="flex items-center gap-0 mb-1">
+        <div className="shrink-0" style={{ width: 180 }} />
+        <div className="flex-1 relative">
+          {monthBands.map((band, i) => (
+            <div key={i} className="absolute text-center text-xs py-2 border-l border-r"
+              style={{ left: `${band.startPct}%`, width: `${band.widthPct}%`, color: '#6B6254', borderColor: '#4A4B5459', fontFamily: 'JetBrains Mono, monospace', fontSize: '9px' }}>
+              {band.label}
             </div>
           ))}
+          <div style={{ height: '32px' }} />
         </div>
+      </div>
+
+      {/* Week sub-axis */}
+      <div className="flex items-center gap-0 mb-1">
+        <div className="shrink-0" style={{ width: 180 }} />
+        <div className="flex-1 relative">
+          {Array.from({ length: weekCount }, (_, i) => (
+            <div key={i} className="absolute text-center text-xs py-0.5 border-l"
+              style={{ left: `${(i / weekCount) * 100}%`, width: `${100 / weekCount}%`, color: '#4A4B54', borderColor: '#4A4B5459', fontFamily: 'JetBrains Mono, monospace', fontSize: '9px', display: (i + 1) % 2 === 0 ? 'block' : 'none' }}>
+              {i + 1}
+            </div>
+          ))}
+
+          {/* Cursor tooltip */}
+          {cursorInfo && cursorPct !== null && (
+            <div className="absolute pointer-events-none" style={{ left: `${cursorPct}%`, transform: 'translateX(-50%)', top: 0, zIndex: 20 }}>
+              <div className="text-xs px-2 py-0.5 rounded whitespace-nowrap" style={{ background: '#2A2C35', border: '1px solid #4A4B54', color: '#2C5F8A', fontFamily: 'JetBrains Mono, monospace', fontSize: '10px' }}>
+                W{cursorInfo.weekNum} · {cursorInfo.dateStr}
+              </div>
+            </div>
+          )}
+
+          {/* Cursor vertical line */}
+          {cursorPct !== null && (
+            <div className="absolute top-0 bottom-0 pointer-events-none" style={{ left: `${cursorPct}%`, width: '1px', background: 'rgba(44, 95, 138, 0.35)', zIndex: 10 }} />
+          )}
+
+          <div style={{ height: '20px' }} />
+        </div>
+      </div>
+
+      {/* Chart rows */}
+      <div className="relative">
+        {rows.map((row, idx) => {
+          const leftPct = (row.weekOffset / weekCount) * 100;
+          const widthPct = (row.durationWeeks / weekCount) * 100;
+          const color = row.color ?? BRAND_COLORS[idx % BRAND_COLORS.length];
+
+          return (
+            <div key={idx} className="flex items-center gap-0 py-0.5 rounded" style={{ transition: 'background 0.15s' }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+              {/* Label */}
+              <div className="shrink-0 pr-3 flex items-baseline gap-2" style={{ width: 180 }}>
+                <span className="text-xs truncate block" style={{ color: '#B8A98E', fontFamily: 'DM Sans, sans-serif' }} title={row.label}>
+                  {row.label}
+                </span>
+                {row.subtitle && (
+                  <span className="text-xs shrink-0" style={{ color: '#6B6254', fontFamily: 'JetBrains Mono, monospace' }}>{row.subtitle}</span>
+                )}
+              </div>
+
+              {/* Bar */}
+              <div className="flex-1 relative h-6">
+                {/* Grid lines */}
+                {Array.from({ length: weekCount + 1 }, (_, i) => (
+                  <div key={i} className="absolute top-0 bottom-0 border-l" style={{ left: `${(i / weekCount) * 100}%`, borderColor: '#4A4B5459', opacity: 0.3 }} />
+                ))}
+
+                <div className="absolute top-0.5 bottom-0.5 rounded-sm flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden cursor-default"
+                  style={{ left: `${leftPct}%`, width: `${Math.max(widthPct, 3)}%`, minWidth: '32px', background: `${color}18`, border: `1px solid ${color}55`, color }}>
+                  <span className="truncate">{row.durationWeeks}w</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

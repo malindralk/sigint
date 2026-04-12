@@ -21,10 +21,10 @@ export default function RootLayout({
           <Sidebar />
           <div className="flex-1 flex flex-col min-w-0">
             <Header />
-            <main className="flex-1 px-6 py-8 max-w-5xl mx-auto w-full">
+            <main className="flex-1" style={{ padding: 'var(--space-xl) var(--space-2xl)', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
               {children}
             </main>
-            <footer className="border-t px-6 py-4 text-center" style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', fontFamily: 'var(--font-ui)', fontSize: '10px' }}>
+            <footer className="border-t text-center" style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', fontFamily: 'var(--font-ui)', fontSize: '10px', padding: 'var(--space-md) var(--space-xl)' }}>
               SIGINT WIKI &middot; {new Date().getFullYear()} &middot; EM-SCA &middot; RF Intelligence &middot; Hardware Security
             </footer>
           </div>

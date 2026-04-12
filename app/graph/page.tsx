@@ -8,12 +8,14 @@ export default function GraphPage() {
   const graphData = buildGraphData();
 
   return (
-    <div className="space-y-4 h-full">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
       <div>
-        <div className="font-mono text-xs text-text-muted mb-1">&gt; knowledge_graph / {graphData.nodes.length} nodes / {graphData.edges.length} edges</div>
-        <h1 className="text-2xl font-bold text-accent-green">Knowledge Graph</h1>
-        <p className="text-text-secondary text-sm mt-1">
-          Force-directed map of all wiki articles and their cross-references. Nodes are articles; edges are explicit links between them.
+        <div className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)', marginBottom: 'var(--space-xs)' }}>
+          &gt; knowledge_graph / {graphData.nodes.length} nodes / {graphData.edges.length} edges
+        </div>
+        <h1 className="t-heading" style={{ color: 'var(--brand-primary)' }}>Knowledge Graph</h1>
+        <p className="t-body" style={{ fontSize: '13px', marginTop: 'var(--space-xs)' }}>
+          Force-directed map of all wiki articles and their cross-references. Nodes are articles; edges are explicit links.
         </p>
       </div>
       <div style={{ height: '70vh' }}>
