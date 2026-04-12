@@ -4,24 +4,26 @@ import { categories, getArticles, getCategoryMeta, type Category } from '@/lib/c
 import type { Metadata } from 'next';
 
 interface Props {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }
 
 export function generateStaticParams() {
   return categories.map((c) => ({ category: c.id }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const meta = getCategoryMeta(params.category as Category);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { category } = await params;
+  const meta = getCategoryMeta(category as Category);
   if (!meta) return {};
   return { title: meta.label, description: meta.description };
 }
 
-export default function CategoryPage({ params }: Props) {
-  const meta = getCategoryMeta(params.category as Category);
+export default async function CategoryPage({ params }: Props) {
+  const { category } = await params;
+  const meta = getCategoryMeta(category as Category);
   if (!meta) notFound();
 
-  const articles = getArticles(params.category as Category);
+  const articles = getArticles(category as Category);
 
   return (
     <div className="space-y-8">
@@ -49,7 +51,7 @@ export default function CategoryPage({ params }: Props) {
         {articles.map((article, i) => (
           <Link
             key={article.slug}
-            href={`/${params.category}/${article.slug}`}
+            href={`/${category}/${article.slug}`}
             className="group flex items-start gap-4 bg-bg-secondary border border-border-default rounded-lg p-5 hover:bg-bg-hover hover:border-border-default transition-all"
           >
             <span className="font-mono text-text-muted text-sm mt-0.5 shrink-0 w-6 text-right">

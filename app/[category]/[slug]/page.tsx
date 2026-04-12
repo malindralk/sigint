@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import MarkdownRenderer from '@/app/components/MarkdownRenderer';
 
 interface Props {
-  params: { category: string; slug: string };
+  params: Promise<{ category: string; slug: string }>;
 }
 
 export function generateStaticParams() {
@@ -14,19 +14,21 @@ export function generateStaticParams() {
   );
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const article = getArticle(params.category as Category, params.slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { category, slug } = await params;
+  const article = getArticle(category as Category, slug);
   if (!article) return {};
   return { title: article.title, description: article.description };
 }
 
-export default function ArticlePage({ params }: Props) {
-  const article = getArticle(params.category as Category, params.slug);
+export default async function ArticlePage({ params }: Props) {
+  const { category, slug } = await params;
+  const article = getArticle(category as Category, slug);
   if (!article) notFound();
 
-  const meta = getCategoryMeta(params.category as Category);
-  const articles = getArticles(params.category as Category);
-  const currentIdx = articles.findIndex((a) => a.slug === params.slug);
+  const meta = getCategoryMeta(category as Category);
+  const articles = getArticles(category as Category);
+  const currentIdx = articles.findIndex((a) => a.slug === slug);
   const prev = articles[currentIdx - 1];
   const next = articles[currentIdx + 1];
 
@@ -36,7 +38,7 @@ export default function ArticlePage({ params }: Props) {
       <div className="font-mono text-text-muted text-sm flex items-center gap-2 flex-wrap">
         <Link href="/" className="hover:text-accent-cyan">home</Link>
         <span>/</span>
-        <Link href={`/${params.category}`} className="hover:text-white" style={{ color: meta?.accent }}>
+        <Link href={`/${category}`} className="hover:text-white" style={{ color: meta?.accent }}>
           {meta?.label}
         </Link>
         <span>/</span>
@@ -53,7 +55,7 @@ export default function ArticlePage({ params }: Props) {
         <div className="border-t border-border-default pt-6 grid grid-cols-2 gap-4">
           {prev ? (
             <Link
-              href={`/${params.category}/${prev.slug}`}
+              href={`/${category}/${prev.slug}`}
               className="flex flex-col gap-1 bg-bg-secondary border border-border-default rounded-lg p-4 hover:bg-bg-hover transition-all"
             >
               <span className="text-text-muted text-xs font-mono">← Previous</span>
@@ -62,7 +64,7 @@ export default function ArticlePage({ params }: Props) {
           ) : <div />}
           {next ? (
             <Link
-              href={`/${params.category}/${next.slug}`}
+              href={`/${category}/${next.slug}`}
               className="flex flex-col gap-1 bg-bg-secondary border border-border-default rounded-lg p-4 hover:bg-bg-hover transition-all text-right"
             >
               <span className="text-text-muted text-xs font-mono">Next →</span>
@@ -75,7 +77,7 @@ export default function ArticlePage({ params }: Props) {
       {/* Back to category */}
       <div className="pb-4">
         <Link
-          href={`/${params.category}`}
+          href={`/${category}`}
           className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors font-mono"
         >
           ← Back to {meta?.label}
