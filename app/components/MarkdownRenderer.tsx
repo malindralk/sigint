@@ -8,17 +8,18 @@ import 'highlight.js/styles/github-dark.css';
 
 interface Props {
   content: string;
+  category: string;
 }
 
-function transformHref(href: string | undefined): string | undefined {
+function transformHref(href: string | undefined, category: string): string | undefined {
   if (!href) return href;
-  // Leave external links alone
-  if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('#')) return href;
-  // Strip .md extension from relative wiki-style links
-  return href.replace(/\.md$/, '');
+  if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('#') || href.startsWith('/')) return href;
+  // Convert relative wiki links (e.g. "organizations.md") to absolute category paths
+  const slug = href.replace(/\.md$/, '');
+  return `/${category}/${slug}`;
 }
 
-export default function MarkdownRenderer({ content }: Props) {
+export default function MarkdownRenderer({ content, category }: Props) {
   return (
     <div className="prose">
       <ReactMarkdown
@@ -26,7 +27,7 @@ export default function MarkdownRenderer({ content }: Props) {
         rehypePlugins={[rehypeHighlight, rehypeSlug]}
         components={{
           a({ href, children, ...props }) {
-            return <a href={transformHref(href)} {...props}>{children}</a>;
+            return <a href={transformHref(href, category)} {...props}>{children}</a>;
           },
         }}
       >

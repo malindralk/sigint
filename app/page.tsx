@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { MARKET_GROWTH, COMPANIES, RESEARCH_PAPERS } from '@/lib/viz-data';
+import { getAllArticles } from '@/lib/content';
 
 const views = [
   { href: '/graph', icon: '◎', label: 'Knowledge Graph', desc: 'Interactive force-directed map of all wiki articles and cross-links', color: '#39d353' },
@@ -11,8 +12,11 @@ const views = [
 ];
 
 const latestPapers = RESEARCH_PAPERS.filter(p => p.year >= 2026).slice(0, 4);
-const emScaRevenue = MARKET_GROWTH.find(m => m.year === '2026')!.emSca;
-const sigintRevenue = MARKET_GROWTH.find(m => m.year === '2026')!.sigint;
+const articles = getAllArticles();
+const articleCount = articles.length;
+const marketEntry = MARKET_GROWTH.find(m => m.year === '2026') ?? MARKET_GROWTH[MARKET_GROWTH.length - 1];
+const emScaRevenue = marketEntry.emSca;
+const sigintRevenue = marketEntry.sigint;
 
 export default function Home() {
   return (
@@ -28,14 +32,14 @@ export default function Home() {
         </h1>
         <p className="text-text-secondary text-base max-w-2xl leading-relaxed">
           Interactive knowledge base covering electromagnetic side-channel analysis,
-          signals intelligence, and hardware security research. 22 articles · 60+ organizations · 18 attack papers · Current through April 2026.
+          signals intelligence, and hardware security research. {articleCount} articles · 60+ organizations · 18 attack papers · Current through April 2026.
         </p>
       </div>
 
       {/* Live stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Wiki Articles', value: '22', sub: 'cross-linked', color: 'text-accent-green' },
+          { label: 'Wiki Articles', value: String(articleCount), sub: 'cross-linked', color: 'text-accent-green' },
           { label: 'EM-SCA Market', value: `$${emScaRevenue}M`, sub: '2026 est.', color: 'text-accent-cyan' },
           { label: 'SIGINT Market', value: `$${(sigintRevenue / 1000).toFixed(0)}B`, sub: 'private sector', color: 'text-accent-purple' },
           { label: 'Research Papers', value: `${RESEARCH_PAPERS.length}`, sub: '2021–2026', color: 'text-accent-orange' },

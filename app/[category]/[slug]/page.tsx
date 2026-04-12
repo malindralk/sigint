@@ -47,7 +47,7 @@ export default async function ArticlePage({ params }: Props) {
 
       {/* Article */}
       <article>
-        <MarkdownRenderer content={article.content} />
+        <MarkdownRenderer content={article.content} category={category} />
       </article>
 
       {/* Prev / Next navigation */}
