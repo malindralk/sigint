@@ -3,20 +3,22 @@
 import { useEffect, useRef, useState } from "react";
 import type { GraphData, GraphNode } from "@/lib/graph-data";
 
-const COLORS: Record<string, string> = {
-  "em-sca": "#7A1E2E",
-  "sigint": "#2C5F8A",
-  "infrastructure": "#C4881E",
-  "learning": "#C4881E",
-  "reference": "#1E6B52",
-};
+const CATEGORIES = [
+  { key: "em-sca", label: "EM-SCA", color: "#7A1E2E" },
+  { key: "sigint", label: "SIGINT", color: "#2C5F8A" },
+  { key: "reference", label: "Reference", color: "#1E6B52" },
+  { key: "learning", label: "Learning", color: "#C4881E" },
+  { key: "infrastructure", label: "Infrastructure", color: "#C4881E" },
+] as const;
 
 interface Props { data: GraphData; }
 
 function GraphSkeleton() {
   return (
-    <div className="flex items-center justify-center h-full min-h-[500px]">
-      <div className="t-muted font-mono text-sm animate-pulse">Loading knowledge graph...</div>
+    <div className="flex items-center justify-center" style={{ height: '100%', minHeight: '400px' }}>
+      <div className="t-muted" style={{ fontFamily: 'var(--font-ui)', fontSize: '13px' }}>
+        Loading knowledge graph...
+      </div>
     </div>
   );
 }
@@ -24,7 +26,7 @@ function GraphSkeleton() {
 export default function KnowledgeGraph({ data }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [selected, setSelected] = useState<GraphNode | null>(null);
-  const [filter, setFilter] = useState<string>("all");
+  const [filter, setFilter] = useState("all");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -41,6 +43,9 @@ export default function KnowledgeGraph({ data }: Props) {
       const H = container.clientHeight || 600;
       svgRef.current!.setAttribute("width", String(W));
       svgRef.current!.setAttribute("height", String(H));
+
+      const colorMap: Record<string, string> = {};
+      CATEGORIES.forEach(c => { colorMap[c.key] = c.color; });
 
       const filteredNodes = filter === "all" ? data.nodes : data.nodes.filter((n) => n.category === filter);
       const filteredIds = new Set(filteredNodes.map((n) => n.id));
@@ -59,7 +64,7 @@ export default function KnowledgeGraph({ data }: Props) {
       svg.call(zoom);
 
       const link = g.append("g").selectAll("line").data(links).join("line")
-        .attr("stroke", "#4A4B54").attr("stroke-width", 1.2).attr("stroke-opacity", 0.6);
+        .attr("stroke", "#4A4B54").attr("stroke-width", 1.2).attr("stroke-opacity", 0.4);
 
       const node = g.append("g").selectAll("g").data(nodes).join("g")
         .attr("cursor", "pointer")
@@ -70,12 +75,12 @@ export default function KnowledgeGraph({ data }: Props) {
         .on("click", (_event, d) => setSelected(d as unknown as GraphNode));
 
       node.append("circle").attr("r", 14)
-        .attr("fill", (d: any) => `${COLORS[d.category]}22`)
-        .attr("stroke", (d: any) => COLORS[d.category]).attr("stroke-width", 1.5);
+        .attr("fill", (d: any) => `${colorMap[d.category]}22`)
+        .attr("stroke", (d: any) => colorMap[d.category]).attr("stroke-width", 1.5);
 
       node.append("text").attr("dy", "0.35em").attr("text-anchor", "middle")
         .attr("font-size", "9px").attr("font-family", "JetBrains Mono, monospace")
-        .attr("fill", (d: any) => COLORS[d.category]).attr("pointer-events", "none")
+        .attr("fill", (d: any) => colorMap[d.category]).attr("pointer-events", "none")
         .each(function(d: any) {
           const words = d.label.split(/[\s-]/);
           const abbr = words.map((w: string) => w[0]).join("").toUpperCase().slice(0, 4);
@@ -98,55 +103,101 @@ export default function KnowledgeGraph({ data }: Props) {
     return () => { cleanup.then((fn) => fn && fn()); };
   }, [data, filter]);
 
+  const totalCount = data.nodes.length;
+  const filteredCount = filter === "all" ? totalCount : data.nodes.filter(n => n.category === filter).length;
+  const edgeCount = filter === "all" ? data.edges.length : data.edges.filter(e => {
+    const ids = new Set(data.nodes.filter(n => filter === "all" || n.category === filter).map(n => n.id));
+    return ids.has(e.source as string) && ids.has(e.target as string);
+  }).length;
+
   return (
-    <div className="flex flex-col h-full gap-3">
-      <div className="flex items-center gap-3 flex-wrap">
-        <span className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>Filter:</span>
-        {["all", "em-sca", "sigint", "reference", "learning", "infrastructure"].map((f) => (
-          <button key={f} onClick={() => setFilter(f)}
-            className="text-xs px-3 py-1 rounded border transition-colors font-mono"
+    <div className="flex flex-col h-full gap-4">
+      {/* Filter bar */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <span className="t-muted" style={{ fontSize: '10px' }}>Filter</span>
+          <div className="h-4" style={{ width: '1px', background: 'var(--border)' }} />
+
+          {/* All button */}
+          <button
+            onClick={() => setFilter("all")}
+            className="text-xs px-3 py-1 rounded-md transition-all"
             style={{
-              borderColor: filter === f ? (COLORS[f] ?? "#EDE0C4") : "#4A4B54",
-              color: filter === f ? (COLORS[f] ?? "#EDE0C4") : "#6B6254",
-              background: filter === f ? `${COLORS[f] ?? "#EDE0C4"}11` : "transparent",
+              background: filter === "all" ? 'var(--text-primary)' : 'transparent',
+              color: filter === "all" ? 'var(--bg-base)' : 'var(--text-muted)',
+              fontWeight: filter === "all" ? 600 : 400,
+              border: `1px solid ${filter === "all" ? 'var(--text-primary)' : 'var(--border)'}`,
               fontFamily: 'var(--font-ui)',
-            }}>{f}</button>
-        ))}
-        <div className="ml-auto flex items-center gap-4 flex-wrap">
-          {Object.entries(COLORS).map(([cat, color]) => (
-            <span key={cat} className="flex items-center gap-1.5 text-xs t-muted" style={{ fontFamily: 'var(--font-ui)' }}>
-              <span className="w-2 h-2 rounded-full" style={{ background: color }} />{cat}
-            </span>
+            }}
+          >
+            All
+          </button>
+
+          {/* Category pills */}
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat.key}
+              onClick={() => setFilter(cat.key)}
+              className="text-xs px-3 py-1 rounded-md transition-all flex items-center gap-1.5"
+              style={{
+                background: filter === cat.key ? `${cat.color}22` : 'transparent',
+                color: filter === cat.key ? cat.color : 'var(--text-muted)',
+                fontWeight: filter === cat.key ? 600 : 400,
+                border: `1px solid ${filter === cat.key ? cat.color : 'var(--border)'}`,
+                fontFamily: 'var(--font-ui)',
+              }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: cat.color }} />
+              {cat.label}
+            </button>
           ))}
+        </div>
+
+        {/* Stats */}
+        <div className="flex items-center gap-4">
+          <span className="t-muted" style={{ fontSize: '10px' }}>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{filteredCount}</span> nodes
+          </span>
+          <span className="t-muted" style={{ fontSize: '10px' }}>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{edgeCount}</span> edges
+          </span>
         </div>
       </div>
 
+      {/* Graph area */}
       <div className="flex gap-4 flex-1 min-h-0">
-        <div className="flex-1 bg-bg-secondary border border-border-default rounded-lg overflow-hidden relative min-h-[500px]" style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
+        <div className="flex-1 overflow-hidden relative" style={{ minHeight: '500px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)' }}>
           {!ready && <GraphSkeleton />}
           <svg ref={svgRef} className="w-full h-full" style={{ display: ready ? "block" : "none" }} />
-          <div className="absolute bottom-3 left-3 text-xs t-muted font-mono">Drag to pan · Scroll to zoom · Click node for details</div>
+          <div className="absolute bottom-3 left-3 t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)' }}>
+            Drag to pan · Scroll to zoom · Click node
+          </div>
         </div>
 
+        {/* Selected node panel */}
         {selected && (
-          <div className="w-64 shrink-0 card" style={{ padding: 'var(--space-md)' }}>
-            <div>
-              <div className="t-label">SELECTED NODE</div>
-              <div className="t-card-heading" style={{ fontSize: '14px', color: COLORS[selected.category] }}>{selected.label}</div>
+          <div className="w-64 shrink-0 card" style={{ padding: 'var(--space-md)', height: 'fit-content' }}>
+            <div className="t-label">SELECTED NODE</div>
+            <div className="t-card-heading" style={{ fontSize: '14px', marginBottom: 'var(--space-sm)' }}>
+              <span style={{ color: CATEGORIES.find(c => c.key === selected.category)?.color }}>{selected.label}</span>
             </div>
-            <div>
-              <span className="text-xs border rounded px-2 py-0.5 font-mono" style={{ borderColor: COLORS[selected.category], color: COLORS[selected.category] }}>
+            <div className="flex items-center gap-1.5" style={{ marginBottom: 'var(--space-sm)' }}>
+              <span className="w-2 h-2 rounded-full" style={{ background: CATEGORIES.find(c => c.key === selected.category)?.color }} />
+              <span className="text-xs" style={{ fontFamily: 'var(--font-ui)', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
                 {selected.category}
               </span>
             </div>
             {selected.description && (
-              <p className="t-muted" style={{ fontSize: '12px', lineHeight: 1.5, marginTop: 'var(--space-xs)' }}>{selected.description}</p>
+              <p className="t-muted" style={{ fontSize: '12px', lineHeight: 1.5, marginBottom: 'var(--space-sm)' }}>
+                {selected.description}
+              </p>
             )}
-            <div>
-              <div className="t-label">CONNECTIONS</div>
-              <div className="text-sm font-mono" style={{ color: '#7A1E2E' }}>
-                {data.edges.filter((e) => e.source === selected.id || e.target === selected.id).length} links
-              </div>
+            <div className="divider" style={{ margin: 'var(--space-sm) 0' }} />
+            <div className="flex items-center justify-between">
+              <span className="t-label" style={{ marginBottom: 0 }}>Connections</span>
+              <span className="text-sm" style={{ fontFamily: 'var(--font-ui)', color: 'var(--brand-primary)', fontWeight: 600 }}>
+                {data.edges.filter((e) => e.source === selected.id || e.target === selected.id).length}
+              </span>
             </div>
           </div>
         )}
