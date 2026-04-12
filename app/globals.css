@@ -27,6 +27,10 @@
   --muted-foreground: #8b949e;
   --ring: #58a6ff;
   --destructive: #f85149;
+  --sidebar-accent: #1a2233;
+  --sidebar-border: #30363d;
+  --sidebar-width: 15rem;
+  --sidebar-width-icon: 3rem;
 }
 
 * {
