@@ -1,68 +1,31 @@
-/* ============================================================
-   MALINDRA — Design Tokens
-   Heritage: Kotte Kingdom 1412–1467 CE
-   ============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-ui:      'DM Sans', sans-serif;
-  --bg-base:        #09090E;
-  --bg-surface:     #131217;
-  --bg-elevated:    #2A2C35;
-  --text-primary:   #EDE0C4;
-  --text-secondary: #B8A98E;
-  --text-muted:     #6B6254;
-  --border:         rgba(74, 75, 84, 0.35);
-  --border-strong:  rgba(74, 75, 84, 0.60);
-  --brand-primary:  #7A1E2E;
-  --brand-accent:   #C4881E;
-  --success:        #1E6B52;
-  --danger:         #A8293C;
-  --info:           #2C5F8A;
-  --space-xs:   4px;
-  --space-sm:   8px;
-  --space-md:   16px;
-  --space-lg:   24px;
-  --space-xl:   32px;
-  --space-2xl:  48px;
-  --radius-sm:  3px;
-  --radius-md:  6px;
-  --radius-lg:  8px;
-  --transition-fast:   0.15s ease;
-  --transition-normal: 0.25s ease;
-  --transition-slow:   0.4s ease;
-}
-
 @import "tailwindcss";
 
 @theme {
-  --color-bg-primary:   var(--bg-base);
-  --color-bg-secondary: var(--bg-surface);
-  --color-bg-tertiary:  var(--bg-elevated);
-  --color-bg-hover:     #1C1C24;
-  --color-brand-primary: var(--brand-primary);
-  --color-brand-accent:  var(--brand-accent);
-  --color-success: var(--success);
-  --color-danger:  var(--danger);
-  --color-info:    var(--info);
-  --color-text-primary:   var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted:     var(--text-muted);
+  --color-bg-primary: #09090E;
+  --color-bg-secondary: #131217;
+  --color-bg-tertiary: #2A2C35;
+  --color-bg-hover: #1C1C24;
+  --color-brand-primary: #7A1E2E;
+  --color-brand-accent: #C4881E;
+  --color-success: #1E6B52;
+  --color-danger: #A8293C;
+  --color-info: #2C5F8A;
+  --color-text-primary: #EDE0C4;
+  --color-text-secondary: #B8A98E;
+  --color-text-muted: #6B6254;
   --color-border-default: #4A4B54;
-  --color-border-muted:   #4A4B5459;
-  --color-border-strong:  #4A4B5499;
-  /* Legacy aliases */
-  --color-accent-green:  var(--brand-primary);
-  --color-accent-cyan:   var(--info);
-  --color-accent-purple: var(--brand-accent);
-  --color-accent-orange: var(--brand-accent);
-  --color-accent-red:    var(--danger);
-  --color-accent-yellow: var(--brand-accent);
-  --font-display: var(--font-display);
-  --font-sans:    var(--font-ui);
-  --font-mono:    'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --color-border-muted: #4A4B5459;
+  --color-border-strong: #4A4B5499;
+  --color-accent-green: #7A1E2E;
+  --color-accent-cyan: #2C5F8A;
+  --color-accent-purple: #C4881E;
+  --color-accent-orange: #C4881E;
+  --color-accent-red: #A8293C;
+  --color-accent-yellow: #C4881E;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   --background: 240 2% 3%;
   --foreground: 35 32% 85%;
   --popover: 240 3% 7%;
@@ -79,6 +42,36 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'DM Sans', sans-serif;
+  --bg-base: #09090E;
+  --bg-surface: #131217;
+  --bg-elevated: #2A2C35;
+  --text-primary: #EDE0C4;
+  --text-secondary: #B8A98E;
+  --text-muted: #6B6254;
+  --border: rgba(74, 75, 84, 0.35);
+  --border-strong: rgba(74, 75, 84, 0.60);
+  --brand-primary: #7A1E2E;
+  --brand-accent: #C4881E;
+  --success: #1E6B52;
+  --danger: #A8293C;
+  --info: #2C5F8A;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.4s ease;
+}
+
 html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
 
 body { background: var(--bg-base); color: var(--text-primary); font-family: var(--font-ui); font-size: 14px; font-weight: 400; line-height: 1.6; min-height: 100vh; }
@@ -92,8 +85,6 @@ ul, ol { list-style: none; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }
 ::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
-
-/* ── SELECTION ────────────────────────────────────────────── */
 ::selection { background: rgba(122, 30, 46, 0.3); color: var(--text-primary); }
 
 /* ── TYPOGRAPHY ───────────────────────────────────────────── */
@@ -187,7 +178,7 @@ ul, ol { list-style: none; }
 /* ── NAV ──────────────────────────────────────────────────── */
 .nav {
   height: 56px; background: var(--bg-surface); border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; padding: 0 var(--space-lg);
+  display: flex; align-items: center; padding: 0 28px;
   position: sticky; top: 0; z-index: 100;
 }
 .nav-logo {
@@ -195,6 +186,16 @@ ul, ol { list-style: none; }
   color: var(--text-primary); letter-spacing: -0.02em; text-decoration: none;
 }
 .nav-logo-dot { color: var(--brand-primary); }
+.nav-link {
+  display: flex; align-items: center; height: 56px; padding: 0 16px;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 400;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted); text-decoration: none;
+  border-bottom: 2px solid transparent; position: relative; top: 1px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+.nav-link:hover { color: var(--text-secondary); opacity: 1; }
+.nav-link.active { color: var(--info); border-bottom-color: var(--info); }
 
 /* ── DIVIDER ──────────────────────────────────────────────── */
 .divider { border: none; border-top: 1px solid var(--border); margin: var(--space-md) 0; }
