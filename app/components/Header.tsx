@@ -13,40 +13,37 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-border-default bg-bg-secondary/80 backdrop-blur-sm sticky top-0 z-40">
+    <header className="border-b sticky top-0 z-40" style={{ borderColor: 'var(--border)', background: 'var(--bg-surface)', backdropFilter: 'blur(8px)' }}>
       <div className="flex items-center justify-between px-4 h-12">
-        {/* Mobile brand */}
-        <Link href="/" className="lg:hidden font-mono font-bold text-accent-green tracking-tight">
-          SIGINT WIKI
+        <Link href="/" className="lg:hidden font-bold tracking-tight" style={{ color: 'var(--brand-primary)', fontFamily: 'var(--font-display)', fontSize: '18px' }}>
+          MALINDRA<span style={{ color: 'var(--brand-accent)' }}>.</span>
         </Link>
 
-        {/* Mobile nav */}
         <nav className="lg:hidden flex items-center gap-1 overflow-x-auto">
           {mobileNav.map((item) => {
             const active = pathname.startsWith(item.href);
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-3 py-1.5 rounded text-xs whitespace-nowrap transition-colors ${
-                  active ? 'bg-bg-hover text-white' : 'text-text-secondary hover:text-text-primary'
-                }`}
-              >
+              <Link key={item.href} href={item.href}
+                className="px-3 py-1.5 rounded text-xs whitespace-nowrap transition-colors"
+                style={{
+                  background: active ? 'var(--bg-elevated)' : 'transparent',
+                  color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  fontFamily: 'var(--font-ui)',
+                }}>
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
-        {/* Breadcrumb (desktop) */}
-        <div className="hidden lg:flex items-center gap-2 text-sm text-text-secondary font-mono">
+        <div className="hidden lg:flex items-center gap-2 text-sm font-mono" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-ui)' }}>
           {pathname === '/' ? (
-            <span className="text-text-primary">Home</span>
+            <span style={{ color: 'var(--text-primary)' }}>Home</span>
           ) : (
             pathname.split('/').filter(Boolean).map((seg, i, arr) => (
               <span key={i} className="flex items-center gap-2">
-                {i > 0 && <span className="text-border-default">/</span>}
-                <span className={i === arr.length - 1 ? 'text-text-primary' : 'text-text-secondary'}>
+                {i > 0 && <span style={{ color: 'var(--border-strong)' }}>/</span>}
+                <span style={i === arr.length - 1 ? { color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}>
                   {seg.replace(/-/g, ' ')}
                 </span>
               </span>
@@ -55,8 +52,8 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-xs font-mono text-accent-green">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-mono" style={{ color: 'var(--brand-primary)', fontFamily: 'var(--font-ui)' }}>
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--brand-primary)' }} />
             LIVE
           </span>
         </div>

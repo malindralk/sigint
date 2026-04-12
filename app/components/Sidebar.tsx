@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const vizNav = [
-  { href: '/graph', label: 'Knowledge Graph', icon: '◎', color: '#39d353' },
-  { href: '/market', label: 'Market Intel', icon: '▲', color: '#58a6ff' },
-  { href: '/companies', label: 'Companies', icon: '◈', color: '#bc8cff' },
-  { href: '/equipment', label: 'Equipment', icon: '⊡', color: '#f0883e' },
-  { href: '/research', label: 'Research', icon: '◷', color: '#e3b341' },
+  { href: '/graph', label: 'Knowledge Graph', icon: '◎', color: '#7A1E2E' },
+  { href: '/market', label: 'Market Intel', icon: '▲', color: '#2C5F8A' },
+  { href: '/companies', label: 'Companies', icon: '◈', color: '#C4881E' },
+  { href: '/equipment', label: 'Equipment', icon: '⊡', color: '#1E6B52' },
+  { href: '/research', label: 'Research', icon: '◷', color: '#A8293C' },
 ];
 
 const wikiGroups = [
@@ -17,7 +17,7 @@ const wikiGroups = [
     id: 'em-sca',
     label: 'EM Side-Channel',
     icon: '⚡',
-    color: '#39d353',
+    color: '#7A1E2E',
     items: [
       { slug: 'electromagnetic-side-channel-analysis', label: 'Overview & Theory' },
       { slug: 'tempest-standards-reference', label: 'TEMPEST Standards' },
@@ -41,7 +41,7 @@ const wikiGroups = [
     id: 'sigint',
     label: 'SIGINT',
     icon: '📡',
-    color: '#58a6ff',
+    color: '#2C5F8A',
     items: [
       { slug: 'sigint-academic-research-overview', label: 'Academic Research' },
       { slug: 'sigint-private-companies-em-intelligence', label: 'Private Companies' },
@@ -60,14 +60,14 @@ function CollapsibleGroup({ group, pathname }: { group: typeof wikiGroups[number
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-sm transition-colors hover:bg-white/[0.03]"
-        style={{ color: isActive ? group.color : '#8b949e' }}
+        style={{ color: isActive ? group.color : 'var(--text-muted)' }}
       >
         <span className="font-mono text-base">{group.icon}</span>
         <span className="flex-1 text-left">{group.label}</span>
         <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`}>&#x203a;</span>
       </button>
       {expanded && (
-        <ul className="ml-4 mt-0.5 space-y-0.5 border-l border-border-muted pl-3">
+        <ul className="ml-4 mt-0.5 space-y-0.5 border-l pl-3" style={{ borderColor: 'var(--border)' }}>
           {group.items.map((item) => {
             const href = `/${group.id}/${item.slug}`;
             const active = pathname === href || pathname === `${href}/`;
@@ -77,8 +77,8 @@ function CollapsibleGroup({ group, pathname }: { group: typeof wikiGroups[number
                   href={href}
                   className="block px-2 py-1 rounded text-xs transition-colors truncate"
                   style={active
-                    ? { background: `${group.color}15`, color: '#e6edf3', borderLeft: `2px solid ${group.color}`, marginLeft: '-3px', paddingLeft: '5px' }
-                    : { color: '#6e7681' }
+                    ? { background: `${group.color}22`, color: 'var(--text-primary)', borderLeft: `2px solid ${group.color}`, marginLeft: '-3px', paddingLeft: '5px' }
+                    : { color: 'var(--text-muted)' }
                   }
                 >
                   {item.label}
@@ -102,27 +102,28 @@ function LearningGroup({ pathname }: { pathname: string }) {
         <Link
           href="/learning"
           className="flex items-center gap-2 flex-1 px-2 py-1.5 rounded text-sm transition-colors hover:bg-white/[0.03]"
-          style={{ color: isActive ? '#ff7b72' : '#8b949e' }}
+          style={{ color: isActive ? 'var(--brand-primary)' : 'var(--text-muted)' }}
         >
           <span className="font-mono text-base">⊕</span>
           <span className="flex-1">Learning Path</span>
         </Link>
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-5 h-5 flex items-center justify-center rounded transition-colors text-text-muted hover:text-text-secondary mr-1"
+          className="w-5 h-5 flex items-center justify-center rounded transition-colors hover:text-text-secondary mr-1"
+          style={{ color: 'var(--text-muted)' }}
         >
           <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`}>&#x203a;</span>
         </button>
       </div>
       {expanded && (
-        <ul className="ml-4 mt-0.5 space-y-0.5 border-l border-border-muted pl-3">
+        <ul className="ml-4 mt-0.5 space-y-0.5 border-l pl-3" style={{ borderColor: 'var(--border)' }}>
           <li>
             <Link
               href="/learning/coursera-sigint"
               className="block px-2 py-1 rounded text-xs transition-colors truncate flex items-center gap-1.5"
               style={pathname.startsWith('/learning/coursera-sigint')
-                ? { background: '#ff7b7215', color: '#e6edf3', borderLeft: '2px solid #ff7b72', marginLeft: '-3px', paddingLeft: '5px' }
-                : { color: '#6e7681' }
+                ? { background: 'var(--brand-primary)22', color: 'var(--text-primary)', borderLeft: '2px solid var(--brand-primary)', marginLeft: '-3px', paddingLeft: '5px' }
+                : { color: 'var(--text-muted)' }
               }
             >
               <span className="text-xs">🎓</span>
@@ -139,17 +140,21 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-60 shrink-0 bg-bg-secondary border-r border-border-default h-screen sticky top-0 overflow-y-auto hidden lg:flex flex-col">
+    <aside
+      className="w-60 shrink-0 border-r h-screen sticky top-0 overflow-y-auto hidden lg:flex flex-col"
+      style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+    >
       {/* Header */}
-      <Link href="/" className="flex items-center gap-2 px-4 py-3 border-b border-border-default hover:bg-bg-tertiary transition-colors">
-        <span className="text-accent-green font-mono font-bold tracking-tight">SIGINT</span>
-        <span className="text-text-secondary font-mono text-xs">WIKI</span>
+      <Link href="/" className="flex items-center gap-2 px-4 py-3 border-b transition-colors hover:bg-white/[0.03]" style={{ borderColor: 'var(--border)' }}>
+        <span className="font-display font-bold tracking-tight text-lg" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>MALINDRA</span>
+        <span className="text-xs font-mono" style={{ color: 'var(--brand-primary)' }}>●</span>
+        <span style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-ui)', fontSize: '10px' }}>SIGINT</span>
       </Link>
 
       <nav className="flex-1 py-3 px-2 space-y-4 overflow-y-auto">
         {/* Visualizations */}
         <div>
-          <div className="px-2 mb-1 text-xs font-mono text-text-muted uppercase tracking-widest">Visualize</div>
+          <div className="px-2 mb-1 text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-ui)', letterSpacing: '0.2em', fontSize: '9px', fontWeight: 600 }}>Visualize</div>
           <ul className="space-y-0.5">
             {vizNav.map((item) => {
               const active = pathname === item.href || pathname === `${item.href}/`;
@@ -157,14 +162,14 @@ export default function Sidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="flex items-center gap-2 px-2 py-1.5 rounded text-sm transition-colors"
+                    className="flex items-center gap-2 px-2 py-1.5 rounded text-sm transition-colors relative"
                     style={active
-                      ? { background: `${item.color}15`, color: item.color, borderLeft: `2px solid ${item.color}`, paddingLeft: '6px' }
-                      : { color: '#8b949e' }
+                      ? { background: `${item.color}18`, color: 'var(--text-primary)', borderLeft: `3px solid ${item.color}`, paddingLeft: '5px' }
+                      : { color: 'var(--text-muted)' }
                     }
                   >
                     <span className="font-mono text-base">{item.icon}</span>
-                    <span>{item.label}</span>
+                    <span style={{ fontFamily: 'var(--font-ui)' }}>{item.label}</span>
                   </Link>
                 </li>
               );
@@ -174,7 +179,7 @@ export default function Sidebar() {
 
         {/* Wiki articles */}
         <div>
-          <div className="px-2 mb-1 text-xs font-mono text-text-muted uppercase tracking-widest">Articles</div>
+          <div className="px-2 mb-1 text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-ui)', letterSpacing: '0.2em', fontSize: '9px', fontWeight: 600 }}>Articles</div>
           <ul className="space-y-0.5">
             {/* Learning — with submenu */}
             <li><LearningGroup pathname={pathname} /></li>
@@ -189,8 +194,8 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-2 border-t border-border-default shrink-0">
-        <p className="text-text-muted text-xs font-mono">Apr 2026</p>
+      <div className="px-4 py-2 border-t shrink-0" style={{ borderColor: 'var(--border)' }}>
+        <p className="text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-ui)', fontSize: '10px' }}>Apr 2026</p>
       </div>
     </aside>
   );

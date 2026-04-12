@@ -1,109 +1,262 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* ============================================================
+   MALINDRA — Design Tokens
+   tokens.css — Single source of truth
+
+   Heritage: Kotte Kingdom 1412–1467 CE
+   Inspired by: Singapore 1978 · The age of AI
+
+   NEVER hardcode colors in any other file.
+   ALWAYS reference these variables.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+
+  /* ── FONTS ────────────────────────────────────────────────
+     Cormorant Garamond — display, headings, heritage voice
+     DM Sans            — UI, body, labels, numbers          */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui:      'DM Sans', sans-serif;
+
+  /* ── BACKGROUNDS ──────────────────────────────────────────
+     3 dark steps from deepest to elevated                   */
+  --bg-base:        #09090E;   /* Kotte Night      · page shell, app bg    */
+  --bg-surface:     #131217;   /* Manuscript Dark  · cards, panels, nav    */
+  --bg-elevated:    #2A2C35;   /* War Elephant     · inputs, hover, rows   */
+
+  /* ── TEXT ─────────────────────────────────────────────────
+     3 levels from primary to muted                          */
+  --text-primary:   #EDE0C4;   /* Ola Leaf         · headlines, key text   */
+  --text-secondary: #B8A98E;   /* Aged Parchment   · body copy             */
+  --text-muted:     #6B6254;   /* Warm Stone       · captions, placeholders*/
+
+  /* ── BORDER ───────────────────────────────────────────────  */
+  --border:         rgba(74, 75, 84, 0.35);   /* Spear Iron · default      */
+  --border-strong:  rgba(74, 75, 84, 0.60);   /* Spear Iron · hover/focus  */
+
+  /* ── BRAND ────────────────────────────────────────────────
+     Primary = CTAs, logo dot, key actions
+     Accent  = wealth, returns, premium stats                */
+  --brand-primary:  #7A1E2E;   /* Sinha Maroon    · CTA, logo dot          */
+  --brand-accent:   #C4881E;   /* Temple Gold     · wealth, stats, premium */
+
+  /* ── SEMANTIC ─────────────────────────────────────────────
+     Standard fintech signal colors,
+     each grounded in Kotte heritage                         */
+  --success:        #1E6B52;   /* Water Fortress  · growth, positive, safe */
+  --danger:         #A8293C;   /* War Banner      · alerts, errors, urgent  */
+  --info:           #2C5F8A;   /* Zheng He Blue   · links, AI, data, info  */
+
+  /* ── SPACING ──────────────────────────────────────────────  */
+  --space-xs:   4px;
+  --space-sm:   8px;
+  --space-md:   16px;
+  --space-lg:   24px;
+  --space-xl:   32px;
+  --space-2xl:  48px;
+  --space-3xl:  64px;
+
+  /* ── RADIUS ───────────────────────────────────────────────  */
+  --radius-sm:  3px;
+  --radius-md:  6px;
+  --radius-lg:  8px;
+
+  /* ── TRANSITIONS ──────────────────────────────────────────  */
+  --transition-fast:   0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow:   0.4s ease;
+}
+
+/* ── TAILWIND 4 THEME — maps brand tokens to utility classes */
 @import "tailwindcss";
 
 @theme {
-  --color-bg-primary: #080b10;
-  --color-bg-secondary: #0d1117;
-  --color-bg-tertiary: #161b22;
-  --color-bg-hover: #1a2233;
+  /* Backgrounds */
+  --color-bg-primary:   var(--bg-base);
+  --color-bg-secondary: var(--bg-surface);
+  --color-bg-tertiary:  var(--bg-elevated);
+  --color-bg-hover:     #1C1C24;
 
-  --color-accent-green: #39d353;
-  --color-accent-cyan: #58a6ff;
-  --color-accent-purple: #bc8cff;
-  --color-accent-orange: #f0883e;
-  --color-accent-red: #f85149;
-  --color-accent-yellow: #e3b341;
+  /* Brand */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-accent:  var(--brand-accent);
 
-  --color-border-default: #30363d;
-  --color-border-muted: #21262d;
+  /* Semantic */
+  --color-success: var(--success);
+  --color-danger:  var(--danger);
+  --color-info:    var(--info);
 
-  --color-text-primary: #e6edf3;
-  --color-text-secondary: #8b949e;
-  --color-text-muted: #6e7681;
+  /* Text */
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted:     var(--text-muted);
 
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  /* Border (hex values for Tailwind utilities) */
+  --color-border-default: #4A4B54;
+  --color-border-muted:   #4A4B5459;
+  --color-border-strong:  #4A4B5499;
 
-  /* shadcn/ui variables */
-  --background: #080b10;
-  --foreground: #e6edf3;
-  --popover: #0d1117;
-  --popover-foreground: #e6edf3;
-  --card: #0d1117;
-  --card-foreground: #e6edf3;
-  --muted: #161b22;
-  --muted-foreground: #8b949e;
-  --ring: #58a6ff;
-  --destructive: #f85149;
-  --sidebar-accent: #1a2233;
-  --sidebar-border: #30363d;
+  /* Legacy aliases for existing class names in sigint codebase */
+  --color-accent-green:  var(--brand-primary);
+  --color-accent-cyan:   var(--info);
+  --color-accent-purple: var(--brand-accent);
+  --color-accent-orange: var(--brand-accent);
+  --color-accent-red:    var(--danger);
+  --color-accent-yellow: var(--brand-accent);
+
+  /* Fonts */
+  --font-display: var(--font-display);
+  --font-sans:    var(--font-ui);
+  --font-mono:    'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* shadcn/ui — hsl format */
+  --background: 240 2% 3%;
+  --foreground: 35 32% 85%;
+  --popover: 240 3% 7%;
+  --popover-foreground: 35 32% 85%;
+  --card: 240 3% 7%;
+  --card-foreground: 35 32% 85%;
+  --muted: 240 5% 14%;
+  --muted-foreground: 35 8% 37%;
+  --ring: 35 32% 85%;
+  --destructive: 350 64% 42%;
+  --sidebar-accent: 240 5% 14%;
+  --sidebar-border: 240 3% 18%;
 }
 
-* {
+/* ── RESET ────────────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
+  font-size: 16px;
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background-color: var(--bg-primary);
+  background: var(--bg-base);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #484f58; }
+img, video, svg {
+  display: block;
+  max-width: 100%;
+}
 
-/* Markdown prose */
+a {
+  color: var(--info);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+a:hover { opacity: 0.8; }
+
+ul, ol { list-style: none; }
+
+/* ── SCROLLBAR ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* ── SELECTION ────────────────────────────────────────────── */
+::selection {
+  background: rgba(122, 30, 46, 0.3);
+  color: var(--text-primary);
+}
+
+/* ── MARKDOWN PROSE ──────────────────────────────────────── */
 .prose {
   color: var(--text-primary);
   max-width: none;
-  line-height: 1.75;
+  line-height: 1.7;
+  font-family: var(--font-ui);
 }
 
-.prose h1 { font-size: 1.875rem; font-weight: 700; margin: 2rem 0 1rem; color: #e6edf3; border-bottom: 1px solid var(--border-default); padding-bottom: 0.5rem; }
-.prose h2 { font-size: 1.5rem; font-weight: 600; margin: 1.75rem 0 0.75rem; color: #e6edf3; border-bottom: 1px solid var(--border-muted); padding-bottom: 0.35rem; }
-.prose h3 { font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.5rem; color: #cdd9e5; }
-.prose h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #adbac7; }
+.prose h1 {
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 2rem 0 1rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 1.75rem 0 0.75rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.35rem;
+}
+.prose h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+  color: var(--text-secondary);
+}
+.prose h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.5rem;
+  color: var(--text-secondary);
+}
 
-.prose p { margin: 0.875rem 0; color: #adbac7; }
+.prose p { margin: 0.875rem 0; color: var(--text-secondary); }
 
-.prose a { color: var(--accent-cyan); text-decoration: none; }
-.prose a:hover { text-decoration: underline; }
+.prose a { color: var(--info); }
+.prose a:hover { opacity: 0.8; }
 
-.prose strong { color: #e6edf3; font-weight: 600; }
-.prose em { color: #cdd9e5; }
+.prose strong { color: var(--text-primary); font-weight: 600; }
+.prose em { color: var(--text-secondary); }
 
 .prose ul { list-style: none; padding-left: 1.25rem; margin: 0.75rem 0; }
-.prose ul li { position: relative; padding-left: 0.5rem; margin: 0.35rem 0; color: #adbac7; }
-.prose ul li::before { content: '›'; position: absolute; left: -1rem; color: var(--accent-green); font-weight: 700; }
+.prose ul li { position: relative; padding-left: 0.5rem; margin: 0.35rem 0; color: var(--text-secondary); }
+.prose ul li::before { content: '›'; position: absolute; left: -1rem; color: var(--brand-primary); font-weight: 700; }
 
 .prose ol { list-style: decimal; padding-left: 1.5rem; margin: 0.75rem 0; }
-.prose ol li { margin: 0.35rem 0; color: #adbac7; }
+.prose ol li { margin: 0.35rem 0; color: var(--text-secondary); }
 
-.prose blockquote { border-left: 3px solid var(--accent-cyan); padding: 0.5rem 1rem; margin: 1rem 0; background: var(--bg-tertiary); border-radius: 0 4px 4px 0; }
-.prose blockquote p { color: #8b949e; margin: 0; }
+.prose blockquote {
+  border-left: 3px solid var(--brand-primary);
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  background: var(--bg-surface);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.prose blockquote p { color: var(--text-muted); margin: 0; }
 
 .prose code:not(pre code) {
-  background: var(--bg-tertiary);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-default);
-  color: var(--accent-orange);
+  color: var(--brand-accent);
   padding: 0.15rem 0.4rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85em;
 }
 
 .prose pre {
-  background: var(--bg-tertiary) !important;
+  background: var(--bg-surface) !important;
   border: 1px solid var(--border-default);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   padding: 1rem 1.25rem;
   overflow-x: auto;
   margin: 1rem 0;
@@ -114,7 +267,7 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.82rem;
   line-height: 1.6;
-  color: #e6edf3;
+  color: var(--text-primary);
   background: none;
   border: none;
   padding: 0;
@@ -129,27 +282,38 @@ body {
   display: block;
 }
 
-.prose thead tr { background: var(--bg-tertiary); }
-.prose th { padding: 0.6rem 1rem; text-align: left; color: #e6edf3; font-weight: 600; border: 1px solid var(--border-default); white-space: nowrap; }
-.prose td { padding: 0.5rem 1rem; border: 1px solid var(--border-muted); color: #adbac7; }
-.prose tr:nth-child(even) { background: #0d111766; }
-.prose tr:hover { background: var(--bg-hover, #1a223344); }
+.prose thead tr { background: var(--bg-elevated); }
+.prose th {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  color: var(--text-primary);
+  font-weight: 600;
+  border: 1px solid var(--border-default);
+  white-space: nowrap;
+}
+.prose td {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.prose tr:nth-child(even) { background: #13121766; }
+.prose tr:hover { background: var(--bg-hover); }
 
 .prose hr { border: none; border-top: 1px solid var(--border-default); margin: 2rem 0; }
 
-/* Highlight.js theme overrides */
+/* ── HIGHLIGHT.JS — Malindra palette ────────────────────── */
 .hljs { background: transparent !important; }
-.hljs-keyword, .hljs-selector-tag { color: #ff7b72; }
-.hljs-string, .hljs-attr { color: #a5d6ff; }
-.hljs-number, .hljs-literal { color: #79c0ff; }
-.hljs-comment { color: #6e7681; font-style: italic; }
-.hljs-function, .hljs-title { color: #d2a8ff; }
-.hljs-variable, .hljs-name { color: #ffa657; }
-.hljs-built_in { color: #79c0ff; }
-.hljs-type { color: #ffa657; }
-.hljs-operator, .hljs-punctuation { color: #e6edf3; }
+.hljs-keyword, .hljs-selector-tag { color: var(--danger); }
+.hljs-string, .hljs-attr { color: #8BB8E0; }
+.hljs-number, .hljs-literal { color: #7DAAC8; }
+.hljs-comment { color: var(--text-muted); font-style: italic; }
+.hljs-function, .hljs-title { color: var(--brand-accent); }
+.hljs-variable, .hljs-name { color: var(--brand-accent); }
+.hljs-built_in { color: #7DAAC8; }
+.hljs-type { color: var(--brand-accent); }
+.hljs-operator, .hljs-punctuation { color: var(--text-primary); }
 
-/* Scan-line overlay effect (subtle) */
+/* ── SCANLINE OVERLAY ───────────────────────────────────── */
 .scanline {
   pointer-events: none;
   position: fixed;
@@ -162,4 +326,32 @@ body {
     rgba(0,0,0,0.03) 4px
   );
   z-index: 9999;
+}
+
+/* ── DIVIDER ─────────────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-lg) 0;
+}
+
+/* ── EYEBROW ─────────────────────────────────────────────── */
+.t-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brand-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.t-eyebrow::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--brand-primary);
+  flex-shrink: 0;
 }
