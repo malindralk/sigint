@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import AppSidebar from './components/AppSidebar';
+import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { TooltipProvider } from '@/components/ui/tooltip';
 
 export const metadata: Metadata = {
   title: { default: 'SIGINT Wiki', template: '%s — SIGINT Wiki' },
@@ -18,21 +16,19 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="bg-bg-primary text-text-primary min-h-screen">
-        <TooltipProvider>
-          <SidebarProvider defaultOpen>
-            <div className="scanline" />
-            <AppSidebar />
-            <div className="flex-1 flex flex-col min-w-0">
-              <Header />
-              <main className="flex-1 px-6 py-8 max-w-5xl mx-auto w-full">
-                {children}
-              </main>
-              <footer className="border-t border-border-default px-6 py-4 text-center text-text-muted text-xs font-mono">
-                SIGINT WIKI &middot; {new Date().getFullYear()} &middot; EM-SCA &middot; RF Intelligence &middot; Hardware Security
-              </footer>
-            </div>
-          </SidebarProvider>
-        </TooltipProvider>
+        <div className="scanline" />
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex-1 flex flex-col min-w-0">
+            <Header />
+            <main className="flex-1 px-6 py-8 max-w-5xl mx-auto w-full">
+              {children}
+            </main>
+            <footer className="border-t border-border-default px-6 py-4 text-center text-text-muted text-xs font-mono">
+              SIGINT WIKI &middot; {new Date().getFullYear()} &middot; EM-SCA &middot; RF Intelligence &middot; Hardware Security
+            </footer>
+          </div>
+        </div>
       </body>
     </html>
   );
