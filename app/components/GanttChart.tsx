@@ -56,11 +56,11 @@ export default function GanttChart({
   projectStart?: Date;
 }) {
   const [cursorPct, setCursorPct] = useState<number | null>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!trackRef.current) return;
-    const rect = trackRef.current.getBoundingClientRect();
+    if (!chartRef.current) return;
+    const rect = chartRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
     setCursorPct(pct);
@@ -84,67 +84,33 @@ export default function GanttChart({
 
   return (
     <div style={{ minWidth: '900px' }}>
-      {/* Month/Year axis */}
-      <div className="flex items-center gap-0 mb-1">
-        <div className="shrink-0" style={{ width: LABEL_WIDTH }} />
-        <div className="flex-1 relative">
-          {monthBands.map((band, i) => (
-            <div
-              key={i}
-              className="absolute text-center text-xs font-mono py-2 border-l border-r"
-              style={{
-                left: `${band.startPct}%`,
-                width: `${band.widthPct}%`,
-                color: '#8b949e',
-                borderColor: '#21262d',
-              }}
-            >
-              {band.label}
-            </div>
-          ))}
-          <div style={{ height: '32px' }} />
-        </div>
-      </div>
-
-      {/* Week sub-axis */}
-      <div className="flex items-center gap-0 mb-1">
-        <div className="shrink-0" style={{ width: LABEL_WIDTH }} />
-        <div className="flex-1 relative">
-          {Array.from({ length: totalWeeks }, (_, i) => (
-            <div
-              key={i}
-              className="absolute text-center text-xs font-mono py-0.5 border-l"
-              style={{
-                left: `${(i / totalWeeks) * 100}%`,
-                width: `${100 / totalWeeks}%`,
-                color: '#484f58',
-                borderColor: '#21262d',
-                fontSize: '9px',
-                display: (i + 1) % 2 === 0 ? 'block' : 'none',
-              }}
-            >
-              {i + 1}
-            </div>
-          ))}
-          <div style={{ height: '20px' }} />
-        </div>
-      </div>
-
-      {/* Chart rows — single mouse tracking layer */}
+      {/* Unified chart area — single mouse tracking ref */}
       <div
-        className="relative"
-        ref={trackRef}
+        className="relative select-none"
+        ref={chartRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
+        {/* Cursor overlay — full height vertical line */}
+        {cursorPct !== null && (
+          <div
+            className="absolute top-0 bottom-0 pointer-events-none z-30"
+            style={{
+              left: `${cursorPct}%`,
+              width: '1px',
+              background: 'rgba(88, 166, 255, 0.4)',
+            }}
+          />
+        )}
+
         {/* Cursor tooltip */}
         {cursorInfo && cursorPct !== null && (
           <div
-            className="absolute pointer-events-none z-30"
+            className="absolute pointer-events-none z-40"
             style={{
               left: `${cursorPct}%`,
               transform: 'translateX(-50%)',
-              top: -4,
+              top: 2,
             }}
           >
             <div
@@ -160,74 +126,114 @@ export default function GanttChart({
           </div>
         )}
 
-        {grouped.map((group) => (
-          <div key={group.section} className="mb-3">
-            {/* Section header */}
-            <div
-              className="flex items-center gap-0 py-1.5 px-2 rounded mb-0.5 text-xs font-mono font-semibold uppercase tracking-wider"
-              style={{ color: group.color, background: `${group.color}0a`, borderLeft: `3px solid ${group.color}` }}
-            >
-              <div className="shrink-0" style={{ width: LABEL_WIDTH }}>{group.section}</div>
-            </div>
+        {/* Month/Year axis */}
+        <div className="flex items-center gap-0 mb-1">
+          <div className="shrink-0" style={{ width: LABEL_WIDTH }} />
+          <div className="flex-1 relative">
+            {monthBands.map((band, i) => (
+              <div
+                key={i}
+                className="absolute text-center text-xs font-mono py-2 border-l border-r"
+                style={{
+                  left: `${band.startPct}%`,
+                  width: `${band.widthPct}%`,
+                  color: '#8b949e',
+                  borderColor: '#21262d',
+                }}
+              >
+                {band.label}
+              </div>
+            ))}
+            <div style={{ height: '32px' }} />
+          </div>
+        </div>
 
-            {/* Items */}
-            {group.items.map((item, idx) => {
-              const leftPct = (item.weekOffset / totalWeeks) * 100;
-              const widthPct = (item.durationWeeks / totalWeeks) * 100;
+        {/* Week sub-axis */}
+        <div className="flex items-center gap-0 mb-1">
+          <div className="shrink-0" style={{ width: LABEL_WIDTH }} />
+          <div className="flex-1 relative">
+            {Array.from({ length: totalWeeks }, (_, i) => (
+              <div
+                key={i}
+                className="absolute text-center text-xs font-mono py-0.5 border-l"
+                style={{
+                  left: `${(i / totalWeeks) * 100}%`,
+                  width: `${100 / totalWeeks}%`,
+                  color: '#484f58',
+                  borderColor: '#21262d',
+                  fontSize: '9px',
+                  display: (i + 1) % 2 === 0 ? 'block' : 'none',
+                }}
+              >
+                {i + 1}
+              </div>
+            ))}
+            <div style={{ height: '20px' }} />
+          </div>
+        </div>
 
-              return (
-                <div key={idx} className="flex items-center gap-0 py-0.5 rounded group/item hover:bg-white/[0.02]">
-                  {/* Label */}
-                  <div className="shrink-0 pr-3 flex items-baseline gap-2" style={{ width: LABEL_WIDTH }}>
-                    <span className="text-xs font-mono truncate block" style={{ color: '#cdd9e5' }} title={item.label}>
-                      {item.label}
-                    </span>
-                    {item.subtitle && (
-                      <span className="text-xs font-mono shrink-0" style={{ color: '#484f58' }}>
-                        {item.subtitle}
+        {/* Chart rows */}
+        <div className="relative">
+          {grouped.map((group) => (
+            <div key={group.section} className="mb-3">
+              {/* Section header */}
+              <div
+                className="flex items-center gap-0 py-1.5 px-2 rounded mb-0.5 text-xs font-mono font-semibold uppercase tracking-wider"
+                style={{ color: group.color, background: `${group.color}0a`, borderLeft: `3px solid ${group.color}` }}
+              >
+                <div className="shrink-0" style={{ width: LABEL_WIDTH }}>{group.section}</div>
+              </div>
+
+              {/* Items */}
+              {group.items.map((item, idx) => {
+                const leftPct = (item.weekOffset / totalWeeks) * 100;
+                const widthPct = (item.durationWeeks / totalWeeks) * 100;
+
+                return (
+                  <div key={idx} className="flex items-center gap-0 py-0.5 rounded group/item hover:bg-white/[0.02]">
+                    {/* Label */}
+                    <div className="shrink-0 pr-3 flex items-baseline gap-2" style={{ width: LABEL_WIDTH }}>
+                      <span className="text-xs font-mono truncate block" style={{ color: '#cdd9e5' }} title={item.label}>
+                        {item.label}
                       </span>
-                    )}
-                  </div>
-
-                  {/* Bar row */}
-                  <div className="flex-1 relative h-6">
-                    {/* Cursor line */}
-                    {cursorPct !== null && (
-                      <div
-                        className="absolute top-0 bottom-0 pointer-events-none z-10"
-                        style={{ left: `${cursorPct}%`, width: '1px', background: 'rgba(88, 166, 255, 0.35)' }}
-                      />
-                    )}
-
-                    {/* Grid lines */}
-                    {Array.from({ length: totalWeeks + 1 }, (_, i) => (
-                      <div
-                        key={i}
-                        className="absolute top-0 bottom-0 border-l"
-                        style={{ left: `${(i / totalWeeks) * 100}%`, borderColor: '#21262d', opacity: 0.3 }}
-                      />
-                    ))}
+                      {item.subtitle && (
+                        <span className="text-xs font-mono shrink-0" style={{ color: '#484f58' }}>
+                          {item.subtitle}
+                        </span>
+                      )}
+                    </div>
 
                     {/* Bar */}
-                    <div
-                      className="absolute top-0.5 bottom-0.5 rounded-sm flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden cursor-default"
-                      style={{
-                        left: `${leftPct}%`,
-                        width: `${Math.max(widthPct, 3)}%`,
-                        minWidth: '32px',
-                        background: `${item.color ?? group.color}18`,
-                        border: `1px solid ${item.color ?? group.color}55`,
-                        color: item.color ?? group.color,
-                      }}
-                    >
-                      <span className="truncate">{item.durationWeeks}w</span>
+                    <div className="flex-1 relative h-6">
+                      {/* Grid lines */}
+                      {Array.from({ length: totalWeeks + 1 }, (_, i) => (
+                        <div
+                          key={i}
+                          className="absolute top-0 bottom-0 border-l"
+                          style={{ left: `${(i / totalWeeks) * 100}%`, borderColor: '#21262d', opacity: 0.3 }}
+                        />
+                      ))}
+
+                      <div
+                        className="absolute top-0.5 bottom-0.5 rounded-sm flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden cursor-default"
+                        style={{
+                          left: `${leftPct}%`,
+                          width: `${Math.max(widthPct, 3)}%`,
+                          minWidth: '32px',
+                          background: `${item.color ?? group.color}18`,
+                          border: `1px solid ${item.color ?? group.color}55`,
+                          color: item.color ?? group.color,
+                        }}
+                      >
+                        <span className="truncate">{item.durationWeeks}w</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        ))}
+                );
+              })}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
