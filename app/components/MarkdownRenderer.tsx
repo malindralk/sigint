@@ -157,39 +157,34 @@ function MermaidDiagram({ code }: { code: string }) {
         </div>
       </div>
 
-      {/* Expanded dialog */}
+      {/* Full-screen expanded view */}
       {open && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center"
+          className="fixed inset-0 z-[9999] bg-background"
           onClick={() => setOpen(false)}
         >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          {/* Header bar */}
+          <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-background sticky top-0">
+            <span className="text-sm font-medium text-foreground">Diagram</span>
+            <div className="flex items-center gap-3">
+              <ZoomControls zoom={dialogZoom} onZoomIn={dialogZoomIn} onZoomOut={dialogZoomOut} />
+              <button
+                onClick={() => setOpen(false)}
+                className="h-8 w-8 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground"
+                aria-label="Close"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
 
-          {/* Dialog panel */}
+          {/* Full-screen scrollable body */}
           <div
-            className="relative z-10 w-[95vw] max-w-5xl bg-background rounded-xl border border-border shadow-2xl flex flex-col max-h-[90vh]"
+            className="flex items-start justify-center p-8 overflow-auto"
+            style={{ height: 'calc(100vh - 52px)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0">
-              <span className="text-sm font-medium">Diagram</span>
-              <div className="flex items-center gap-3">
-                <ZoomControls zoom={dialogZoom} onZoomIn={dialogZoomIn} onZoomOut={dialogZoomOut} />
-                <button
-                  onClick={() => setOpen(false)}
-                  className="h-7 w-7 flex items-center justify-center rounded hover:bg-muted transition-colors text-muted-foreground"
-                  aria-label="Close"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Body */}
-            <div className="overflow-auto flex-1 p-6 flex items-start justify-center bg-muted/10">
-              {renderDiagram(dialogZoom)}
-            </div>
+            {renderDiagram(dialogZoom)}
           </div>
         </div>
       )}
