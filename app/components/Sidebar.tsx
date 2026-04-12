@@ -5,18 +5,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const vizNav = [
-  { href: '/graph', label: 'Knowledge Graph', color: 'var(--brand-primary)' },
-  { href: '/market', label: 'Market Intel', color: 'var(--info)' },
-  { href: '/companies', label: 'Companies', color: 'var(--brand-accent)' },
-  { href: '/equipment', label: 'Equipment', color: 'var(--success)' },
-  { href: '/research', label: 'Research', color: 'var(--danger)' },
+  { href: '/graph', label: 'Knowledge Graph' },
+  { href: '/market', label: 'Market Intel' },
+  { href: '/companies', label: 'Companies' },
+  { href: '/equipment', label: 'Equipment' },
+  { href: '/research', label: 'Research' },
 ];
 
 const wikiGroups = [
   {
     id: 'em-sca',
     label: 'EM Side-Channel',
-    color: 'var(--brand-primary)',
     items: [
       { slug: 'electromagnetic-side-channel-analysis', label: 'Overview & Theory' },
       { slug: 'tempest-standards-reference', label: 'TEMPEST Standards' },
@@ -39,7 +38,6 @@ const wikiGroups = [
   {
     id: 'sigint',
     label: 'SIGINT',
-    color: 'var(--info)',
     items: [
       { slug: 'sigint-academic-research-overview', label: 'Academic Research' },
       { slug: 'sigint-private-companies-em-intelligence', label: 'Private Companies' },
@@ -57,11 +55,11 @@ function CollapsibleGroup({ group, pathname }: { group: typeof wikiGroups[number
     <div>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="sidebar-item"
-        style={{ padding: '9px 20px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: isActive ? group.color : 'var(--text-muted)', fontWeight: isActive ? 500 : 400 }}
+        className={`sidebar-item ${isActive ? 'active' : ''}`}
+        style={{ justifyContent: 'space-between' }}
       >
-        <span className="flex-1 text-left">{group.label}</span>
-        <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`} style={{ color: 'var(--text-muted)' }}>&#x203a;</span>
+        <span>{group.label}</span>
+        <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`} style={{ color: 'var(--text-muted)', flexShrink: 0 }}>&#x203a;</span>
       </button>
       {expanded && (
         <ul className="ml-4 mt-0.5 space-y-0.5 border-l pl-3" style={{ borderColor: 'var(--border)' }}>
@@ -73,10 +71,10 @@ function CollapsibleGroup({ group, pathname }: { group: typeof wikiGroups[number
                 <Link
                   href={href}
                   className="block px-2 py-1 rounded text-xs transition-colors truncate"
-                  style={active
-                    ? { background: 'rgba(44, 95, 138, 0.08)', color: 'var(--text-primary)', borderLeft: `2px solid ${group.color}`, marginLeft: '-3px', paddingLeft: '5px' }
-                    : { color: 'var(--text-muted)' }
-                  }
+                  style={{
+                    color: active ? 'var(--text-primary)' : 'var(--text-muted)',
+                    ...(active ? { background: 'rgba(44, 95, 138, 0.08)', fontWeight: 500 } : {}),
+                  }}
                 >
                   {item.label}
                 </Link>
@@ -95,17 +93,13 @@ function LearningGroup({ pathname }: { pathname: string }) {
 
   return (
     <div>
-      <div className="flex items-center gap-2">
-        <Link
-          href="/learning"
-          className="sidebar-item"
-          style={{ padding: '9px 20px', width: '100%', color: isActive ? 'var(--brand-primary)' : 'var(--text-muted)', fontWeight: isActive ? 500 : 400 }}
-        >
-          <span className="flex-1 text-left">Learning Path</span>
+      <div className="flex items-center">
+        <Link href="/learning" className={`sidebar-item ${isActive ? 'active' : ''}`} style={{ flex: 1 }}>
+          Learning Path
         </Link>
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-5 h-5 flex items-center justify-center rounded transition-colors mr-1"
+          className="w-5 h-5 flex items-center justify-center mr-1"
           style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
         >
           <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`}>&#x203a;</span>
@@ -117,10 +111,10 @@ function LearningGroup({ pathname }: { pathname: string }) {
             <Link
               href="/learning/coursera-sigint"
               className="block px-2 py-1 rounded text-xs transition-colors truncate"
-              style={pathname.startsWith('/learning/coursera-sigint')
-                ? { background: 'rgba(44, 95, 138, 0.08)', color: 'var(--text-primary)', borderLeft: '2px solid var(--brand-primary)', marginLeft: '-3px', paddingLeft: '5px' }
-                : { color: 'var(--text-muted)' }
-              }
+              style={{
+                color: pathname.startsWith('/learning/coursera-sigint') ? 'var(--text-primary)' : 'var(--text-muted)',
+                ...(pathname.startsWith('/learning/coursera-sigint') ? { background: 'rgba(44, 95, 138, 0.08)', fontWeight: 500 } : {}),
+              }}
             >
               Coursera Path
             </Link>
@@ -137,21 +131,20 @@ export default function Sidebar() {
   return (
     <aside className="sidebar hidden lg:flex">
       {/* Header */}
-      <Link href="/" className="flex items-center gap-2 px-5 py-4 mb-2 border-b transition-colors hover:bg-white/[0.03]" style={{ borderColor: 'var(--border)' }}>
+      <Link href="/" className="flex items-center gap-2 px-5 py-4 mb-2 border-b transition-colors hover:bg-white/[0.03]" style={{ borderColor: 'var(--border)', textDecoration: 'none' }}>
         <span className="nav-logo">MALINDRA<span className="nav-logo-dot">.</span></span>
-        <span className="t-muted" style={{ fontFamily: 'var(--font-ui)', fontSize: '10px' }}>SIGINT</span>
+        <span className="t-muted" style={{ fontSize: '10px' }}>SIGINT</span>
       </Link>
 
+      {/* Nav */}
       <nav className="flex-1 overflow-y-auto">
-        {/* Visualizations */}
+        {/* Visualize */}
         <div className="sidebar-section">Visualize</div>
         {vizNav.map((item) => {
           const active = pathname === item.href || pathname === `${item.href}/`;
           return (
-            <Link key={item.href} href={item.href}
-              className={`sidebar-item ${active ? 'active' : ''}`}
-              style={active ? { borderLeftColor: item.color } : {}}>
-              <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px' }}>{item.label}</span>
+            <Link key={item.href} href={item.href} className={`sidebar-item ${active ? 'active' : ''}`}>
+              {item.label}
             </Link>
           );
         })}
@@ -162,7 +155,7 @@ export default function Sidebar() {
         {/* Learning */}
         <LearningGroup pathname={pathname} />
 
-        {/* EM-SCA & SIGINT */}
+        {/* Wiki groups */}
         {wikiGroups.map((group) => (
           <CollapsibleGroup key={group.id} group={group} pathname={pathname} />
         ))}
