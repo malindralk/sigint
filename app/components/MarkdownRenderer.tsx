@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -19,89 +19,148 @@ function transformHref(href: string | undefined, category: string): string | und
   return `/${category}/${slug}`;
 }
 
-function MermaidDiagram({ code }: { code: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
-  const [zoom, setZoom] = useState(1);
-  const [ready, setReady] = useState(false);
-  const mermaidSvgRef = useRef<string | null>(null);
+interface GanttItem {
+  section: string;
+  label: string;
+  startWeek: number;
+  durationWeeks: number;
+}
 
-  useEffect(() => {
-    let cancelled = false;
-    setReady(false);
+function parseMermaidGantt(code: string): GanttItem[] {
+  const items: GanttItem[] = [];
+  let currentSection = '';
+  const sectionMap = new Map<string, number>();
+  let weekCursor = 0;
 
-    async function render() {
-      try {
-        const mermaid = (await import('mermaid')).default;
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: 'dark',
-          securityLevel: 'loose',
-        });
+  for (const rawLine of code.split('\n')) {
+    const line = rawLine.trim();
 
-        const id = `mermaid-${Math.random().toString(36).slice(2, 8)}`;
-        const { svg } = await mermaid.render(id, code);
+    // Skip directives
+    if (!line || line.startsWith('gantt') || line.startsWith('title') || line.startsWith('dateFormat') || line.startsWith('axisFormat') || line.startsWith('%')) continue;
 
-        if (!cancelled) {
-          mermaidSvgRef.current = svg;
-          setReady(true);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          console.error('Mermaid render error:', err);
-          setError(err instanceof Error ? err.message : 'Failed to render diagram');
-        }
-      }
+    // section header
+    const secMatch = line.match(/^section\s+(.+)$/i);
+    if (secMatch) {
+      currentSection = secMatch[1].trim();
+      if (!sectionMap.has(currentSection)) sectionMap.set(currentSection, 0);
+      continue;
     }
 
-    render();
-    return () => { cancelled = true; };
-  }, [code]);
-
-  // Lock body scroll when open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+    // task: label :alias, start, duration
+    // start can be: a date (YYYY-MM-DD), after <alias>, or nothing
+    // duration: Xw
+    const taskMatch = line.match(/^(.+?)\s*:\s*\w+,\s*(?:after\s+\w+|(\d{4}-\d{2}-\d{2})),\s*(\d+)w$/);
+    if (taskMatch && currentSection) {
+      const label = taskMatch[1].trim();
+      const durationWeeks = parseInt(taskMatch[3], 10);
+      // Sequential within section
+      const lastInSection = [...items].reverse().find(i => i.section === currentSection);
+      const startWeek = lastInSection ? lastInSection.startWeek + lastInSection.durationWeeks : weekCursor;
+      items.push({ section: currentSection, label, startWeek, durationWeeks });
+      weekCursor = Math.max(weekCursor, startWeek + durationWeeks);
     }
-    return () => { document.body.style.overflow = ''; };
-  }, [open]);
-
-  // Close on Escape
-  useEffect(() => {
-    if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open]);
-
-  const renderSVG = () => {
-    if (!mermaidSvgRef.current) return null;
-    // Remove fixed width/height from mermaid SVG so it scales with zoom
-    let svg = mermaidSvgRef.current
-      .replace(/width="[^"]*"/g, 'width="100%"')
-      .replace(/height="[^"]*"/g, '');
-    return svg;
-  };
-
-  if (error) {
-    return (
-      <div className="my-6 border border-border rounded-lg p-4" style={{ background: '#0d1117' }}>
-        <div className="text-xs font-mono mb-2" style={{ color: '#f85149' }}>Mermaid render error</div>
-        <pre className="text-xs font-mono whitespace-pre-wrap" style={{ color: '#8b949e' }}>{code}</pre>
-      </div>
-    );
   }
 
-  if (!ready) {
-    return (
-      <div className="my-6 border border-border rounded-lg p-8 text-center" style={{ background: '#0d1117' }}>
-        <div className="text-sm font-mono animate-pulse" style={{ color: '#6e7681' }}>Rendering diagram...</div>
+  return items;
+}
+
+function GanttChart({ items }: { items: GanttItem[] }) {
+  const sectionColors = ['#39d353', '#58a6ff', '#bc8cff', '#f0883e', '#e3b341', '#ff7b72', '#7ee787', '#a5d6ff'];
+
+  // Pre-compute colors per section
+  const colorCache = new Map<string, string>();
+  const sections = [...new Set(items.map(i => i.section))];
+  sections.forEach((s, i) => colorCache.set(s, sectionColors[i % sectionColors.length]));
+
+  let totalWeeks = 0;
+  for (const item of items) {
+    const end = item.startWeek + item.durationWeeks;
+    if (end > totalWeeks) totalWeeks = end;
+  }
+  if (totalWeeks === 0) totalWeeks = 26;
+
+  return (
+    <div className="w-full" style={{ minWidth: '800px' }}>
+      {/* Week ruler */}
+      <div className="flex items-center gap-0 mb-2">
+        <div className="w-48 shrink-0" />
+        <div className="flex-1 flex">
+          {Array.from({ length: totalWeeks }, (_, i) => (
+            <div
+              key={i}
+              className="flex-1 text-center text-xs font-mono border-l py-1"
+              style={{
+                minWidth: 0,
+                display: (i + 1) % 4 === 0 || i === 0 ? 'block' : 'none',
+                color: '#6e7681',
+                borderColor: '#21262d',
+              }}
+            >
+              W{i + 1}
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Bars */}
+      <div className="space-y-1">
+        {items.map((item, idx) => {
+          const leftPct = (item.startWeek / totalWeeks) * 100;
+          const widthPct = (item.durationWeeks / totalWeeks) * 100;
+          const color = colorCache.get(item.section) || '#58a6ff';
+          const isSectionStart = idx === 0 || items[idx - 1].section !== item.section;
+
+          return (
+            <div key={idx} className="flex items-center gap-0" style={{ marginTop: isSectionStart ? '8px' : 0 }}>
+              <div className="w-48 shrink-0 pr-4">
+                <div
+                  className="text-xs font-mono truncate"
+                  style={{ color: isSectionStart ? color : '#8b949e' }}
+                  title={item.label}
+                >
+                  {item.label}
+                </div>
+              </div>
+              <div className="flex-1 relative h-7">
+                {/* Grid lines */}
+                <div
+                  className="absolute inset-y-0 left-0 right-0 border-l opacity-20"
+                  style={{
+                    borderColor: '#30363d',
+                    backgroundImage: 'repeating-linear-gradient(90deg, #30363d 0px, #30363d 1px, transparent 1px, transparent calc(100% / var(--tw, 26)))',
+                  }}
+                />
+                {/* Bar */}
+                <div
+                  className="absolute top-0.5 bottom-0.5 rounded flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden"
+                  style={{
+                    left: `${leftPct}%`,
+                    width: `${widthPct}%`,
+                    background: `${color}22`,
+                    border: `1px solid ${color}66`,
+                    color: color,
+                  }}
+                >
+                  {item.durationWeeks}w
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function MermaidGanttBlock({ code }: { code: string }) {
+  const [open, setOpen] = useState(false);
+
+  const items = parseMermaidGantt(code);
+  if (items.length === 0) {
+    return (
+      <pre className="text-xs font-mono p-4 rounded-lg border overflow-x-auto" style={{ borderColor: '#30363d', background: '#161b22', color: '#adbac7' }}>
+        {code}
+      </pre>
     );
   }
 
@@ -111,87 +170,47 @@ function MermaidDiagram({ code }: { code: string }) {
       <div className="my-6">
         <div className="flex items-center justify-between mb-2">
           <button
-            onClick={() => { setOpen(true); setZoom(1); }}
-            className="text-xs px-3 py-1.5 rounded border transition-colors cursor-pointer"
-            style={{
-              borderColor: '#30363d',
-              color: '#8b949e',
-              background: 'transparent',
-            }}
+            onClick={() => setOpen(true)}
+            className="text-xs px-3 py-1.5 rounded border cursor-pointer transition-colors"
+            style={{ borderColor: '#30363d', color: '#8b949e', background: 'transparent' }}
           >
             <span style={{ marginRight: 6 }}>Expand</span>
             &#x2922;
           </button>
           <div className="text-xs font-mono" style={{ color: '#6e7681' }}>
-            {code.split('\n').length} lines
+            {items.length} tasks · {(() => { let m = 0; items.forEach(i => { const e = i.startWeek + i.durationWeeks; if (e > m) m = e; }); return m; })()} weeks
           </div>
         </div>
-        <div className="overflow-x-auto rounded-lg border" style={{ borderColor: '#30363d', background: '#0d1117' }}>
-          <div className="p-4" ref={containerRef} dangerouslySetInnerHTML={{ __html: renderSVG() || '' }} />
+        <div className="overflow-x-auto rounded-lg border p-4" style={{ borderColor: '#30363d', background: '#0d1117' }}>
+          <GanttChart items={items} />
         </div>
       </div>
 
-      {/* Full-screen expanded view */}
+      {/* Full-screen expanded */}
       {open && (
-        <div
-          className="fixed inset-0"
-          style={{ zIndex: 99999, background: '#080b10' }}
-        >
-          {/* Sticky header */}
-          <div
-            className="flex items-center justify-between px-6 py-3 border-b"
-            style={{ borderColor: '#30363d', background: '#080b10', position: 'sticky', top: 0, zIndex: 10 }}
-          >
-            <span className="text-sm font-mono" style={{ color: '#e6edf3' }}>Diagram</span>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setZoom((z) => Math.max(z - 0.25, 0.25))}
-                  className="px-2.5 py-1 rounded border text-xs font-mono cursor-pointer transition-colors"
-                  style={{ borderColor: '#30363d', color: '#8b949e', background: 'transparent' }}
-                >
-                  -
-                </button>
-                <span className="text-xs font-mono w-10 text-center" style={{ color: '#8b949e' }}>
-                  {Math.round(zoom * 100)}%
-                </span>
-                <button
-                  onClick={() => setZoom((z) => Math.min(z + 0.25, 5))}
-                  className="px-2.5 py-1 rounded border text-xs font-mono cursor-pointer transition-colors"
-                  style={{ borderColor: '#30363d', color: '#8b949e', background: 'transparent' }}
-                >
-                  +
-                </button>
-              </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="h-8 w-8 flex items-center justify-center rounded cursor-pointer transition-colors"
-                style={{ color: '#8b949e' }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = '#161b22')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-              >
-                &#x2715;
-              </button>
-            </div>
+        <div className="fixed inset-0" style={{ zIndex: 99999, background: '#080b10' }}>
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-3 border-b" style={{ borderColor: '#30363d', background: '#080b10', position: 'sticky', top: 0, zIndex: 10 }}>
+            <span className="text-sm font-mono" style={{ color: '#e6edf3' }}>Gantt Chart</span>
+            <button
+              onClick={() => setOpen(false)}
+              className="h-8 w-8 flex items-center justify-center rounded cursor-pointer transition-colors"
+              style={{ color: '#8b949e' }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#161b22')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            >
+              &#x2715;
+            </button>
           </div>
 
-          {/* Full-screen body */}
+          {/* Full body */}
           <div
-            className="flex items-start justify-center overflow-auto"
+            className="overflow-auto"
             style={{ height: 'calc(100vh - 52px)' }}
             onClick={() => setOpen(false)}
           >
-            <div
-              className="p-8"
-              style={{
-                transform: `scale(${zoom})`,
-                transformOrigin: 'top center',
-                transition: 'transform 0.15s ease-out',
-                maxWidth: '95vw',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div dangerouslySetInnerHTML={{ __html: renderSVG() || '' }} />
+            <div className="p-8" onClick={(e) => e.stopPropagation()}>
+              <GanttChart items={items} />
             </div>
           </div>
         </div>
@@ -213,7 +232,15 @@ export default function MarkdownRenderer({ content, category }: Props) {
           code({ className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
             if (match && match[1] === 'mermaid' && typeof children === 'string') {
-              return <MermaidDiagram code={children} />;
+              if (children.includes('gantt')) {
+                return <MermaidGanttBlock code={children} />;
+              }
+              // Other mermaid: show as pre
+              return (
+                <pre className="text-xs font-mono p-4 rounded-lg border overflow-x-auto" style={{ borderColor: '#30363d', background: '#161b22', color: '#adbac7' }}>
+                  {children}
+                </pre>
+              );
             }
             return <code className={className} {...props}>{children}</code>;
           },
