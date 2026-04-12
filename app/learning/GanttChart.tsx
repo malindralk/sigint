@@ -2,68 +2,44 @@
 
 import { useState } from 'react';
 import { LEARNING_PHASES } from '@/lib/viz-data';
+import GanttChart from '@/app/components/GanttChart';
+import type { GanttItem } from '@/app/components/GanttChart';
 
-const ZOOM_LEVELS = [1, 1.5, 2] as const;
+const SECTION_COLORS = ['#39d353', '#58a6ff', '#bc8cff', '#f0883e', '#e3b341'];
 
-function GanttBar({
-  phase,
-  startPct,
-  widthPct,
-}: {
-  phase: { phase: number; title: string; weeks: string; hours: number; color: string };
-  startPct: number;
-  widthPct: number;
-}) {
-  return (
-    <div className="flex items-center gap-0">
-      <div className="w-40 shrink-0 pr-4">
-        <div className="text-xs font-mono text-text-secondary truncate">Phase {phase.phase}</div>
-        <div className="text-xs text-text-muted truncate">{phase.title}</div>
-      </div>
-      <div className="flex-1 relative h-8">
-        <div
-          className="absolute inset-y-0 left-0 right-0 border-l border-border-muted opacity-20"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(90deg, #30363d 0px, #30363d 1px, transparent 1px, transparent calc(100%/26))',
-          }}
-        />
-        <div
-          className="absolute top-1 bottom-1 rounded flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden"
-          style={{
-            left: `${startPct}%`,
-            width: `${widthPct}%`,
-            background: `${phase.color}22`,
-            border: `1px solid ${phase.color}66`,
-            color: phase.color,
-          }}
-        >
-          {phase.weeks} · {phase.hours}h
-        </div>
-      </div>
-    </div>
-  );
-}
+export default function LearningGanttChart() {
+  const [zoom, setZoom] = useState(1);
 
-export default function GanttChart() {
-  const [zoomIdx, setZoomIdx] = useState(0);
-  const zoom = ZOOM_LEVELS[zoomIdx];
+  // Convert LEARNING_PHASES to GanttItem format
+  const items: GanttItem[] = [];
+  for (const phase of LEARNING_PHASES) {
+    const [startW, endW] = phase.weeks.split('\u2013').map(Number);
+    const weekOffset = startW - 1;
+    const durationWeeks = endW - startW + 1;
+    items.push({
+      section: `Phase ${phase.phase}`,
+      label: phase.title,
+      subtitle: `${phase.hours}h`,
+      weekOffset,
+      durationWeeks,
+      color: phase.color,
+    });
+  }
 
-  const cycleZoom = () => setZoomIdx((i) => (i + 1) % ZOOM_LEVELS.length);
+  const totalWeeks = 26;
+  const projectStart = new Date('2026-04-13');
 
   return (
     <div>
       {/* Zoom controls — desktop only */}
       <div className="hidden md:flex items-center justify-end mb-3 gap-2">
         <span className="text-xs text-text-muted font-mono">Zoom:</span>
-        {ZOOM_LEVELS.map((z, i) => (
+        {[1, 1.5, 2].map((z) => (
           <button
             key={z}
-            onClick={cycleZoom}
+            onClick={() => setZoom(z)}
             className={`text-xs px-2 py-0.5 rounded border font-mono transition-colors ${
-              zoomIdx === i
-                ? 'border-accent-cyan text-accent-cyan bg-accent-cyan/10'
-                : 'border-border-muted text-text-muted hover:text-text-secondary'
+              zoom === z ? 'border-accent-cyan text-accent-cyan bg-accent-cyan/10' : 'border-border-muted text-text-muted hover:text-text-secondary'
             }`}
           >
             {z}x
@@ -72,39 +48,10 @@ export default function GanttChart() {
       </div>
 
       <div
-        className="space-y-4 overflow-x-auto"
+        className="overflow-x-auto"
         style={{ transform: `scale(${zoom})`, transformOrigin: 'top left', minWidth: `${100 * zoom}%` }}
       >
-        {/* Week ruler */}
-        <div className="flex items-center gap-0" style={{ minWidth: '600px' }}>
-          <div className="w-40 shrink-0" />
-          <div className="flex-1 flex">
-            {Array.from({ length: 26 }, (_, i) => (
-              <div
-                key={i}
-                className="flex-1 text-center text-xs text-text-muted font-mono border-l border-border-muted py-1"
-                style={{ minWidth: 0, display: (i + 1) % 4 === 0 || i === 0 ? 'block' : 'none' }}
-              >
-                {i === 0 ? 'W1' : `W${i + 1}`}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {LEARNING_PHASES.map((phase) => {
-          const [startW, endW] = phase.weeks.split('\u2013').map(Number);
-          const startPct = ((startW - 1) / 26) * 100;
-          const widthPct = ((endW - startW + 1) / 26) * 100;
-
-          return (
-            <GanttBar
-              key={phase.phase}
-              phase={phase}
-              startPct={startPct}
-              widthPct={widthPct}
-            />
-          );
-        })}
+        <GanttChart items={items} totalWeeks={totalWeeks} projectStart={projectStart} />
       </div>
     </div>
   );
