@@ -44,14 +44,6 @@ const wikiNav = [
     ],
   },
   {
-    id: 'infrastructure', label: 'Infrastructure', icon: '🖥', color: '#bc8cff',
-    items: [
-      { slug: 'proxmox-homelab', label: 'Proxmox Homelab' },
-      { slug: 'community-scripts-org', label: 'Community Scripts' },
-      { slug: 'malindra-lxc-setup', label: 'Malindra LXC Setup' },
-    ],
-  },
-  {
     id: 'learning', label: 'Learning', icon: '📚', color: '#f0883e',
     items: [{ slug: 'coursera-sigint', label: 'Coursera Path' }],
   },

@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 const mobileNav = [
   { href: '/em-sca', label: '⚡ EM-SCA' },
   { href: '/sigint', label: '📡 SIGINT' },
-  { href: '/infrastructure', label: '🖥 Infra' },
   { href: '/learning', label: '📚 Learn' },
 ];
 

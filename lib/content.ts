@@ -4,7 +4,7 @@ import matter from 'gray-matter';
 
 const contentDir = path.join(process.cwd(), 'content');
 
-export type Category = 'em-sca' | 'sigint' | 'infrastructure' | 'learning';
+export type Category = 'em-sca' | 'sigint' | 'learning';
 
 export interface Article {
   slug: string;
@@ -40,14 +40,6 @@ export const categories: CategoryMeta[] = [
     color: 'text-accent-cyan',
     accent: '#58a6ff',
     icon: '📡',
-  },
-  {
-    id: 'infrastructure',
-    label: 'Infrastructure',
-    description: 'Homelab and server infrastructure — Proxmox, Docker, LXC containers, and deployment guides.',
-    color: 'text-accent-purple',
-    accent: '#bc8cff',
-    icon: '🖥',
   },
   {
     id: 'learning',
