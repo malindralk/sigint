@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
-import Header from "./components/Header";
 
 export const metadata: Metadata = {
   title: { default: "SIGINT Wiki", template: "%s — SIGINT Wiki" },
@@ -14,23 +13,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body style={{ background: "var(--color-kotte-night)", color: "var(--color-ola-leaf)", fontFamily: "var(--font-ui)", minHeight: "100vh", margin: 0 }}>
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('malindra-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}})()`,
+          }}
+        />
+      </head>
+      <body style={{ background: "var(--theme-bg-base)", color: "var(--theme-text-primary)", fontFamily: "var(--font-ui)", height: "100vh", margin: 0, overflow: "hidden" }}>
         <div className="scanline" />
-        <div className="flex min-h-screen">
+        <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
           <Sidebar />
-          <div className="flex-1 flex flex-col min-w-0">
-            <Header />
-            <main className="flex-1" style={{ padding: "var(--spacing-xl) var(--spacing-2xl)", maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
-              {children}
-            </main>
-            <footer className="border-t text-center" style={{ borderColor: "var(--color-border-default)", padding: "var(--spacing-md) var(--spacing-xl)" }}>
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <span className="t-sinhala-logo" style={{ fontSize: "14px" }}>මලින්ද්‍ර</span>
-                <span className="t-muted" style={{ fontSize: "10px", fontFamily: "var(--font-ui)" }}>SIGINT WIKI</span>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, height: "100vh", overflow: "hidden" }}>
+            <main style={{ flex: 1, overflow: "auto", padding: "var(--spacing-xl) var(--spacing-2xl)" }}>
+              <div style={{ maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
+                {children}
               </div>
-              <p className="t-muted" style={{ fontSize: "10px", fontFamily: "var(--font-ui)" }}>
-                {new Date().getFullYear()} &middot; EM-SCA &middot; RF Intelligence &middot; Hardware Security
+            </main>
+            <footer style={{ borderTop: "1px solid var(--theme-border)", padding: "10px var(--spacing-xl)", textAlign: "center", flexShrink: 0, background: "var(--theme-bg-base)" }}>
+              <span className="t-sinhala-logo" style={{ fontSize: "14px", color: "var(--theme-text-primary)" }}>{'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}</span>
+              <p className="t-muted" style={{ fontSize: "10px", fontFamily: "var(--font-ui)", marginTop: "2px", color: "var(--theme-text-muted)" }}>
+                &copy; {new Date().getFullYear()}
               </p>
             </footer>
           </div>

@@ -3,19 +3,21 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTheme } from '@/hooks/use-theme';
 
 const vizNav = [
-  { href: '/graph', label: 'Knowledge Graph' },
-  { href: '/market', label: 'Market Intel' },
-  { href: '/companies', label: 'Companies' },
-  { href: '/equipment', label: 'Equipment' },
-  { href: '/research', label: 'Research' },
+  { href: '/graph', label: 'Knowledge Graph', shield: 'blue' as const },
+  { href: '/market', label: 'Market Intel', shield: 'fortress' as const },
+  { href: '/companies', label: 'Companies', shield: 'fortress' as const },
+  { href: '/equipment', label: 'Equipment', shield: 'gold' as const },
+  { href: '/research', label: 'Research', shield: 'blue' as const },
 ];
 
 const wikiGroups = [
   {
     id: 'em-sca',
     label: 'EM Side-Channel',
+    shield: 'gold' as const,
     items: [
       { slug: 'electromagnetic-side-channel-analysis', label: 'Overview & Theory' },
       { slug: 'tempest-standards-reference', label: 'TEMPEST Standards' },
@@ -38,6 +40,7 @@ const wikiGroups = [
   {
     id: 'sigint',
     label: 'SIGINT',
+    shield: 'blue' as const,
     items: [
       { slug: 'sigint-academic-research-overview', label: 'Academic Research' },
       { slug: 'sigint-private-companies-em-intelligence', label: 'Private Companies' },
@@ -50,7 +53,7 @@ const wikiGroups = [
 function SubItems({ items, basePath }: { items: { slug: string; label: string }[]; basePath: string }) {
   const pathname = usePathname();
   return (
-    <div style={{ marginLeft: '20px', borderLeft: '1px solid var(--border)', paddingLeft: '8px', marginTop: '4px' }}>
+    <div className="sidebar-subtree">
       {items.map((item) => {
         const href = `${basePath}/${item.slug}`;
         const active = pathname === href || pathname === `${href}/`;
@@ -58,13 +61,7 @@ function SubItems({ items, basePath }: { items: { slug: string; label: string }[
           <Link
             key={item.slug}
             href={href}
-            className="block text-xs transition-colors"
-            style={{
-              color: active ? 'var(--text-primary)' : 'var(--text-muted)',
-              fontWeight: active ? 500 : 400,
-              padding: '5px 8px',
-              borderRadius: 'var(--radius-sm)',
-            }}
+            className={`sidebar-subitem ${active ? 'active' : ''}`}
           >
             {item.label}
           </Link>
@@ -78,17 +75,42 @@ function GroupToggle({ label, expanded, onToggle }: { label: string; expanded: b
   return (
     <button
       onClick={onToggle}
-      className="sidebar-item"
-      style={{ justifyContent: 'space-between', width: '100%', background: 'none', border: 'none' }}
+      aria-expanded={expanded}
+      className="sidebar-item sidebar-group-toggle"
     >
-      <span>{label}</span>
-      <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`} style={{ color: 'var(--text-muted)', flexShrink: 0 }}>&#x203a;</span>
+      {label}
+      <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`} style={{ color: 'var(--theme-text-muted)', flexShrink: 0, marginLeft: 'auto' }}>{'\u203a'}</span>
     </button>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1" y1="12" x2="3" y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
   );
 }
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     learning: pathname.startsWith('/learning'),
     'em-sca': pathname.startsWith('/em-sca'),
@@ -99,13 +121,21 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar hidden lg:flex">
-      {/* Header */}
-      <Link href="/" className="flex items-center gap-2 px-5 py-4 mb-2 border-b transition-colors hover:bg-white/[0.03]" style={{ borderColor: 'var(--border)', textDecoration: 'none' }}>
-        <span className="nav-logo">MALINDRA<span className="nav-logo-dot">.</span></span>
-        <span className="t-muted" style={{ fontSize: '10px' }}>SIGINT</span>
+      {/* Header -- rotating wordmark (Sinhala / English) */}
+      <Link href="/" className="sidebar-wordmark">
+        <div className="wordmark-coin">
+          <div className="wordmark-face wordmark-front">
+            <span className="sidebar-wordmark-sinhala">{'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}</span>
+            <span className="sidebar-wordmark-line" />
+          </div>
+          <div className="wordmark-face wordmark-back">
+            <span className="sidebar-wordmark-english">MALINDRA</span>
+            <span className="sidebar-wordmark-line" />
+          </div>
+        </div>
       </Link>
 
-      {/* Nav items — flat, no nesting */}
+      {/* Nav items */}
       <nav className="flex-1 overflow-y-auto">
         {/* Visualize */}
         <div className="sidebar-section">Visualize</div>
@@ -121,24 +151,28 @@ export default function Sidebar() {
         {/* Articles */}
         <div className="sidebar-section">Articles</div>
 
-        {/* Learning Path — flat toggle + sub-items */}
+        {/* Learning Path */}
         <GroupToggle label="Learning Path" expanded={!!openGroups.learning} onToggle={() => toggle('learning')} />
         {openGroups.learning && (
           <SubItems items={[{ slug: 'coursera-sigint', label: 'Coursera Path' }]} basePath="/learning" />
         )}
 
-        {/* EM Side-Channel — flat toggle + sub-items */}
-        <GroupToggle label="EM Side-Channel" expanded={!!openGroups['em-sca']} onToggle={() => toggle('em-sca')} />
-        {openGroups['em-sca'] && (
-          <SubItems items={wikiGroups[0].items} basePath="/em-sca" />
-        )}
-
-        {/* SIGINT — flat toggle + sub-items */}
-        <GroupToggle label="SIGINT" expanded={!!openGroups.sigint} onToggle={() => toggle('sigint')} />
-        {openGroups.sigint && (
-          <SubItems items={wikiGroups[1].items} basePath="/sigint" />
-        )}
+        {/* Wiki groups -- lookup by id, not array index */}
+        {wikiGroups.map((group) => (
+          <div key={group.id}>
+            <GroupToggle label={group.label} expanded={!!openGroups[group.id]} onToggle={() => toggle(group.id)} />
+            {openGroups[group.id] && (
+              <SubItems items={group.items} basePath={`/${group.id}`} />
+            )}
+          </div>
+        ))}
       </nav>
+
+      {/* Theme toggle */}
+      <button className="theme-toggle" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+        {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+      </button>
 
       {/* Footer */}
       <div className="sidebar-bottom">

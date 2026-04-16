@@ -8,9 +8,7 @@ export default function Header() {
 
   return (
     <header className="nav">
-      <Link href="/" className="nav-logo">MALINDRA<span className="nav-logo-dot">.</span></Link>
-
-      <nav className="hidden md:flex items-center gap-0 ml-12">
+      <nav className="hidden md:flex items-center gap-0">
         {[
           { href: '/graph', label: 'Graph' },
           { href: '/market', label: 'Market' },
@@ -23,6 +21,7 @@ export default function Header() {
           return (
             <Link key={item.href} href={item.href}
               className={`nav-link ${active ? 'active' : ''}`}>
+              {active && <span className="nav-shield" />}
               {item.label}
             </Link>
           );
