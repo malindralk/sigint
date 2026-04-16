@@ -1,0 +1,4 @@
+Contact: info@malindra.lk
+Expires: 2027-12-31T23:59:00.000Z
+Preferred-Languages: en, si
+Canonical: https://malindra.com/.well-known/security.txt

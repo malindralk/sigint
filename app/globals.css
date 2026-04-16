@@ -3,30 +3,24 @@
    tailwind.css — Single entry point
    
    IMPORT ORDER (strict CSS spec requirement):
-   1. @import url()        — external fonts, must be first
-   2. @import "tailwindcss" — Tailwind engine
-   3. @theme {}            — custom design tokens
-   4. @keyframes           — animations
-   5. @layer base          — resets + global defaults
-   6. @layer components    — component classes (plain CSS, no @apply)
-   7. @layer utilities     — utility helpers
+   1. @import "tailwindcss" — Tailwind engine
+   2. @theme {}            — custom design tokens
+   3. @keyframes           — animations
+   4. @layer base          — resets + global defaults
+   5. @layer components    — component classes (plain CSS, no @apply)
+   6. @layer utilities     — utility helpers
    
    NOTE: @apply only works with core Tailwind utilities.
    Custom tokens must use var(--color-*) directly in CSS.
    
-   NOTE FOR NEXT.JS: There's a better way to load the three
-   Malindra fonts that avoids the CSS @import url() entirely
-   and gives you better performance — use next/font/google.
-   Set each font's CSS variable (--font-display, --font-ui,
-   --font-sinhala) via the variable option, remove the
-   @import url() line below, and the fonts load automatically
-   with zero layout shift and automatic subsetting.
+   FONTS: Loaded via next/font/google in layout.tsx for:
+   - Zero layout shift
+   - Automatic subsetting
+   - Better performance
    
    Sinhala: මලින්ද්‍ර (ma-lin-dra)
    Heritage: Kotte Kingdom 1412–1467 CE
    ============================================================ */
-
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+Sinhala:wght@300;400;600;700&display=swap');
 
 @import "tailwindcss";
 

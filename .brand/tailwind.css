@@ -1,0 +1,812 @@
+/* ============================================================
+   MALINDRA — Tailwind CSS v4 Theme
+   tailwind.css — Single entry point
+   
+   IMPORT ORDER (strict CSS spec requirement):
+   1. @import url()        — external fonts, must be first
+   2. @import "tailwindcss" — Tailwind engine
+   3. @theme {}            — custom design tokens
+   4. @keyframes           — animations
+   5. @layer base          — resets + global defaults
+   6. @layer components    — component classes (plain CSS, no @apply)
+   7. @layer utilities     — utility helpers
+   
+   NOTE: @apply only works with core Tailwind utilities.
+   Custom tokens must use var(--color-*) directly in CSS.
+   
+   NOTE FOR NEXT.JS: There's a better way to load the three
+   Malindra fonts that avoids the CSS @import url() entirely
+   and gives you better performance — use next/font/google.
+   Set each font's CSS variable (--font-display, --font-ui,
+   --font-sinhala) via the variable option, remove the
+   @import url() line below, and the fonts load automatically
+   with zero layout shift and automatic subsetting.
+   
+   Sinhala: මලින්ද්‍ර (ma-lin-dra)
+   Heritage: Kotte Kingdom 1412–1467 CE
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+Sinhala:wght@300;400;600;700&display=swap');
+
+@import "tailwindcss";
+
+
+/* ============================================================
+   @theme — generates all utility classes
+   Every --color-*, --font-*, --spacing-* etc. becomes a class
+   ============================================================ */
+@theme {
+
+  /* ── COLORS ─────────────────────────────────────────────── */
+
+  /* Heritage names */
+  --color-kotte-night:    #0A0A0D;
+  --color-manuscript:     #16151B;
+  --color-war-elephant:   #27262D;
+  --color-spear-iron:     #49474F;
+  --color-ola-leaf:       #F2E8D0;
+  --color-parchment:      #C0B298;
+  --color-warm-stone:     #857B6C;
+  --color-white-parasol:  #E8E4DC;
+  --color-sinha-maroon:   #922438;
+  --color-temple-gold:    #D49628;
+  --color-water-fortress: #28805E;
+  --color-war-banner:     #BE3348;
+  --color-zheng-he:       #3D74A8;
+
+  /* Semantic aliases */
+  --color-surface:    #16151B;
+  --color-elevated:   #27262D;
+  --color-foreground: #F2E8D0;
+  --color-muted:      #857B6C;
+  --color-brand:      #922438;
+  --color-accent:     #D49628;
+  --color-success:    #28805E;
+  --color-danger:     #BE3348;
+  --color-info:       #3D74A8;
+
+  /* Alpha tints */
+  --color-sinha-maroon-10:    color-mix(in srgb, #922438 10%, transparent);
+  --color-sinha-maroon-20:    color-mix(in srgb, #922438 20%, transparent);
+  --color-sinha-maroon-30:    color-mix(in srgb, #922438 30%, transparent);
+  --color-temple-gold-10:     color-mix(in srgb, #D49628 10%, transparent);
+  --color-temple-gold-20:     color-mix(in srgb, #D49628 20%, transparent);
+  --color-water-fortress-10:  color-mix(in srgb, #28805E 10%, transparent);
+  --color-water-fortress-20:  color-mix(in srgb, #28805E 20%, transparent);
+  --color-war-banner-10:      color-mix(in srgb, #BE3348 10%, transparent);
+  --color-war-banner-20:      color-mix(in srgb, #BE3348 20%, transparent);
+  --color-zheng-he-10:        color-mix(in srgb, #3D74A8 10%, transparent);
+  --color-zheng-he-20:        color-mix(in srgb, #3D74A8 20%, transparent);
+
+  /* Semantic border shorthands */
+  --color-border-default: rgba(74, 72, 82, 0.42);
+  --color-border-strong:  rgba(74, 72, 82, 0.65);
+
+  /* Extended palette — v2, defined but don't use yet */
+  --color-cosmic-indigo: #2E1F4A;
+  --color-dharma-violet: #6B4E9A;
+  --color-wheel-light:   #8B60C8;
+  --color-lotus-bloom:   #C07882;
+  --color-lotus-root:    #7A3A48;
+  --color-ming-celadon:  #5B91B5;
+  --color-laterite-seal: #B8371A;
+  --color-blood-oath:    #5C1520;
+  --color-shield-bronze: #7A6840;
+
+  /* ── FONTS ──────────────────────────────────────────────── */
+  --font-sinhala: 'Noto Serif Sinhala', serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui:      'DM Sans', sans-serif;
+
+  /* ── FONT SIZES ─────────────────────────────────────────── */
+  --text-sinhala-hero:  clamp(48px, 8vw, 88px);
+  --text-sinhala-logo:  22px;
+  --text-display:       clamp(40px, 7vw, 80px);
+  --text-hero:          clamp(28px, 4vw, 48px);
+  --text-heading:       clamp(20px, 2.5vw, 28px);
+  --text-card-heading:  20px;
+  --text-stat-lg:       clamp(48px, 6vw, 72px);
+  --text-stat:          28px;
+  --text-body:          16px;
+  --text-label:         12px;
+  --text-caption:       13px;
+  --text-heritage:      12px;
+
+  /* ── FONT WEIGHTS ───────────────────────────────────────── */
+  --font-weight-light:    300;
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+
+  /* ── LETTER SPACING ─────────────────────────────────────── */
+  --tracking-tight:   -0.03em;
+  --tracking-snug:    -0.02em;
+  --tracking-label:    0.14em;
+  --tracking-eyebrow:  0.22em;
+  --tracking-wide:     0.3em;
+
+  /* ── LINE HEIGHTS ───────────────────────────────────────── */
+  --leading-display:  0.95;
+  --leading-tight:    1.05;
+  --leading-snug:     1.2;
+  --leading-body:     1.7;
+  --leading-relaxed:  1.85;
+
+  /* ── SPACING ────────────────────────────────────────────── */
+  --spacing-xs:  4px;
+  --spacing-sm:  8px;
+  --spacing-md:  16px;
+  --spacing-lg:  24px;
+  --spacing-xl:  32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* ── BORDER RADIUS ──────────────────────────────────────── */
+  --radius-sm:   3px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+
+  /* ── SHADOWS ────────────────────────────────────────────── */
+  --shadow-card:   0 1px 2px rgba(0,0,0,0.4);
+  --shadow-panel:  0 4px 16px rgba(0,0,0,0.5);
+  --shadow-brand:  0 0 0 2px rgba(146, 36, 56, 0.4);
+  --shadow-accent: 0 0 0 2px rgba(212, 150, 40, 0.4);
+  --shadow-info:   0 0 0 2px rgba(61, 116, 168, 0.4);
+
+  /* ── TRANSITIONS ────────────────────────────────────────── */
+  --duration-fast:   150ms;
+  --duration-normal: 250ms;
+  --duration-slow:   400ms;
+
+  /* ── ANIMATIONS ─────────────────────────────────────────── */
+  --animate-fade-up:    fade-up 0.25s ease both;
+  --animate-fade-in:    fade-in 0.25s ease both;
+  --animate-shimmer:    shimmer 1.5s infinite;
+  --animate-pulse-soft: pulse-soft 2s ease infinite;
+
+}
+
+/* ── KEYFRAMES ──────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ============================================================
+   BASE LAYER
+   Plain CSS resets + global defaults
+   @apply only used with core Tailwind (box-sizing etc.)
+   ============================================================ */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-kotte-night);
+    color: var(--color-ola-leaf);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  a {
+    color: var(--color-zheng-he);
+    text-decoration: none;
+    transition: opacity 150ms ease;
+  }
+  a:hover { opacity: 0.8; }
+
+  button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  ul, ol { list-style: none; }
+  img, svg, video { display: block; max-width: 100%; }
+
+  ::selection {
+    background-color: rgba(146, 36, 56, 0.3);
+    color: var(--color-ola-leaf);
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background-color: var(--color-kotte-night); }
+  ::-webkit-scrollbar-thumb { background-color: var(--color-war-elephant); border-radius: 2px; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-zheng-he);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================
+   COMPONENT LAYER
+   All plain CSS — no @apply with custom tokens.
+   This is correct Tailwind v4 practice.
+   ============================================================ */
+@layer components {
+
+  /* ── LOGO ─────────────────────────────────────────────── */
+  .logo-sinhala {
+    font-family: var(--font-sinhala);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-ola-leaf);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .logo-english {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-ola-leaf);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .logo-dot {
+    color: var(--color-sinha-maroon);
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────── */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    background-color: var(--color-manuscript);
+    border-bottom: 1px solid rgba(74, 72, 82, 0.42);
+    padding-inline: 28px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding-inline: 16px;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-warm-stone);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    position: relative;
+    top: 1px;
+    transition: color 150ms ease, border-color 150ms ease;
+  }
+  .nav-link:hover {
+    color: var(--color-parchment);
+    opacity: 1;
+  }
+  .nav-link-active {
+    color: var(--color-zheng-he);
+    border-bottom-color: var(--color-zheng-he);
+  }
+
+  .nav-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 9999px;
+    background-color: var(--color-sinha-maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ola-leaf);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ── CARDS ────────────────────────────────────────────── */
+  .card {
+    background-color: var(--color-manuscript);
+    border: 1px solid rgba(74, 72, 82, 0.42);
+    border-radius: var(--radius-md);
+    padding: 24px 24px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 250ms ease;
+  }
+  .card:hover {
+    border-color: rgba(74, 72, 82, 0.65);
+  }
+
+  /* 2px accent line — required on every stat card */
+  .card-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+  .card-accent-gold   { background-color: var(--color-temple-gold); }
+  .card-accent-maroon { background-color: var(--color-sinha-maroon); }
+  .card-accent-green  { background-color: var(--color-water-fortress); }
+  .card-accent-blue   { background-color: var(--color-zheng-he); }
+  .card-accent-red    { background-color: var(--color-war-banner); }
+
+  .card-label {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-warm-stone);
+    margin-bottom: 8px;
+  }
+  .card-value {
+    font-family: var(--font-ui);
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .card-value-gold   { color: var(--color-temple-gold); }
+  .card-value-green  { color: var(--color-water-fortress); }
+  .card-value-blue   { color: var(--color-zheng-he); }
+  .card-value-red    { color: var(--color-war-banner); }
+  .card-value-maroon { color: var(--color-sinha-maroon); }
+
+  .card-sub {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--color-warm-stone);
+  }
+  .card-sub-pos { color: var(--color-water-fortress); }
+  .card-sub-neg { color: var(--color-war-banner); }
+
+  /* ── BUTTONS ──────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+  .btn:hover  { opacity: 0.85; transform: translateY(-1px); }
+  .btn:active { opacity: 0.95; transform: translateY(0); }
+
+  .btn-primary {
+    background-color: var(--color-sinha-maroon);
+    color: var(--color-ola-leaf);
+  }
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-zheng-he);
+    border: 1px solid rgba(61, 116, 168, 0.4);
+  }
+  .btn-ghost:hover {
+    background-color: rgba(61, 116, 168, 0.08);
+    opacity: 1;
+  }
+  .btn-danger {
+    background-color: var(--color-war-banner);
+    color: var(--color-ola-leaf);
+  }
+  .btn-full {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ── BADGES ───────────────────────────────────────────── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+  .badge-buy   { background-color: color-mix(in srgb, #28805E 15%, transparent); color: var(--color-water-fortress); }
+  .badge-sell  { background-color: color-mix(in srgb, #BE3348 15%, transparent); color: var(--color-war-banner); }
+  .badge-hold  { background-color: color-mix(in srgb, #3D74A8 15%, transparent); color: var(--color-zheng-he); }
+  .badge-gold  { background-color: color-mix(in srgb, #D49628 15%, transparent); color: var(--color-temple-gold); }
+
+  /* ── INPUTS ───────────────────────────────────────────── */
+  .input {
+    width: 100%;
+    background-color: var(--color-war-elephant);
+    border: 1px solid rgba(74, 72, 82, 0.42);
+    border-radius: var(--radius-sm);
+    color: var(--color-ola-leaf);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+  .input:hover { border-color: rgba(74, 72, 82, 0.65); }
+  .input:focus {
+    border-color: var(--color-zheng-he);
+    background-color: color-mix(in srgb, #3D74A8 5%, transparent);
+  }
+  .input::placeholder { color: var(--color-warm-stone); }
+
+  .input-label {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-warm-stone);
+    margin-bottom: 6px;
+  }
+
+  /* ── SIDEBAR ──────────────────────────────────────────── */
+  .sidebar {
+    width: 212px;
+    background-color: var(--color-manuscript);
+    border-right: 1px solid rgba(74, 72, 82, 0.42);
+    display: flex;
+    flex-direction: column;
+    padding-block: 20px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .sidebar-section {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-warm-stone);
+    padding-inline: 20px;
+    margin-top: 20px;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-warm-stone);
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    transition: color 150ms ease, background-color 150ms ease;
+  }
+  .sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--color-parchment);
+    opacity: 1;
+  }
+  .sidebar-item-active {
+    background-color: color-mix(in srgb, #3D74A8 8%, transparent);
+    color: var(--color-ola-leaf);
+    font-weight: 500;
+  }
+  .sidebar-item-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    background-color: var(--color-sinha-maroon);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .sidebar-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-bottom {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(74, 72, 82, 0.42);
+  }
+  .sidebar-version {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--color-warm-stone);
+    opacity: 0.5;
+  }
+  .sidebar-edition {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-style: italic;
+    color: var(--color-temple-gold);
+    margin-top: 3px;
+    opacity: 0.7;
+  }
+
+  /* ── PROGRESS BAR ─────────────────────────────────────── */
+  .progress-track {
+    height: 4px;
+    background-color: var(--color-war-elephant);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 400ms ease;
+  }
+  .progress-fill-blue   { background-color: var(--color-zheng-he); }
+  .progress-fill-green  { background-color: var(--color-water-fortress); }
+  .progress-fill-gold   { background-color: var(--color-temple-gold); }
+  .progress-fill-maroon { background-color: var(--color-sinha-maroon); }
+
+  /* ── ALERTS ───────────────────────────────────────────── */
+  .alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .alert-danger  {
+    background-color: color-mix(in srgb, #BE3348 10%, transparent);
+    border: 1px solid color-mix(in srgb, #BE3348 30%, transparent);
+    color: var(--color-war-banner);
+  }
+  .alert-success {
+    background-color: color-mix(in srgb, #28805E 10%, transparent);
+    border: 1px solid color-mix(in srgb, #28805E 30%, transparent);
+    color: var(--color-water-fortress);
+  }
+  .alert-info {
+    background-color: color-mix(in srgb, #3D74A8 10%, transparent);
+    border: 1px solid color-mix(in srgb, #3D74A8 30%, transparent);
+    color: var(--color-zheng-he);
+  }
+
+  /* ── HERITAGE TAG ─────────────────────────────────────── */
+  /* Required at the bottom of every premium dashboard panel */
+  .heritage-tag {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-style: italic;
+    color: var(--color-warm-stone);
+    opacity: 0.45;
+    text-align: center;
+    letter-spacing: 0.04em;
+    margin-top: auto;
+    padding-top: 16px;
+  }
+
+  /* ── TOOLTIP ──────────────────────────────────────────── */
+  .tooltip { position: relative; display: inline-flex; }
+  .tooltip-content {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-war-elephant);
+    border: 1px solid rgba(74, 72, 82, 0.42);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    color: var(--color-parchment);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 150ms ease;
+    z-index: 10;
+  }
+  .tooltip:hover .tooltip-content { opacity: 1; }
+
+  /* ── SKELETON ─────────────────────────────────────────── */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-war-elephant) 25%,
+      rgba(74, 75, 84, 0.4) 50%,
+      var(--color-war-elephant) 75%
+    );
+    background-size: 800px 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ── TYPE HELPERS ─────────────────────────────────────── */
+  .t-sinhala-hero {
+    font-family: var(--font-sinhala);
+    font-size: clamp(48px, 8vw, 88px);
+    font-weight: 700;
+    color: var(--color-ola-leaf);
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+  }
+  .t-sinhala-logo {
+    font-family: var(--font-sinhala);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-ola-leaf);
+    line-height: 1;
+  }
+  .t-display {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 7vw, 80px);
+    font-weight: 700;
+    color: var(--color-ola-leaf);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+  .t-hero {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--color-ola-leaf);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .t-heading {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 700;
+    color: var(--color-ola-leaf);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+  .t-card-heading {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-ola-leaf);
+    letter-spacing: -0.01em;
+  }
+  .t-label {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-warm-stone);
+  }
+  .t-eyebrow {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-sinha-maroon);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .t-eyebrow::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background-color: var(--color-sinha-maroon);
+    flex-shrink: 0;
+  }
+  .t-body {
+    font-family: var(--font-ui);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--color-parchment);
+  }
+  .t-muted {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--color-warm-stone);
+  }
+  .t-stat {
+    font-family: var(--font-ui);
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .t-stat-lg {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .t-heritage {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-style: italic;
+    color: var(--color-warm-stone);
+    opacity: 0.45;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .t-mono {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    color: var(--color-temple-gold);
+  }
+
+}
+
+/* ============================================================
+   UTILITIES LAYER
+   ============================================================ */
+@layer utilities {
+
+  /* Stagger animation delays */
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.10s; }
+  .stagger-3 { animation-delay: 0.15s; }
+  .stagger-4 { animation-delay: 0.20s; }
+  .stagger-5 { animation-delay: 0.25s; }
+  .stagger-6 { animation-delay: 0.30s; }
+
+  /* Accent utilities */
+  .accent-gold   { background-color: var(--color-temple-gold); }
+  .accent-maroon { background-color: var(--color-sinha-maroon); }
+  .accent-green  { background-color: var(--color-water-fortress); }
+  .accent-blue   { background-color: var(--color-zheng-he); }
+  .accent-red    { background-color: var(--color-war-banner); }
+
+  /* Border opacity helpers */
+  .border-default { border-color: rgba(74, 72, 82, 0.42); }
+  .border-strong  { border-color: rgba(74, 72, 82, 0.65); }
+
+  /* Text on colored backgrounds */
+  .text-on-maroon { color: var(--color-ola-leaf); }
+  .text-on-gold   { color: var(--color-kotte-night); }
+  .text-on-light  { color: var(--color-kotte-night); }
+
+  /* Writing mode */
+  .writing-vertical { writing-mode: vertical-rl; }
+
+}

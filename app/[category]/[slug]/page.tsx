@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { categories, getArticle, getArticles, getCategoryMeta, type Category } from '@/lib/content';
+import { categories, getArticle, getArticles, getCategoryMeta, type Category, isValidCategory, isValidSlug } from '@/lib/content';
 import type { Metadata } from 'next';
 import ArticleView from '@/app/components/ArticleView';
 
@@ -20,7 +20,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticlePage({ params }: Props) {
   const { category, slug } = await params;
-  const article = getArticle(category as Category, slug);
+
+  // Validate category
+  if (!isValidCategory(category)) {
+    notFound();
+  }
+
+  // Validate slug format
+  if (!isValidSlug(slug)) {
+    notFound();
+  }
+
+  const article = getArticle(category, slug);
   if (!article) notFound();
 
   const meta = getCategoryMeta(category as Category);

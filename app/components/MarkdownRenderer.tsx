@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
+import rehypeSanitize from 'rehype-sanitize';
 import GanttChart from '@/app/components/GanttChart';
 import 'highlight.js/styles/github-dark.css';
 
@@ -102,7 +103,7 @@ function MermaidGanttBlock({ code }: { code: string }) {
 export default function MarkdownRenderer({ content, category }: Props) {
   return (
     <div className="prose">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight, rehypeSlug]}
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight, rehypeSlug, rehypeSanitize]}
         components={{
           a({ href, children, ...props }) { return <a href={transformHref(href, category)} {...props}>{children}</a>; },
           code({ className, children, ...props }) {

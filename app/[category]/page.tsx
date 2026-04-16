@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { categories, getArticles, getCategoryMeta, type Category } from '@/lib/content';
+import { categories, getArticles, getCategoryMeta, type Category, isValidCategory } from '@/lib/content';
 import type { Metadata } from 'next';
 
 interface Props { params: Promise<{ category: string }>; }
@@ -18,10 +18,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CategoryPage({ params }: Props) {
   const { category } = await params;
-  const meta = getCategoryMeta(category as Category);
+
+  // Validate category
+  if (!isValidCategory(category)) {
+    notFound();
+  }
+
+  const meta = getCategoryMeta(category);
   if (!meta) notFound();
 
-  const articles = getArticles(category as Category);
+  const articles = getArticles(category);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>

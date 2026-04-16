@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://malindra.com/sitemap.xml
+
+# Disallow admin/internal paths
+Disallow: /api/
+Disallow: /_next/

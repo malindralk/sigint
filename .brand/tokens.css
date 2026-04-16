@@ -1,0 +1,92 @@
+/* ============================================================
+   MALINDRA — Design Tokens v2.0
+   tokens.css — Single source of truth
+   
+   Sinhala name: මලින්ද්‍ර (ma-lin-dra, short inherent a)
+   Heritage: Kotte Kingdom 1412–1467 CE
+   Inspired by: Singapore 1978 · The age of AI
+   
+   NEVER hardcode colors in any other file.
+   ALWAYS reference these variables.
+   ============================================================ */
+
+/* ── FONTS ────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+Sinhala:wght@300;400;600;700&display=swap');
+
+:root {
+
+  /* Three fonts — each with a specific role
+     Noto Serif Sinhala → Sinhala script only
+     Cormorant Garamond → English display, headings, heritage voice
+     DM Sans            → All UI: labels, body, numbers, buttons, nav */
+  --font-sinhala: 'Noto Serif Sinhala', serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui:      'DM Sans', sans-serif;
+
+  /* ── BACKGROUNDS ──────────────────────────────────────────
+     3 dark steps — base → surface → elevated               */
+  --bg-base:        #0A0A0D;   /* Kotte Night      · page shell, app bg    */
+  --bg-surface:     #16151B;   /* Manuscript Dark  · cards, panels, nav    */
+  --bg-elevated:    #27262D;   /* War Elephant     · inputs, hover, rows   */
+
+  /* ── TEXT ─────────────────────────────────────────────────
+     3 levels — primary → secondary → muted                 */
+  --text-primary:   #F2E8D0;   /* Ola Leaf         · headlines, key text   */
+  --text-secondary: #C0B298;   /* Aged Parchment   · body copy             */
+  --text-muted:     #857B6C;   /* Warm Stone       · captions, placeholders*/
+
+  /* ── BORDER ───────────────────────────────────────────────
+     Always rgba — never solid opaque                        */
+  --border:         rgba(74, 72, 82, 0.42);   /* Spear Iron · default      */
+  --border-strong:  rgba(74, 72, 82, 0.65);   /* Spear Iron · hover/focus  */
+
+  /* ── BRAND ────────────────────────────────────────────────
+     Primary = CTAs, logo dot, key actions
+     Accent  = wealth, returns, premium stats                */
+  --brand-primary:  #922438;   /* Sinha Maroon    · CTA, logo dot, regent  */
+  --brand-accent:   #D49628;   /* Temple Gold     · wealth, stats, premium */
+
+  /* ── SEMANTIC ─────────────────────────────────────────────
+     Standard fintech signal colors
+     Each grounded in Kotte / Ming heritage                  */
+  --success:        #28805E;   /* Water Fortress  · growth, positive, safe */
+  --danger:         #BE3348;   /* War Banner      · alerts, errors, urgent */
+  --info:           #3D74A8;   /* Zheng He Blue   · AI, data, links, info  */
+
+  /* ── SPACING ──────────────────────────────────────────────  */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* ── RADIUS ───────────────────────────────────────────────  */
+  --radius-sm: 3px;    /* buttons, badges        */
+  --radius-md: 6px;    /* cards, inputs          */
+  --radius-lg: 8px;    /* app icons, containers  */
+
+  /* ── TRANSITIONS ──────────────────────────────────────────  */
+  --transition-fast:   0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow:   0.4s ease;
+
+}
+
+
+/* ── EXTENDED PALETTE ─────────────────────────────────────────
+   Shelved for v2 features. DO NOT USE until instructed.
+   Each has a defined product moment when it activates.
+   
+   --bg-ai:            #2E1F4A  Cosmic Indigo  → AI section backgrounds
+   --samsara-core:     #6B4E9A  Dharma Violet  → cycle/prediction indicators
+   --samsara-light:    #8B60C8  Wheel Light    → AI badges, prediction glow
+   --lotus-bloom:      #C07882  Lotus Bloom    → neutral/balance state
+   --lotus-root:       #7A3A48  Lotus Root     → anchored/settled state
+   --info-light:       #5B91B5  Ming Celadon   → hover states, link color
+   --sovereign:        #E8E4DC  White Parasol  → sovereign/admin tier
+   --brand-secondary:  #B8371A  Laterite Seal  → secondary civilian actions
+   --maroon-deep:      #5C1520  Blood Oath     → critical/irreversible actions
+   --bronze:           #7A6840  Shield Bronze  → locked/protected states
+   ──────────────────────────────────────────────────────────── */

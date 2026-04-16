@@ -4,7 +4,7 @@
 set -e
 
 NGINX_DIR="/home/www/sigint/.nginx"
-DEFAULT_EMAIL="info@malindra.lk"
+DEFAULT_EMAIL="${CERTBOT_EMAIL:-info@malindra.lk}"
 DEFAULT_NAME="Malindra"
 
 # Colors for output

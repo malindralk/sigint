@@ -1,0 +1,68 @@
+# Fail2Ban configuration for SIGINT Wiki
+# Standard security jails for web application protection
+# Place this file in /etc/fail2ban/jail.local
+
+[DEFAULT]
+# Ban time: 1 hour (3600 seconds)
+bantime = 3600
+# Time window for counting failures: 10 minutes
+findtime = 600
+# Maximum failures before ban
+maxretry = 5
+# Use nftables (Debian default)
+banaction = nftables
+banaction_allports = nftables[type=allports]
+# Email notifications (optional - uncomment if configured)
+# destemail = admin@malindra.com
+# sender = fail2ban@malindra.com
+
+# SSH protection
+[sshd]
+enabled = true
+port = ssh
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s
+maxretry = 5
+
+# Nginx HTTP authentication failures
+[nginx-http-auth]
+enabled = true
+port = http,https
+logpath = %(nginx_error_log)s
+maxretry = 3
+
+# Block bots scanning for vulnerabilities
+[nginx-botsearch]
+enabled = true
+port = http,https
+logpath = %(nginx_access_log)s
+maxretry = 2
+
+# Nginx request limit violations
+[nginx-limit-req]
+enabled = true
+port = http,https
+logpath = %(nginx_error_log)s
+maxretry = 10
+
+# Bad requests (malformed HTTP)
+[nginx-bad-request]
+enabled = true
+port = http,https
+logpath = %(nginx_error_log)s
+maxretry = 2
+
+# 403 Forbidden responses
+[nginx-forbidden]
+enabled = true
+port = http,https
+logpath = %(nginx_error_log)s
+maxretry = 3
+
+# Recidive - ban repeat offenders longer
+[recidive]
+enabled = true
+bantime = 86400
+findtime = 86400
+maxretry = 2
+logpath = /var/log/fail2ban.log

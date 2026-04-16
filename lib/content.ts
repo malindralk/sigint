@@ -6,6 +6,16 @@ const contentDir = path.join(process.cwd(), 'content');
 
 export type Category = 'em-sca' | 'sigint' | 'learning';
 
+export const VALID_CATEGORIES: Category[] = ['em-sca', 'sigint', 'learning'];
+
+export function isValidCategory(value: string): value is Category {
+  return VALID_CATEGORIES.includes(value as Category);
+}
+
+export function isValidSlug(value: string): boolean {
+  return /^[a-z0-9-]+$/.test(value);
+}
+
 export interface Article {
   slug: string;
   category: Category;

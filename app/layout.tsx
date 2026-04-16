@@ -1,6 +1,29 @@
 import type { Metadata } from "next";
+import Script from "next/script";
+import { Cormorant_Garamond, DM_Sans, Noto_Serif_Sinhala } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-ui",
+  display: "swap",
+});
+
+const notoSinhala = Noto_Serif_Sinhala({
+  subsets: ["sinhala"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sinhala",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: { default: "SIGINT Wiki", template: "%s — SIGINT Wiki" },
@@ -13,13 +36,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
+    <html lang="en" data-theme="dark" suppressHydrationWarning className={`${cormorant.variable} ${dmSans.variable} ${notoSinhala.variable}`}>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('malindra-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}})()`,
-          }}
-        />
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(function(){try{var t=localStorage.getItem('malindra-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}})()`}
+        </Script>
       </head>
       <body style={{ background: "var(--theme-bg-base)", color: "var(--theme-text-primary)", fontFamily: "var(--font-ui)", height: "100vh", margin: 0, overflow: "hidden" }}>
         <div className="scanline" />
