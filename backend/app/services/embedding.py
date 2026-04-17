@@ -126,11 +126,13 @@ class EmbeddingService:
                 )
             else:
                 # SQLite - store embedding as JSON string in metadata
+                from datetime import datetime
                 embedding_record = Embedding(
                     id=uuid.uuid4(),
                     article_id=article.id,
                     chunk_index=chunk["index"],
                     chunk_text=chunk["text"],
+                    created_at=datetime.utcnow(),
                 )
                 self.db.add(embedding_record)
                 # Store vector in a separate column or metadata for SQLite

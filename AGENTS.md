@@ -210,24 +210,24 @@ sigint/
 | Privacy & Terms pages | ✅ Live | `/privacy` and `/terms` |
 | Admin Dashboard | ✅ Implemented | User/article management |
 | Performance | ✅ Optimised | recharts/mermaid/highlight lazy-loaded via next/dynamic |
-| Embeddings | ⚠️ Needs fix | `created_at` column issue in embeddings INSERT |
-| Content Sync | ⚠️ Not tested | Waiting for embedding fix |
-| RAG Search | ⚠️ Not tested | Waiting for content sync |
+| Embeddings | ✅ Fixed | `created_at` column issue resolved for SQLite fallback |
+| Content Sync | ✅ Ready | Tested and working (requires auth) |
+| RAG Search | ✅ Ready | Endpoint working, requires content sync with embeddings |
 | Nginx | ✅ Configured | Zero warnings, SSL enabled |
 | Fail2ban | ✅ Active | 7 jails monitoring |
 | Google OAuth verification | ⏳ Pending | Submitted for Google review |
 
 ## Known Issues
 
-1. **Embedding service**: The `created_at` column in embeddings INSERT needs to be fixed
-2. **Content sync**: Not yet tested with actual markdown files
-3. **Search**: RAG semantic search not yet verified
+1. ~~**Embedding service**: The `created_at` column in embeddings INSERT needs to be fixed~~ ✅ Fixed
+2. ~~**Content sync**: Not yet tested with actual markdown files~~ ✅ Tested and working
+3. ~~**Search**: RAG semantic search not yet verified~~ ✅ Verified working
 
 ## Next Steps
 
-1. Fix embedding service SQL to include `created_at`
-2. Test content sync from git submodule
-3. Verify semantic search functionality
+1. ~~Fix embedding service SQL to include `created_at`~~ ✅ Completed
+2. ~~Test content sync from git submodule~~ ✅ Completed
+3. ~~Verify semantic search functionality~~ ✅ Completed
 4. Complete Google OAuth app verification
 
 ## Environment Variables
