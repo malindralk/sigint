@@ -15,9 +15,13 @@ mal sync-content        # Sync articles and generate embeddings
 
 ### Frontend (Next.js Static Export)
 ```bash
-pnpm dev          # Development server
-pnpm build        # Static export to ./out/
-pnpm start        # Production server
+# pnpm is not installed — use node directly:
+node node_modules/next/dist/bin/next build   # Static export to ./out/
+node node_modules/next/dist/bin/next dev     # Development server
+
+# Node binary location (nvm):
+# /home/www/.nvm/versions/node/v24.14.1/bin/node
+# Add to PATH: export PATH="/home/www/.nvm/versions/node/v24.14.1/bin:$PATH"
 ```
 
 ### Backend (FastAPI + PostgreSQL + Redis)
@@ -118,17 +122,15 @@ Changes to `content/` must be pushed from within that directory.
 #### Authentication Endpoints
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/auth/register` | POST | Register new user |
-| `/api/auth/login` | POST | Login with email/password |
 | `/api/auth/logout` | POST | Logout current session |
-| `/api/auth/refresh` | POST | Refresh access token |
+| `/api/auth/refresh` | POST | Refresh access token (cookie-based) |
 | `/api/auth/me` | GET | Get current user info |
 | `/api/auth/sessions` | GET | List active sessions |
 | `/api/auth/sessions/{id}` | DELETE | Invalidate session |
-| `/api/auth/password/reset-request` | POST | Request password reset |
-| `/api/auth/password/reset` | POST | Reset password with token |
-| `/api/auth/oauth/{provider}` | GET | Initiate OAuth login |
-| `/api/auth/oauth/{provider}/callback` | GET | OAuth callback handler |
+| `/api/auth/oauth/google` | GET | Initiate Google OAuth login |
+| `/api/auth/oauth/google/callback` | GET | Google OAuth callback handler |
+
+> **Note:** Email/password registration and login endpoints exist in the backend but are not exposed in the UI. Authentication is Google OAuth only.
 
 #### Admin Endpoints (requires authentication)
 | Endpoint | Method | Description |
@@ -199,17 +201,21 @@ sigint/
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Frontend | ✅ Static export to `./out/` | Served by nginx |
+| Frontend | ✅ Live | Static export to `./out/`, served by nginx |
 | Backend API | ✅ Running | FastAPI on port 8000 |
 | PostgreSQL | ✅ Running | With pgvector extension |
 | Redis | ✅ Running | Cache/session store |
-| Authentication | ✅ Implemented | JWT + OAuth + Sessions |
+| Authentication | ✅ Google OAuth only | JWT + HTTPOnly cookie sessions, email/password UI removed |
+| Mobile navigation | ✅ Implemented | Hamburger drawer with auth state |
+| Privacy & Terms pages | ✅ Live | `/privacy` and `/terms` |
 | Admin Dashboard | ✅ Implemented | User/article management |
-| Embeddings | ⚠️ Needs fix | `created_at` column issue in progress |
+| Performance | ✅ Optimised | recharts/mermaid/highlight lazy-loaded via next/dynamic |
+| Embeddings | ⚠️ Needs fix | `created_at` column issue in embeddings INSERT |
 | Content Sync | ⚠️ Not tested | Waiting for embedding fix |
 | RAG Search | ⚠️ Not tested | Waiting for content sync |
 | Nginx | ✅ Configured | Zero warnings, SSL enabled |
 | Fail2ban | ✅ Active | 7 jails monitoring |
+| Google OAuth verification | ⏳ Pending | Submitted for Google review |
 
 ## Known Issues
 
@@ -220,33 +226,34 @@ sigint/
 ## Next Steps
 
 1. Fix embedding service SQL to include `created_at`
-2. Rebuild backend Docker image
-3. Run database migrations for auth schema
-4. Test content sync from git submodule
-5. Verify semantic search functionality
-6. Test authentication flows
+2. Test content sync from git submodule
+3. Verify semantic search functionality
+4. Complete Google OAuth app verification
 
 ## Environment Variables
 
 Add these to `backend/.env`:
 
 ```bash
-# Frontend URL (for OAuth callbacks and email links)
-FRONTEND_URL=http://localhost:3000
+# Application
+APP_ENV=production
+FRONTEND_URL=https://malindra.com
 
-# OAuth Providers (optional)
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
+# OAuth (Google only — GitHub removed)
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
+# Authorised redirect URI must be: https://malindra.com/api/auth/oauth/google/callback
 
-# SMTP Settings (optional, for email notifications)
+# SMTP Settings (optional, for transactional emails)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your_email@gmail.com
 SMTP_PASSWORD=your_app_password
-SMTP_FROM=noreply@example.com
+SMTP_FROM=info@malindra.lk
 
 # Security (change in production!)
 SECRET_KEY=your-secret-key-here
+
+# Redis (use container hostname in Docker, localhost otherwise)
+REDIS_URL=redis://redis:6379/0
 ```

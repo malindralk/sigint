@@ -2,27 +2,29 @@
 
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/app/lib/auth/context";
 
 function CallbackHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshToken } = useAuth();
 
   useEffect(() => {
     const success = searchParams.get("success");
     const error = searchParams.get("error");
 
     if (success) {
-      // OAuth login successful, redirect to dashboard
-      router.push("/dashboard");
+      // OAuth set a refresh token cookie — hydrate auth state then redirect
+      refreshToken()
+        .catch(() => {})
+        .finally(() => router.push("/dashboard"));
     } else if (error) {
-      // OAuth login failed
-      console.error("OAuth error:", error);
       router.push(`/login?error=${encodeURIComponent(error)}`);
     } else {
-      // No params, redirect to login
       router.push("/login");
     }
-  }, [router, searchParams]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div

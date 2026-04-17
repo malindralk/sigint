@@ -455,7 +455,7 @@ async def oauth_callback(
             return RedirectResponse(
                 f"{settings.frontend_url}/auth/callback?error=invalid_state"
             )
-        redirect_path = stored_redirect.decode()
+        redirect_path = stored_redirect if isinstance(stored_redirect, str) else stored_redirect.decode()
         await oauth_service.redis.delete(f"oauth_state:{state}")
     else:
         redirect_path = "/"

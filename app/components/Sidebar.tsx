@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/hooks/use-theme';
+import { useAuth } from '@/app/lib/auth/hooks';
 
 const vizNav = [
   { href: '/graph', label: 'Knowledge Graph', shield: 'blue' as const },
@@ -111,6 +112,7 @@ function MoonIcon() {
 export default function Sidebar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     learning: pathname.startsWith('/learning'),
     'em-sca': pathname.startsWith('/em-sca'),
@@ -168,6 +170,35 @@ export default function Sidebar() {
         ))}
       </nav>
 
+      {/* Auth section */}
+      {!isLoading && (isAuthenticated && user ? (
+        <div className="sidebar-auth-user">
+          <Link href="/dashboard" className="sidebar-auth-avatar" title="Go to dashboard">
+            {(user.username?.[0] ?? user.email[0]).toUpperCase()}
+          </Link>
+          <div className="sidebar-auth-info">
+            <span className="sidebar-auth-name">{user.username ?? user.email}</span>
+            <span className="sidebar-auth-role">{user.role}</span>
+          </div>
+          <button
+            className="sidebar-auth-logout"
+            onClick={() => logout().then(() => { window.location.href = '/'; })}
+            title="Sign out"
+            aria-label="Sign out"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </div>
+      ) : (
+        <Link href="/login" className="sidebar-auth-login">
+          Sign in
+        </Link>
+      ))}
+
       {/* Theme toggle */}
       <button className="theme-toggle" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
         {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
@@ -178,6 +209,10 @@ export default function Sidebar() {
       <div className="sidebar-bottom">
         <p className="sidebar-version">Apr 2026</p>
         <p className="sidebar-edition">Kotte Heritage Edition</p>
+        <div style={{ display: 'flex', gap: 'var(--space-sm)', marginTop: 'var(--space-xs)' }}>
+          <Link href="/privacy" style={{ fontSize: '10px', color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy</Link>
+          <Link href="/terms" style={{ fontSize: '10px', color: 'var(--text-muted)', textDecoration: 'none' }}>Terms</Link>
+        </div>
       </div>
     </aside>
   );

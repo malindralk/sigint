@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { RESEARCH_PAPERS, ATTACK_TAXONOMY } from '@/lib/viz-data';
-import ResearchCharts from '@/app/components/ResearchCharts';
+
+const ResearchCharts = dynamic(() => import('@/app/components/ResearchCharts'));
 
 export const metadata: Metadata = { title: 'Research Timeline' };
 

@@ -27,13 +27,6 @@ class OAuthService:
     """Service for OAuth authentication."""
 
     PROVIDERS = {
-        "github": {
-            "auth_url": "https://github.com/login/oauth/authorize",
-            "token_url": "https://github.com/login/oauth/access_token",
-            "user_url": "https://api.github.com/user",
-            "email_url": "https://api.github.com/user/emails",
-            "scopes": ["user:email", "read:user"],
-        },
         "google": {
             "auth_url": "https://accounts.google.com/o/oauth2/v2/auth",
             "token_url": "https://oauth2.googleapis.com/token",
@@ -49,9 +42,7 @@ class OAuthService:
 
     def _get_client_credentials(self, provider: str) -> tuple[str, str]:
         """Get client credentials for a provider."""
-        if provider == "github":
-            return self.settings.github_client_id, self.settings.github_client_secret
-        elif provider == "google":
+        if provider == "google":
             return self.settings.google_client_id, self.settings.google_client_secret
         else:
             raise OAuthError(f"Unknown provider: {provider}", "unknown_provider")
@@ -78,26 +69,15 @@ class OAuthService:
         # Build authorization URL
         scopes = " ".join(config["scopes"])
 
-        if provider == "github":
-            auth_url = (
-                f"{config['auth_url']}"
-                f"?client_id={client_id}"
-                f"&redirect_uri={redirect_uri}"
-                f"&scope={scopes}"
-                f"&state={state}"
-            )
-        elif provider == "google":
-            auth_url = (
-                f"{config['auth_url']}"
-                f"?client_id={client_id}"
-                f"&redirect_uri={redirect_uri}"
-                f"&scope={scopes}"
-                f"&state={state}"
-                f"&response_type=code"
-                f"&access_type=offline"
-            )
-        else:
-            raise OAuthError(f"Unknown provider: {provider}", "unknown_provider")
+        auth_url = (
+            f"{config['auth_url']}"
+            f"?client_id={client_id}"
+            f"&redirect_uri={redirect_uri}"
+            f"&scope={scopes}"
+            f"&state={state}"
+            f"&response_type=code"
+            f"&access_type=offline"
+        )
 
         return auth_url, state
 
@@ -124,30 +104,16 @@ class OAuthService:
         config = self.PROVIDERS[provider]
 
         async with httpx.AsyncClient() as client:
-            if provider == "github":
-                response = await client.post(
-                    config["token_url"],
-                    headers={"Accept": "application/json"},
-                    data={
-                        "client_id": client_id,
-                        "client_secret": client_secret,
-                        "code": code,
-                        "redirect_uri": redirect_uri,
-                    },
-                )
-            elif provider == "google":
-                response = await client.post(
-                    config["token_url"],
-                    data={
-                        "client_id": client_id,
-                        "client_secret": client_secret,
-                        "code": code,
-                        "redirect_uri": redirect_uri,
-                        "grant_type": "authorization_code",
-                    },
-                )
-            else:
-                raise OAuthError(f"Unknown provider: {provider}", "unknown_provider")
+            response = await client.post(
+                config["token_url"],
+                data={
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                    "code": code,
+                    "redirect_uri": redirect_uri,
+                    "grant_type": "authorization_code",
+                },
+            )
 
             if response.status_code != 200:
                 raise OAuthError(
@@ -187,20 +153,6 @@ class OAuthService:
                 )
 
             user_data = response.json()
-
-            # For GitHub, also fetch email if not public
-            if provider == "github" and not user_data.get("email"):
-                email_response = await client.get(
-                    config["email_url"],
-                    headers=headers,
-                )
-                if email_response.status_code == 200:
-                    emails = email_response.json()
-                    # Find primary email
-                    for email in emails:
-                        if email.get("primary") and email.get("verified"):
-                            user_data["email"] = email["email"]
-                            break
 
             return user_data
 

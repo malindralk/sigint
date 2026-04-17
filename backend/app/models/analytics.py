@@ -25,7 +25,7 @@ class AnalyticsEvent(Base):
         nullable=True,
         index=True,
     )
-    metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
+    event_metadata: Mapped[dict] = mapped_column("metadata", JSONB, default=dict)
     ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)
     session_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
     timestamp: Mapped[datetime] = mapped_column(

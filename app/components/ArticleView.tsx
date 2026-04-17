@@ -2,7 +2,9 @@
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import MarkdownRenderer from './MarkdownRenderer';
+import dynamic from 'next/dynamic';
+
+const MarkdownRenderer = dynamic(() => import('./MarkdownRenderer'), { ssr: false });
 
 /* ── Types ───────────────────────────────────────────────── */
 interface Section {

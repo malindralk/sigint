@@ -36,8 +36,6 @@ class Settings(BaseSettings):
     embedding_dimension: int = 384  # all-MiniLM-L6-v2 dimension
 
     # OAuth providers
-    github_client_id: str = ""
-    github_client_secret: str = ""
     google_client_id: str = ""
     google_client_secret: str = ""
 

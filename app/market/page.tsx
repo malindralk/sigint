@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { EMSCA_SEGMENTS, EMSCA_GEOGRAPHY, COMPANIES } from '@/lib/viz-data';
-import { MarketGrowthChart, SegmentPieChart, CompanyRevenueChart } from '@/app/components/MarketCharts';
+
+const MarketGrowthChart   = dynamic(() => import('@/app/components/MarketCharts').then(m => ({ default: m.MarketGrowthChart })));
+const SegmentPieChart     = dynamic(() => import('@/app/components/MarketCharts').then(m => ({ default: m.SegmentPieChart })));
+const CompanyRevenueChart = dynamic(() => import('@/app/components/MarketCharts').then(m => ({ default: m.CompanyRevenueChart })));
 
 export const metadata: Metadata = { title: 'Market Intelligence' };
 

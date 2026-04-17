@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { SDR_HARDWARE } from '@/lib/viz-data';
-import EquipmentViz from '@/app/components/EquipmentViz';
+
+const EquipmentViz = dynamic(() => import('@/app/components/EquipmentViz'));
 
 export const metadata: Metadata = { title: 'Equipment Comparison' };
 

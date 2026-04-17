@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Cormorant_Garamond, DM_Sans, Noto_Serif_Sinhala } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
+import MobileHeader from "./components/MobileHeader";
 import { AuthProvider } from "./lib/auth/context";
 
 const cormorant = Cormorant_Garamond({
@@ -46,10 +47,12 @@ export default function RootLayout({
       <body style={{ background: "var(--theme-bg-base)", color: "var(--theme-text-primary)", fontFamily: "var(--font-ui)", height: "100vh", margin: 0, overflow: "hidden" }}>
         <AuthProvider>
           <div className="scanline" />
+          {/* Mobile top bar — visible below lg breakpoint */}
+          <MobileHeader />
           <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
             <Sidebar />
             <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, height: "100vh", overflow: "hidden" }}>
-              <main style={{ flex: 1, overflow: "auto", padding: "var(--spacing-xl) var(--spacing-2xl)" }}>
+              <main style={{ flex: 1, overflow: "auto", padding: "var(--spacing-xl) var(--spacing-2xl)" }} className="mobile-main">
                 <div style={{ maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
                   {children}
                 </div>
