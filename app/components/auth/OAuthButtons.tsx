@@ -4,12 +4,19 @@ import { useState } from "react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 
-export default function OAuthButtons() {
+interface OAuthButtonsProps {
+  redirect?: string;
+}
+
+export default function OAuthButtons({ redirect }: OAuthButtonsProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
-    window.location.href = `${API_BASE}/api/auth/oauth/google`;
+    const params = redirect && redirect !== "/dashboard"
+      ? `?redirect=${encodeURIComponent(redirect)}`
+      : "";
+    window.location.href = `${API_BASE}/api/auth/oauth/google${params}`;
   };
 
   return (

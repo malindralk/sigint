@@ -1,8 +1,37 @@
 "use client";
 
+import { useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/app/lib/auth/context";
 import OAuthButtons from "@/app/components/auth/OAuthButtons";
 
-export default function LoginPage() {
+function LoginContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { isAuthenticated, isLoading } = useAuth();
+  const redirect = searchParams.get("redirect") || "/dashboard";
+  const error = searchParams.get("error");
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace(redirect);
+    }
+  }, [isAuthenticated, isLoading, redirect, router]);
+
+  if (isLoading || isAuthenticated) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "var(--theme-bg-base)",
+        }}
+      />
+    );
+  }
+
   return (
     <div
       style={{
@@ -41,8 +70,34 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <OAuthButtons />
+        {error && (
+          <div
+            style={{
+              width: "100%",
+              padding: "0.75rem 1rem",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              borderRadius: "4px",
+              color: "var(--theme-text-primary)",
+              fontSize: "0.875rem",
+            }}
+          >
+            {error === "access_denied"
+              ? "Access was denied. Please try again."
+              : "Sign in failed. Please try again."}
+          </div>
+        )}
+
+        <OAuthButtons redirect={redirect} />
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   );
 }

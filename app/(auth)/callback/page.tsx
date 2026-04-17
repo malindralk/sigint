@@ -15,9 +15,10 @@ function CallbackHandler() {
 
     if (success) {
       // OAuth set a refresh token cookie — hydrate auth state then redirect
+      const redirectTo = searchParams.get("redirect") || "/dashboard";
       refreshToken()
         .catch(() => {})
-        .finally(() => router.push("/dashboard"));
+        .finally(() => router.push(redirectTo));
     } else if (error) {
       router.push(`/login?error=${encodeURIComponent(error)}`);
     } else {

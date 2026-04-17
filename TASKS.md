@@ -2,55 +2,22 @@
 
 This file tracks pending tasks, known issues, and technical debt for the SIGINT Wiki project.
 
-## Critical Issues
-
-### Authentication System - CRITICAL
-
-**Status:** 🔴 **CRITICAL - Pages Not Protected**
-
-**Problem:** The authentication system has fundamental flaws that make it ineffective:
-
-1. **No Middleware Protection**
-   - No `middleware.ts` file exists
-   - All routes are publicly accessible
-   - Client-side `ProtectedRoute` only hides UI after page loads
-
-2. **Static Export Bypasses Auth**
-   - Using `output: 'export'` generates static HTML
-   - All pages in `/out/` are publicly served by Nginx
-   - Auth checks only happen client-side after hydration
-   - Disabling JavaScript bypasses all protection
-
-3. **Login Page Issues**
-   - No redirect handling after login
-   - No "already logged in" check
-   - Users can't access dashboard even after successful auth
-
-**Affected Files:**
-- `app/(dashboard)/layout.tsx` - Client-side only protection
-- `app/(auth)/login/page.tsx` - Missing redirect logic
-- `app/middleware.ts` - **MISSING FILE**
-- `next.config.js` - Static export incompatible with auth
-
-**Impact:**
-- Dashboard, user management, settings pages are publicly accessible
-- Authentication is effectively pointless for page access
-- API endpoints ARE protected (only working part)
-
-**Recommended Solutions:**
-
-**Option 1: Convert to SSR (Recommended)**
-Remove `output: 'export'` and implement proper server-side rendering with middleware.
-
-**Option 2: Add Edge Middleware**
-Create `app/middleware.ts` to check auth cookies at the edge (requires moving away from static export).
-
-**Option 3: Client-Only Dashboard**
-Use `export const dynamic = 'force-dynamic'` for dashboard pages (partial fix).
-
----
-
 ## Completed Tasks
+
+### Authentication System Fix ✅
+- **Date:** 2026-04-17
+- **Issues resolved:**
+  1. **Nginx `auth_request` protection** — Dashboard routes now validated server-side via `/_auth_verify` → `/api/auth/verify` before serving static files
+  2. **Backend `/api/auth/verify` endpoint** — New GET endpoint validates the `refresh_token` cookie and returns 200/401 for Nginx
+  3. **Login page redirect handling** — `?redirect=` query param read on login page; authenticated users redirected away immediately
+  4. **OAuth redirect flow** — Redirect path preserved through OAuth state (Redis) and passed back to frontend callback URL
+  5. **Callback page** — Now reads `?redirect=` param and navigates to original destination post-auth
+- **Files changed:**
+  - `.nginx/malindra.com.conf` — Added `/_auth_verify` internal location and `/dashboard` `auth_request` block
+  - `backend/app/api/routes/auth.py` — Added `/verify` endpoint; pass redirect through OAuth callback
+  - `app/(auth)/login/page.tsx` — Redirect handling, already-logged-in check, error display
+  - `app/components/auth/OAuthButtons.tsx` — Accept and forward `redirect` prop to OAuth initiation URL
+  - `app/(auth)/callback/page.tsx` — Use `?redirect=` param from callback URL
 
 ### Embedding Service Fix ✅
 - **Date:** 2026-04-17
@@ -76,7 +43,7 @@ Use `export const dynamic = 'force-dynamic'` for dashboard pages (partial fix).
 | API Server | ✅ Running | FastAPI on port 8000 |
 | PostgreSQL | ✅ Running | With pgvector extension |
 | Redis | ✅ Running | Cache/session store |
-| Authentication | ⚠️ Partial | API protected, pages not protected |
+| Authentication | ✅ Fixed | Nginx auth_request + API protected |
 | Embeddings | ✅ Fixed | SQLite fallback working |
 | Content Sync | ✅ Ready | Tested and working |
 
@@ -88,42 +55,26 @@ Use `export const dynamic = 'force-dynamic'` for dashboard pages (partial fix).
 |-----------|--------|-------|
 | Static Build | ✅ Working | Output to `./out/` |
 | Auth Context | ✅ Working | JWT + cookies implemented |
-| ProtectedRoute | ⚠️ Partial | Client-side only |
+| ProtectedRoute | ✅ Fixed | Client-side + Nginx server-side |
 | Mobile Nav | ✅ Working | Logout button present |
-| Dashboard | ⚠️ Broken | Accessible without auth |
-| Login Page | ⚠️ Broken | No redirect handling |
+| Dashboard | ✅ Fixed | Nginx auth_request blocks unauthenticated access |
+| Login Page | ✅ Fixed | Redirect handling, already-logged-in check |
 
 ---
 
 ## Next Steps (Priority Order)
 
-1. **Fix Authentication Architecture**
-   - Decide on SSR vs static export approach
-   - Implement proper route protection
-   - Add middleware or server-side checks
-
-2. **Fix Login Redirect**
-   - Handle `?redirect=` query parameter
-   - Redirect authenticated users away from login
-
-3. **Test Complete Auth Flow**
-   - Login → Dashboard → Logout
-   - Verify protected pages block unauthenticated users
-   - Test role-based access control
-
-4. **Security Audit**
-   - Review all API endpoints
-   - Verify JWT token handling
-   - Check session management
+1. **Apply Nginx config** — Run `mal configure-nginx` or `sudo nginx -t && sudo nginx -s reload` to apply the updated config
+2. **Rebuild backend** — `docker compose build backend && docker compose up -d backend` to deploy the new `/verify` endpoint
+3. **Build and deploy frontend** — `mal build-frontend` then verify dashboard protection
+4. **Complete Google OAuth app verification** — Pending Google review
 
 ---
 
 ## Technical Debt
 
-- Static export limits authentication options
-- Need to migrate from static export for proper auth
-- Consider Next.js App Router SSR approach
-- Evaluate if static site is the right architecture for authenticated content
+- Static export limits authentication options — Nginx auth_request is the current mitigation
+- Consider full SSR migration in the future for more robust server-side auth
 
 ---
 

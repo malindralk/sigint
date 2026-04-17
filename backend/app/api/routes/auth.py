@@ -87,6 +87,26 @@ def get_refresh_cookie_settings():
     }
 
 
+@router.get("/verify")
+async def verify_session(
+    session_service: SessionSvc,
+    refresh_token: str | None = Cookie(None),
+):
+    """Verify session via refresh token cookie. Used by Nginx auth_request."""
+    if not refresh_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No session",
+        )
+    user = await session_service.validate_session(refresh_token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired session",
+        )
+    return Response(status_code=200)
+
+
 @router.post(
     "/register",
     response_model=dict[str, Any],
@@ -495,8 +515,12 @@ async def oauth_callback(
 
         # Set refresh token cookie and redirect
         cookie_settings = get_refresh_cookie_settings()
+        from urllib.parse import urlencode
+        callback_params = {"success": "true"}
+        if redirect_path and redirect_path != "/":
+            callback_params["redirect"] = redirect_path
         response = RedirectResponse(
-            f"{settings.frontend_url}/auth/callback?success=true"
+            f"{settings.frontend_url}/auth/callback?{urlencode(callback_params)}"
         )
         response.set_cookie(
             value=session_data["refresh_token"],
