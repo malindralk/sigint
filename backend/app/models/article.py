@@ -2,11 +2,15 @@
 
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class Article(Base):
@@ -32,11 +36,36 @@ class Article(Base):
         nullable=False,
     )
 
+    # Publishing fields
+    author_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=True,
+    )
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    is_published: Mapped[bool] = mapped_column(
+        default=True,
+        nullable=False,
+    )
+
     # Relationships
     embeddings: Mapped[list["Embedding"]] = relationship(
         "Embedding",
         back_populates="article",
         cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    author: Mapped["User | None"] = relationship(
+        back_populates="articles",
         lazy="selectin",
     )
 

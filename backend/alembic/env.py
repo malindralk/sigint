@@ -11,7 +11,17 @@ from sqlalchemy.pool import NullPool
 
 from app.core.config import get_settings
 from app.core.database import Base
-from app.models import Article, Embedding, User  # noqa: F401
+# Import all models for Alembic
+from app.models import (  # noqa: F401
+    AnalyticsEvent,
+    Article,
+    Embedding,
+    OAuthConnection,
+    PasswordResetToken,
+    Session,
+    SiteSettings,
+    User,
+)
 
 config = context.config
 settings = get_settings()

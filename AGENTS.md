@@ -105,14 +105,44 @@ Changes to `content/` must be pushed from within that directory.
 | FastAPI | sigint-backend | 8000 | REST API for content sync and search |
 
 ### API Endpoints
+
+#### Public Endpoints
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/` | GET | API info |
 | `/docs` | GET | Swagger UI documentation |
 | `/api/articles` | GET | List all articles |
 | `/api/articles/{slug}` | GET | Get single article |
-| `/api/articles/sync` | POST | Sync content from git submodule |
 | `/api/search` | GET/POST | Semantic search via embeddings |
+
+#### Authentication Endpoints
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/auth/register` | POST | Register new user |
+| `/api/auth/login` | POST | Login with email/password |
+| `/api/auth/logout` | POST | Logout current session |
+| `/api/auth/refresh` | POST | Refresh access token |
+| `/api/auth/me` | GET | Get current user info |
+| `/api/auth/sessions` | GET | List active sessions |
+| `/api/auth/sessions/{id}` | DELETE | Invalidate session |
+| `/api/auth/password/reset-request` | POST | Request password reset |
+| `/api/auth/password/reset` | POST | Reset password with token |
+| `/api/auth/oauth/{provider}` | GET | Initiate OAuth login |
+| `/api/auth/oauth/{provider}/callback` | GET | OAuth callback handler |
+
+#### Admin Endpoints (requires authentication)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/articles/sync` | POST | Sync content from git submodule |
+| `/api/admin/users` | GET | List all users |
+| `/api/admin/users/{id}` | GET | Get user details |
+| `/api/admin/users/{id}` | PATCH | Update user role/status |
+| `/api/admin/users/{id}` | DELETE | Deactivate user |
+| `/api/admin/articles` | POST | Create new article |
+| `/api/admin/articles/{id}` | PATCH | Update article |
+| `/api/admin/articles/{id}` | DELETE | Delete article |
+| `/api/admin/settings` | GET | Get site settings |
+| `/api/admin/settings` | PATCH | Update site settings |
 
 ### Persistent Storage
 All Docker data is stored in `backend/data/` (bind mounts):
@@ -173,6 +203,8 @@ sigint/
 | Backend API | ✅ Running | FastAPI on port 8000 |
 | PostgreSQL | ✅ Running | With pgvector extension |
 | Redis | ✅ Running | Cache/session store |
+| Authentication | ✅ Implemented | JWT + OAuth + Sessions |
+| Admin Dashboard | ✅ Implemented | User/article management |
 | Embeddings | ⚠️ Needs fix | `created_at` column issue in progress |
 | Content Sync | ⚠️ Not tested | Waiting for embedding fix |
 | RAG Search | ⚠️ Not tested | Waiting for content sync |
@@ -189,5 +221,32 @@ sigint/
 
 1. Fix embedding service SQL to include `created_at`
 2. Rebuild backend Docker image
-3. Test content sync from git submodule
-4. Verify semantic search functionality
+3. Run database migrations for auth schema
+4. Test content sync from git submodule
+5. Verify semantic search functionality
+6. Test authentication flows
+
+## Environment Variables
+
+Add these to `backend/.env`:
+
+```bash
+# Frontend URL (for OAuth callbacks and email links)
+FRONTEND_URL=http://localhost:3000
+
+# OAuth Providers (optional)
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# SMTP Settings (optional, for email notifications)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+SMTP_FROM=noreply@example.com
+
+# Security (change in production!)
+SECRET_KEY=your-secret-key-here
+```

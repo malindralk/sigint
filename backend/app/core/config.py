@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     # Application
     app_env: Literal["development", "production", "testing"] = "development"
     debug: bool = False
+    frontend_url: str = "http://localhost:3000"
 
     # Database (SQLite for local dev, PostgreSQL for production)
     database_url: str = "sqlite+aiosqlite:///./sigint.db"
@@ -34,16 +35,27 @@ class Settings(BaseSettings):
     embedding_batch_size: int = 32
     embedding_dimension: int = 384  # all-MiniLM-L6-v2 dimension
 
-    # OAuth (for later phases)
+    # OAuth providers
     github_client_id: str = ""
     github_client_secret: str = ""
     google_client_id: str = ""
     google_client_secret: str = ""
 
+    # SMTP settings for email
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = "noreply@example.com"
+
     # Security
     secret_key: str = "change-me-in-production"
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 60 * 24 * 7  # 7 days
+
+    # Token expiration (in minutes for access, days for refresh)
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 7
 
     @property
     def is_development(self) -> bool:
