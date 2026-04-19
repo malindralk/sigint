@@ -8,10 +8,10 @@
 // Usage: node scripts/generate-static-seo.mjs
 // (Called automatically by rebuild.sh)
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
-import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -37,7 +37,7 @@ function collectArticles() {
       const titleMatch = content.match(/^#\s+(.+)$/m);
       const title = data.title || (titleMatch ? titleMatch[1].trim() : slug);
       const date = data.date || new Date().toISOString().slice(0, 10);
-      const lines = content.split('\n').filter(l => l.trim() && !l.startsWith('#'));
+      const lines = content.split('\n').filter((l) => l.trim() && !l.startsWith('#'));
       const excerpt = data.excerpt || lines.slice(0, 2).join(' ').slice(0, 200);
       articles.push({ slug, category, title, date, excerpt, tags: data.tags || [] });
     }
@@ -66,7 +66,7 @@ function writeSitemap(articles) {
     { loc: `${BASE}/archive`, changefreq: 'weekly', priority: '0.7' },
   ];
 
-  const articleUrls = articles.map(a => ({
+  const articleUrls = articles.map((a) => ({
     loc: `${BASE}/blog/${a.slug}`,
     lastmod: a.date,
     changefreq: 'monthly',
@@ -77,11 +77,15 @@ function writeSitemap(articles) {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.map(u => `  <url>
+${allUrls
+  .map(
+    (u) => `  <url>
     <loc>${u.loc}</loc>${u.lastmod ? `\n    <lastmod>${u.lastmod}</lastmod>` : ''}
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
-  </url>`).join('\n')}
+  </url>`,
+  )
+  .join('\n')}
 </urlset>`;
 
   fs.writeFileSync(path.join(PUBLIC, 'sitemap.xml'), xml);
@@ -92,15 +96,19 @@ ${allUrls.map(u => `  <url>
 
 function writeRss(articles) {
   const recent = articles.slice(0, 20);
-  const items = recent.map(a => `
+  const items = recent
+    .map(
+      (a) => `
     <item>
       <title><![CDATA[${a.title}]]></title>
       <link>${BASE}/blog/${a.slug}</link>
       <guid isPermaLink="true">${BASE}/blog/${a.slug}</guid>
       <pubDate>${new Date(a.date).toUTCString()}</pubDate>
       <description><![CDATA[${a.excerpt}]]></description>
-      ${a.tags.map(t => `<category><![CDATA[${t}]]></category>`).join('\n      ')}
-    </item>`).join('');
+      ${a.tags.map((t) => `<category><![CDATA[${t}]]></category>`).join('\n      ')}
+    </item>`,
+    )
+    .join('');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">

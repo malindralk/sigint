@@ -1,15 +1,16 @@
 'use client';
+
 // MALINDRA PHASE 3
 // components/TopicVote.tsx
 // Topic interest voting — static checkbox grid POSTing to FastAPI.
 // Displays current percentage breakdown (from last build).
 
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { detectLocale, getUI } from '@/lib/i18n';
-import { usePathname } from 'next/navigation';
 
 const TOPICS = ['debt', 'digital', 'tourism', 'geopolitics', 'energy'] as const;
-type Topic = typeof TOPICS[number];
+type Topic = (typeof TOPICS)[number];
 
 interface TopicVoteProps {
   /** Pre-fetched vote totals from last build (data/votes/votes.json) */
@@ -22,16 +23,20 @@ export default function TopicVote({ initialVotes = {} }: TopicVoteProps) {
   const ui = getUI(locale);
 
   const [selected, setSelected] = useState<Set<Topic>>(new Set());
-  const [votes, setVotes] = useState<Record<Topic, number>>(
-    TOPICS.reduce((acc, t) => ({ ...acc, [t]: initialVotes[t] ?? 0 }), {} as Record<Topic, number>)
-  );
+  const [votes, setVotes] = useState<Record<Topic, number>>(() => {
+    const result = {} as Record<Topic, number>;
+    for (const t of TOPICS) {
+      result[t] = initialVotes[t] ?? 0;
+    }
+    return result;
+  });
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
 
   const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
   function toggle(topic: Topic) {
     if (status === 'done') return;
-    setSelected(prev => {
+    setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(topic)) next.delete(topic);
       else next.add(topic);
@@ -50,17 +55,22 @@ export default function TopicVote({ initialVotes = {} }: TopicVoteProps) {
         body: JSON.stringify({ topics: [...selected], locale }),
       });
       if (!res.ok) throw new Error('Non-OK');
-      const data = await res.json() as { totals: Record<Topic, number> };
+      const data = (await res.json()) as { totals: Record<Topic, number> };
       setVotes(data.totals as Record<Topic, number>);
       setStatus('done');
       // Persist to localStorage so we don't re-prompt
-      try { localStorage.setItem('malindra-voted', '1'); } catch {}
+      try {
+        localStorage.setItem('malindra-voted', '1');
+      } catch {}
     } catch {
       setStatus('error');
     }
   }
 
-  const total = Math.max(1, Object.values(votes).reduce((s, n) => s + n, 0));
+  const total = Math.max(
+    1,
+    Object.values(votes).reduce((s, n) => s + n, 0),
+  );
 
   // Badge accent colors per topic
   const TOPIC_COLORS: Record<Topic, string> = {
@@ -74,19 +84,13 @@ export default function TopicVote({ initialVotes = {} }: TopicVoteProps) {
   const labels: Record<Topic, string> = ui.topics as Record<Topic, string>;
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="card"
-      style={{ padding: '20px 24px' }}
-    >
+    <form onSubmit={handleSubmit} className="card" style={{ padding: '20px 24px' }}>
       <div className="card-accent card-accent-gold" />
       <div className="t-label" style={{ marginBottom: '12px' }}>
         {locale === 'en' ? 'Intelligence Priorities' : 'බුද්ධිය ප්‍රමුඛතා'}
       </div>
       <p className="t-muted" style={{ marginBottom: '16px', fontSize: '12px' }}>
-        {locale === 'en'
-          ? 'Which topics deserve deeper analysis?'
-          : 'කුමන මාතෘකා ගැඹුරු විශ්ලේෂණයට සුදුසු ද?'}
+        {locale === 'en' ? 'Which topics deserve deeper analysis?' : 'කුමන මාතෘකා ගැඹුරු විශ්ලේෂණයට සුදුසු ද?'}
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
@@ -105,9 +109,7 @@ export default function TopicVote({ initialVotes = {} }: TopicVoteProps) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                background: isSelected
-                  ? `color-mix(in srgb, ${color} 8%, transparent)`
-                  : 'none',
+                background: isSelected ? `color-mix(in srgb, ${color} 8%, transparent)` : 'none',
                 border: `1px solid ${isSelected ? color : 'var(--color-border-default)'}`,
                 borderRadius: 'var(--radius-sm)',
                 padding: '8px 12px',
@@ -121,46 +123,74 @@ export default function TopicVote({ initialVotes = {} }: TopicVoteProps) {
             >
               {/* Progress fill */}
               {status === 'done' && (
-                <div style={{
-                  position: 'absolute',
-                  left: 0, top: 0, bottom: 0,
-                  width: `${pct}%`,
-                  background: `color-mix(in srgb, ${color} 10%, transparent)`,
-                  transition: 'width 400ms ease',
-                  pointerEvents: 'none',
-                }} />
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: `${pct}%`,
+                    background: `color-mix(in srgb, ${color} 10%, transparent)`,
+                    transition: 'width 400ms ease',
+                    pointerEvents: 'none',
+                  }}
+                />
               )}
 
               {/* Checkbox indicator */}
-              <div style={{
-                width: '16px', height: '16px', borderRadius: '3px',
-                border: `2px solid ${isSelected ? color : 'var(--color-spear-iron)'}`,
-                background: isSelected ? color : 'transparent',
-                flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 150ms ease',
-                position: 'relative', zIndex: 1,
-              }}>
+              <div
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  borderRadius: '3px',
+                  border: `2px solid ${isSelected ? color : 'var(--color-spear-iron)'}`,
+                  background: isSelected ? color : 'transparent',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 150ms ease',
+                  position: 'relative',
+                  zIndex: 1,
+                }}
+              >
                 {isSelected && (
-                  <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
-                    <path d="M1 3.5L3.5 6L8 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <svg aria-hidden="true" width="9" height="7" viewBox="0 0 9 7" fill="none">
+                    <path
+                      d="M1 3.5L3.5 6L8 1"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 )}
               </div>
 
-              <span style={{
-                fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 500,
-                color: isSelected ? color : 'var(--color-parchment)',
-                position: 'relative', zIndex: 1, flex: 1,
-              }}>
+              <span
+                style={{
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: isSelected ? color : 'var(--color-parchment)',
+                  position: 'relative',
+                  zIndex: 1,
+                  flex: 1,
+                }}
+              >
                 {labels[topic] ?? topic}
               </span>
 
               {status === 'done' && (
-                <span style={{
-                  fontSize: '12px', color, fontWeight: 600,
-                  position: 'relative', zIndex: 1,
-                }}>
+                <span
+                  style={{
+                    fontSize: '12px',
+                    color,
+                    fontWeight: 600,
+                    position: 'relative',
+                    zIndex: 1,
+                  }}
+                >
                   {pct}%
                 </span>
               )}
@@ -182,8 +212,12 @@ export default function TopicVote({ initialVotes = {} }: TopicVoteProps) {
             disabled={selected.size === 0 || status === 'loading'}
           >
             {status === 'loading'
-              ? (locale === 'en' ? 'Sending…' : 'යවමින්…')
-              : (locale === 'en' ? 'Cast Vote' : 'ඡන්දය දෙන්න')}
+              ? locale === 'en'
+                ? 'Sending…'
+                : 'යවමින්…'
+              : locale === 'en'
+                ? 'Cast Vote'
+                : 'ඡන්දය දෙන්න'}
           </button>
         </>
       )}

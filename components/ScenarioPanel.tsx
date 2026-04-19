@@ -184,13 +184,7 @@ function ForecastSparkline({ quarters }: { quarters: number[] }) {
     return `${x},${y}`;
   });
   return (
-    <svg
-      width={W}
-      height={H}
-      viewBox={`0 0 ${W} ${H}`}
-      style={{ display: 'block' }}
-      aria-label="Forecast sparkline"
-    >
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }} aria-label="Forecast sparkline">
       <rect width={W} height={H} fill="var(--color-surface)" rx="2" />
       <polyline
         points={pts.join(' ')}
@@ -202,15 +196,8 @@ function ForecastSparkline({ quarters }: { quarters: number[] }) {
       {quarters.map((v, i) => {
         const x = pad + (i / (quarters.length - 1)) * (W - pad * 2);
         const y = H - pad - ((v - min) / range) * (H - pad * 2);
-        return (
-          <circle
-            key={i}
-            cx={x}
-            cy={y}
-            r="2.5"
-            fill="var(--color-temple-gold)"
-          />
-        );
+        // biome-ignore lint/suspicious/noArrayIndexKey: positional SVG data points
+        return <circle key={`pt-${i}`} cx={x} cy={y} r="2.5" fill="var(--color-temple-gold)" />;
       })}
     </svg>
   );
@@ -291,7 +278,16 @@ export default function ScenarioPanel({ slug, locale = 'en' }: ScenarioPanelProp
       }}
     >
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1rem',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+        }}
+      >
         <span
           style={{
             fontFamily: 'var(--font-display)',
@@ -366,22 +362,40 @@ export default function ScenarioPanel({ slug, locale = 'en' }: ScenarioPanelProp
 
       {/* Scenarios */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {prediction.scenarios.map((sc, i) => (
+        {prediction.scenarios.map((sc) => (
           <div
-            key={i}
+            key={sc.signal}
             style={{
               borderLeft: `3px solid ${TOPIC_COLORS[sc.topic] ?? 'var(--color-border)'}`,
               paddingLeft: '1rem',
             }}
           >
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.65rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+                marginBottom: '0.75rem',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '0.65rem',
+                  color: 'var(--color-stone)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                }}
+              >
                 {t.topicLabels[sc.topic] ?? sc.topic}
               </span>
               <span
                 style={{
                   fontSize: '0.65rem',
-                  color: sc.risk_direction === 'increasing' ? 'var(--color-war-banner, #be3348)' : 'var(--color-water-fortress, #28805e)',
+                  color:
+                    sc.risk_direction === 'increasing'
+                      ? 'var(--color-war-banner, #be3348)'
+                      : 'var(--color-water-fortress, #28805e)',
                   letterSpacing: '0.04em',
                 }}
               >
@@ -426,15 +440,41 @@ export default function ScenarioPanel({ slug, locale = 'en' }: ScenarioPanelProp
             ))}
 
             {/* Confidence + forecast */}
-            <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '1.5rem',
+                marginTop: '0.75rem',
+                flexWrap: 'wrap',
+                alignItems: 'flex-start',
+              }}
+            >
               <div style={{ flex: '1', minWidth: '160px' }}>
-                <span style={{ fontSize: '0.65rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.25rem' }}>
+                <span
+                  style={{
+                    fontSize: '0.65rem',
+                    color: 'var(--color-stone)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    display: 'block',
+                    marginBottom: '0.25rem',
+                  }}
+                >
                   {t.confidence}
                 </span>
                 <ConfidenceBar score={sc.confidence} />
               </div>
               <div>
-                <span style={{ fontSize: '0.65rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.25rem' }}>
+                <span
+                  style={{
+                    fontSize: '0.65rem',
+                    color: 'var(--color-stone)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    display: 'block',
+                    marginBottom: '0.25rem',
+                  }}
+                >
                   {t.forecast}
                 </span>
                 <ForecastSparkline quarters={sc.forecast_quarters} />
@@ -455,11 +495,10 @@ export default function ScenarioPanel({ slug, locale = 'en' }: ScenarioPanelProp
           lineHeight: 1.5,
         }}
       >
-        <span style={{ color: 'var(--color-temple-gold)' }}>{t.methodology}:</span>{' '}
-        {prediction.meta.methodology} · {prediction.meta.forecast_horizon_quarters}Q horizon
+        <span style={{ color: 'var(--color-temple-gold)' }}>{t.methodology}:</span> {prediction.meta.methodology} ·{' '}
+        {prediction.meta.forecast_horizon_quarters}Q horizon
         <br />
-        <span style={{ color: 'var(--color-war-banner, #be3348)' }}>{t.disclaimer}:</span>{' '}
-        {prediction.meta.disclaimer}
+        <span style={{ color: 'var(--color-war-banner, #be3348)' }}>{t.disclaimer}:</span> {prediction.meta.disclaimer}
       </div>
 
       {/* Heritage footer */}

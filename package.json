@@ -10,6 +10,10 @@
     "export": "node scripts/generate-static-seo.mjs && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "lint": "biome check app/ lib/ components/ hooks/ scripts/",
+    "lint:fix": "biome check --fix app/ lib/ components/ hooks/ scripts/",
+    "format": "biome format app/ lib/ components/ hooks/ scripts/",
+    "format:fix": "biome format --fix app/ lib/ components/ hooks/ scripts/",
     "seo": "node scripts/generate-static-seo.mjs",
     "enrich": "node scripts/enrich-data.mjs",
     "og": "node scripts/generate-og-images.mjs",
@@ -52,6 +56,7 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.12",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/d3": "^7.4.3",

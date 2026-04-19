@@ -6,8 +6,8 @@
 // IMPORTANT: This runs only at build time (Node.js context).
 // Never import this in client components.
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import matter from 'gray-matter';
 
 // ── Types ────────────────────────────────────────────────────────────────────

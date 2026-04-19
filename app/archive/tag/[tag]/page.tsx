@@ -25,11 +25,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ tag: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ tag: string }> }): Promise<Metadata> {
   const { tag } = await params;
   const label = tag.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   return {
@@ -38,19 +34,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function TagArchivePage({
-  params,
-}: {
-  params: Promise<{ tag: string }>;
-}) {
+export default async function TagArchivePage({ params }: { params: Promise<{ tag: string }> }) {
   const { tag } = await params;
-  const { articles, metadata: blogMeta } = await getBlogData();
+  const { articles } = await getBlogData();
 
   // Match slug-ified tag back to display name
   const normalizedTag = tag.replace(/-/g, ' ');
-  const filtered = articles.filter((a) =>
-    a.tags.some((t) => t.toLowerCase() === normalizedTag.toLowerCase())
-  );
+  const filtered = articles.filter((a) => a.tags.some((t) => t.toLowerCase() === normalizedTag.toLowerCase()));
   const label = normalizedTag.replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
@@ -79,7 +69,9 @@ export default async function TagArchivePage({
 
       {/* Tag strip */}
       <nav style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-xs)' }}>
-        <Link href="/archive" className="badge badge-hold" style={{ textDecoration: 'none' }}>All</Link>
+        <Link href="/archive" className="badge badge-hold" style={{ textDecoration: 'none' }}>
+          All
+        </Link>
         {ALL_TAGS.map((t) => {
           const slug = t.toLowerCase().replace(/\s+/g, '-');
           return (
@@ -89,9 +81,10 @@ export default async function TagArchivePage({
               className="badge"
               style={{
                 textDecoration: 'none',
-                background: slug === tag
-                  ? 'var(--color-sinha-maroon)'
-                  : 'color-mix(in srgb, var(--color-zheng-he) 15%, transparent)',
+                background:
+                  slug === tag
+                    ? 'var(--color-sinha-maroon)'
+                    : 'color-mix(in srgb, var(--color-zheng-he) 15%, transparent)',
                 color: slug === tag ? 'var(--color-ola-leaf)' : 'var(--color-zheng-he)',
               }}
             >
@@ -105,7 +98,11 @@ export default async function TagArchivePage({
         <div className="card" style={{ textAlign: 'center', padding: 'var(--spacing-3xl)' }}>
           <div className="card-accent card-accent-maroon" />
           <p className="t-body">No articles found for this tag.</p>
-          <Link href="/archive" className="btn btn-ghost" style={{ marginTop: 'var(--spacing-md)', display: 'inline-flex' }}>
+          <Link
+            href="/archive"
+            className="btn btn-ghost"
+            style={{ marginTop: 'var(--spacing-md)', display: 'inline-flex' }}
+          >
             View all
           </Link>
         </div>
@@ -116,34 +113,60 @@ export default async function TagArchivePage({
               key={article.slug}
               href={`/blog/${article.slug}`}
               className="card"
-              style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', padding: 'var(--spacing-md) var(--spacing-lg)' }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                textDecoration: 'none',
+                padding: 'var(--spacing-md) var(--spacing-lg)',
+              }}
             >
               <div className="card-accent card-accent-gold" />
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--spacing-lg)' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  gap: 'var(--spacing-lg)',
+                }}
+              >
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-xs)', marginBottom: 'var(--spacing-xs)', flexWrap: 'wrap' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 'var(--spacing-xs)',
+                      marginBottom: 'var(--spacing-xs)',
+                      flexWrap: 'wrap',
+                    }}
+                  >
                     {article.tags.slice(0, 3).map((t) => (
-                      <span key={t} className="badge badge-hold" style={{ fontSize: '9px' }}>{t}</span>
+                      <span key={t} className="badge badge-hold" style={{ fontSize: '9px' }}>
+                        {t}
+                      </span>
                     ))}
                   </div>
                   <h3 className="t-card-heading">{article.title}</h3>
                   <p className="t-muted" style={{ fontSize: '13px', marginTop: 'var(--spacing-xs)', lineHeight: 1.5 }}>
-                    {article.excerpt.slice(0, 160)}{article.excerpt.length > 160 ? '…' : ''}
+                    {article.excerpt.slice(0, 160)}
+                    {article.excerpt.length > 160 ? '…' : ''}
                   </p>
                 </div>
                 <div style={{ flexShrink: 0, textAlign: 'right' }}>
                   <time dateTime={article.date} className="t-muted" style={{ fontSize: '12px', display: 'block' }}>
-                    {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {new Date(article.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
                   </time>
-                  <span className="t-muted" style={{ fontSize: '12px' }}>{article.readingMinutes} min read</span>
+                  <span className="t-muted" style={{ fontSize: '12px' }}>
+                    {article.readingMinutes} min read
+                  </span>
                 </div>
               </div>
             </Link>
           ))}
         </div>
       )}
-
-
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useConsent } from '@/app/hooks/useConsent';
 
 export default function ConsentDialog() {
@@ -39,6 +39,8 @@ export default function ConsentDialog() {
   return (
     <>
       {/* Backdrop */}
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: backdrop click handler */}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop overlay */}
       <div
         style={{
           position: 'fixed',
@@ -113,8 +115,7 @@ export default function ConsentDialog() {
                 marginBottom: '20px',
               }}
             >
-              We use minimal data collection to improve your experience. 
-              By continuing, you agree to our{' '}
+              We use minimal data collection to improve your experience. By continuing, you agree to our{' '}
               <Link
                 href="/privacy"
                 style={{
@@ -138,6 +139,7 @@ export default function ConsentDialog() {
             >
               {/* Accept Button */}
               <button
+                type="button"
                 onClick={acceptConsent}
                 style={{
                   width: '100%',
@@ -166,6 +168,7 @@ export default function ConsentDialog() {
 
               {/* Decline Button */}
               <button
+                type="button"
                 onClick={declineConsent}
                 style={{
                   width: '100%',

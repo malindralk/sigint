@@ -17,10 +17,10 @@ export default function Header() {
           { href: '/research', label: 'Research' },
           { href: '/learning', label: 'Learning' },
         ].map((item) => {
-          const active = pathname === item.href || pathname === `${item.href}/` || pathname.startsWith(`/${item.href}/`);
+          const active =
+            pathname === item.href || pathname === `${item.href}/` || pathname.startsWith(`/${item.href}/`);
           return (
-            <Link key={item.href} href={item.href}
-              className={`nav-link ${active ? 'active' : ''}`}>
+            <Link key={item.href} href={item.href} className={`nav-link ${active ? 'active' : ''}`}>
               {active && <span className="nav-shield" />}
               {item.label}
             </Link>
@@ -29,7 +29,10 @@ export default function Header() {
       </nav>
 
       <div className="ml-auto flex items-center gap-2">
-        <span className="inline-flex items-center gap-1.5 text-xs" style={{ color: 'var(--brand-primary)', fontFamily: 'var(--font-ui)' }}>
+        <span
+          className="inline-flex items-center gap-1.5 text-xs"
+          style={{ color: 'var(--brand-primary)', fontFamily: 'var(--font-ui)' }}
+        >
           <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--brand-primary)' }} />
           LIVE
         </span>

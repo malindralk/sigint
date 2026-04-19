@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
-import { BRAND, CHART_COLORS } from '@/lib/brand-colors';
+import { useCallback, useRef, useState } from 'react';
+import { BRAND } from '@/lib/brand-colors';
 
 export interface GanttItem {
   section: string;
@@ -82,14 +82,25 @@ export default function GanttChart({
   const cursorInfo = cursorPct !== null ? getCursorInfo(cursorPct, weekCount, projectStart) : null;
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: chart cursor tracking
     <div style={{ minWidth: '900px' }} ref={trackRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
       {/* Month/Year axis */}
       <div className="flex items-center gap-0 mb-1">
         <div className="shrink-0" style={{ width: 180 }} />
         <div className="flex-1 relative">
-          {monthBands.map((band, i) => (
-            <div key={i} className="absolute text-center text-xs py-2 border-l border-r"
-              style={{ left: `${band.startPct}%`, width: `${band.widthPct}%`, color: 'var(--theme-text-muted)', borderColor: 'var(--theme-border)', fontFamily: 'JetBrains Mono, monospace', fontSize: '9px' }}>
+          {monthBands.map((band) => (
+            <div
+              key={band.label}
+              className="absolute text-center text-xs py-2 border-l border-r"
+              style={{
+                left: `${band.startPct}%`,
+                width: `${band.widthPct}%`,
+                color: 'var(--theme-text-muted)',
+                borderColor: 'var(--theme-border)',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '9px',
+              }}
+            >
               {band.label}
             </div>
           ))}
@@ -102,16 +113,40 @@ export default function GanttChart({
         <div className="shrink-0" style={{ width: 180 }} />
         <div className="flex-1 relative">
           {Array.from({ length: weekCount }, (_, i) => (
-            <div key={i} className="absolute text-center text-xs py-0.5 border-l"
-              style={{ left: `${(i / weekCount) * 100}%`, width: `${100 / weekCount}%`, color: 'var(--theme-text-muted)', borderColor: 'var(--theme-border)', fontFamily: 'JetBrains Mono, monospace', fontSize: '9px', display: (i + 1) % 2 === 0 ? 'block' : 'none' }}>
+            <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: positional week markers
+              key={`week-${i}`}
+              className="absolute text-center text-xs py-0.5 border-l"
+              style={{
+                left: `${(i / weekCount) * 100}%`,
+                width: `${100 / weekCount}%`,
+                color: 'var(--theme-text-muted)',
+                borderColor: 'var(--theme-border)',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '9px',
+                display: (i + 1) % 2 === 0 ? 'block' : 'none',
+              }}
+            >
               {i + 1}
             </div>
           ))}
 
           {/* Cursor tooltip */}
           {cursorInfo && cursorPct !== null && (
-            <div className="absolute pointer-events-none" style={{ left: `${cursorPct}%`, transform: 'translateX(-50%)', top: 0, zIndex: 20 }}>
-              <div className="text-xs px-2 py-0.5 rounded whitespace-nowrap" style={{ background: 'var(--theme-bg-elevated)', border: '1px solid var(--theme-border-strong)', color: BRAND.info, fontFamily: 'JetBrains Mono, monospace', fontSize: '10px' }}>
+            <div
+              className="absolute pointer-events-none"
+              style={{ left: `${cursorPct}%`, transform: 'translateX(-50%)', top: 0, zIndex: 20 }}
+            >
+              <div
+                className="text-xs px-2 py-0.5 rounded whitespace-nowrap"
+                style={{
+                  background: 'var(--theme-bg-elevated)',
+                  border: '1px solid var(--theme-border-strong)',
+                  color: BRAND.info,
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '10px',
+                }}
+              >
                 W{cursorInfo.weekNum} · {cursorInfo.dateStr}
               </div>
             </div>
@@ -119,7 +154,10 @@ export default function GanttChart({
 
           {/* Cursor vertical line */}
           {cursorPct !== null && (
-            <div className="absolute top-0 bottom-0 pointer-events-none" style={{ left: `${cursorPct}%`, width: '1px', background: `${BRAND.info}59`, zIndex: 10 }} />
+            <div
+              className="absolute top-0 bottom-0 pointer-events-none"
+              style={{ left: `${cursorPct}%`, width: '1px', background: `${BRAND.info}59`, zIndex: 10 }}
+            />
           )}
 
           <div style={{ height: '20px' }} />
@@ -134,16 +172,31 @@ export default function GanttChart({
           const color = row.color ?? BRAND_COLORS[idx % BRAND_COLORS.length];
 
           return (
-            <div key={idx} className="flex items-center gap-0 py-0.5 rounded" style={{ transition: 'background 0.15s' }}
+            // biome-ignore lint/a11y/noStaticElementInteractions: hover highlight for chart rows
+            <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: chart row by position
+              key={`row-${idx}`}
+              className="flex items-center gap-0 py-0.5 rounded"
+              style={{ transition: 'background 0.15s' }}
               onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            >
               {/* Label */}
               <div className="shrink-0 pr-3 flex items-baseline gap-2" style={{ width: 180 }}>
-                <span className="text-xs truncate block" style={{ color: 'var(--theme-text-secondary)', fontFamily: 'DM Sans, sans-serif' }} title={row.label}>
+                <span
+                  className="text-xs truncate block"
+                  style={{ color: 'var(--theme-text-secondary)', fontFamily: 'DM Sans, sans-serif' }}
+                  title={row.label}
+                >
                   {row.label}
                 </span>
                 {row.subtitle && (
-                  <span className="text-xs shrink-0" style={{ color: 'var(--theme-text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>{row.subtitle}</span>
+                  <span
+                    className="text-xs shrink-0"
+                    style={{ color: 'var(--theme-text-muted)', fontFamily: 'JetBrains Mono, monospace' }}
+                  >
+                    {row.subtitle}
+                  </span>
                 )}
               </div>
 
@@ -151,11 +204,25 @@ export default function GanttChart({
               <div className="flex-1 relative h-6">
                 {/* Grid lines */}
                 {Array.from({ length: weekCount + 1 }, (_, i) => (
-                  <div key={i} className="absolute top-0 bottom-0 border-l" style={{ left: `${(i / weekCount) * 100}%`, borderColor: 'var(--theme-border)', opacity: 0.3 }} />
+                  <div
+                    // biome-ignore lint/suspicious/noArrayIndexKey: positional grid lines
+                    key={`grid-${i}`}
+                    className="absolute top-0 bottom-0 border-l"
+                    style={{ left: `${(i / weekCount) * 100}%`, borderColor: 'var(--theme-border)', opacity: 0.3 }}
+                  />
                 ))}
 
-                <div className="absolute top-0.5 bottom-0.5 rounded-sm flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden cursor-default"
-                  style={{ left: `${leftPct}%`, width: `${Math.max(widthPct, 3)}%`, minWidth: '32px', background: `${color}18`, border: `1px solid ${color}55`, color }}>
+                <div
+                  className="absolute top-0.5 bottom-0.5 rounded-sm flex items-center px-2 text-xs font-mono whitespace-nowrap overflow-hidden cursor-default"
+                  style={{
+                    left: `${leftPct}%`,
+                    width: `${Math.max(widthPct, 3)}%`,
+                    minWidth: '32px',
+                    background: `${color}18`,
+                    border: `1px solid ${color}55`,
+                    color,
+                  }}
+                >
                   <span className="truncate">{row.durationWeeks}w</span>
                 </div>
               </div>

@@ -62,19 +62,12 @@ export function trackPageview(url?: string): void {
   enqueue({ name: 'pageview', props: {} }, url);
 }
 
-export function trackEvent(
-  name: string,
-  props?: Record<string, string | number | boolean>,
-  url?: string,
-): void {
+export function trackEvent(name: string, props?: Record<string, string | number | boolean>, url?: string): void {
   if (typeof window === 'undefined' || !hasConsent()) return;
   enqueue({ name, props: props ?? {} }, url);
 }
 
-function enqueue(
-  event: Pick<AnalyticsEvent, 'name' | 'props'>,
-  url?: string,
-): void {
+function enqueue(event: Pick<AnalyticsEvent, 'name' | 'props'>, url?: string): void {
   queue.push({
     ...event,
     url: url ?? (typeof window !== 'undefined' ? window.location.pathname : ''),

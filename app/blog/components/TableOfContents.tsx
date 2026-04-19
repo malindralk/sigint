@@ -11,9 +11,7 @@ export default function TableOfContents({ items }: Props) {
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
-    const headings = items
-      .map((item) => document.getElementById(item.id))
-      .filter(Boolean) as HTMLElement[];
+    const headings = items.map((item) => document.getElementById(item.id)).filter(Boolean) as HTMLElement[];
 
     if (headings.length === 0) return;
 
@@ -29,7 +27,9 @@ export default function TableOfContents({ items }: Props) {
       { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
     );
 
-    headings.forEach((el) => observer.observe(el));
+    headings.forEach((el) => {
+      observer.observe(el);
+    });
     return () => observer.disconnect();
   }, [items]);
 
@@ -50,10 +50,7 @@ export default function TableOfContents({ items }: Props) {
       </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {items.map((item) => (
-          <li
-            key={item.id}
-            style={{ paddingLeft: `${(item.level - 1) * 12}px` }}
-          >
+          <li key={item.id} style={{ paddingLeft: `${(item.level - 1) * 12}px` }}>
             <a
               href={`#${item.id}`}
               className="t-muted"
@@ -61,13 +58,10 @@ export default function TableOfContents({ items }: Props) {
                 display: 'block',
                 padding: '4px 0',
                 textDecoration: 'none',
-                borderLeft: activeId === item.id
-                  ? '2px solid var(--color-temple-gold, #D49628)'
-                  : '2px solid transparent',
+                borderLeft:
+                  activeId === item.id ? '2px solid var(--color-temple-gold, #D49628)' : '2px solid transparent',
                 paddingLeft: '8px',
-                color: activeId === item.id
-                  ? 'var(--color-parchment, #F2E8D0)'
-                  : undefined,
+                color: activeId === item.id ? 'var(--color-parchment, #F2E8D0)' : undefined,
                 transition: 'color 150ms ease, border-color 150ms ease',
               }}
             >

@@ -162,7 +162,7 @@ class EmbeddingService:
         self,
         query: str,
         limit: int = 10,
-        threshold: float = 0.5,
+        threshold: float = 0.3,
     ) -> list[dict[str, Any]]:
         """Search for similar content using vector similarity.
 
@@ -226,9 +226,11 @@ class EmbeddingService:
         limit: int,
         threshold: float,
     ) -> list[dict[str, Any]]:
-        """Search using in-memory similarity (SQLite fallback).
+        """Search using in-memory cosine similarity (SQLite fallback).
 
         For production, use PostgreSQL with pgvector.
+        This fallback re-generates embeddings for stored chunks on-the-fly
+        and computes cosine similarity against the query embedding.
         """
         import numpy as np
 
@@ -245,18 +247,37 @@ class EmbeddingService:
         # Generate query embedding
         query_embedding = np.array(self.generate_embeddings([query])[0])
 
-        # Calculate similarity for each chunk
-        # Note: This is a simplified approach - in production, store vectors properly
-        results = []
-        for row in rows[:limit]:
-            embedding = row[0]
-            results.append({
-                "chunk_text": embedding.chunk_text,
-                "chunk_index": embedding.chunk_index,
-                "slug": row.slug,
-                "title": row.title,
-                "category": row.category,
-                "similarity": 0.5,  # Placeholder - real implementation needs stored vectors
-            })
+        # Generate embeddings for all chunks and compute cosine similarity
+        chunk_texts = [row[0].chunk_text for row in rows]
+        chunk_vectors = self.generate_embeddings(chunk_texts)
 
-        return results
+        # Calculate cosine similarity for each chunk
+        results = []
+        for row, chunk_vector in zip(rows, chunk_vectors):
+            embedding_record = row[0]
+            chunk_vec = np.array(chunk_vector)
+
+            # Cosine similarity: dot(a, b) / (||a|| * ||b||)
+            dot_product = np.dot(query_embedding, chunk_vec)
+            norm_query = np.linalg.norm(query_embedding)
+            norm_chunk = np.linalg.norm(chunk_vec)
+
+            if norm_query == 0 or norm_chunk == 0:
+                similarity = 0.0
+            else:
+                similarity = float(dot_product / (norm_query * norm_chunk))
+
+            # Filter by threshold
+            if similarity > threshold:
+                results.append({
+                    "chunk_text": embedding_record.chunk_text,
+                    "chunk_index": embedding_record.chunk_index,
+                    "slug": row.slug,
+                    "title": row.title,
+                    "category": row.category,
+                    "similarity": similarity,
+                })
+
+        # Sort by similarity descending and limit results
+        results.sort(key=lambda x: x["similarity"], reverse=True)
+        return results[:limit]

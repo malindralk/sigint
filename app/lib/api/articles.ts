@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { api } from "./client";
+import { api } from './client';
 
 export interface Article {
   id: string;
@@ -44,23 +44,17 @@ export interface UpdateArticleRequest {
 
 export const articlesApi = {
   // List articles
-  list: (params?: {
-    category?: string;
-    limit?: number;
-    offset?: number;
-    include_unpublished?: boolean;
-  }) => api.get<ArticleListItem[]>("/api/articles", { skipAuth: !params?.include_unpublished }),
+  list: (params?: { category?: string; limit?: number; offset?: number; include_unpublished?: boolean }) =>
+    api.get<ArticleListItem[]>('/api/articles', { skipAuth: !params?.include_unpublished }),
 
   // Get single article
   get: (slug: string) => api.get<Article>(`/api/articles/${slug}`),
 
   // Create article (requires editor/admin)
-  create: (data: CreateArticleRequest) =>
-    api.post<Article>("/api/admin/articles", data),
+  create: (data: CreateArticleRequest) => api.post<Article>('/api/admin/articles', data),
 
   // Update article (requires editor/admin)
-  update: (id: string, data: UpdateArticleRequest) =>
-    api.patch<Article>(`/api/admin/articles/${id}`, data),
+  update: (id: string, data: UpdateArticleRequest) => api.patch<Article>(`/api/admin/articles/${id}`, data),
 
   // Delete article (requires editor/admin)
   delete: (id: string) => api.delete<{ message: string }>(`/api/admin/articles/${id}`),
@@ -69,13 +63,13 @@ export const articlesApi = {
   sync: (generateEmbeddings = true) =>
     api.post<{ status: string; stats: Record<string, number> }>(
       `/api/articles/sync?generate_embeddings=${generateEmbeddings}`,
-      {}
+      {},
     ),
 
   // Generate embeddings
   generateEmbeddings: (slug?: string) =>
     api.post<{ status: string; stats: Record<string, number> }>(
-      `/api/articles/embeddings/generate${slug ? `?slug=${slug}` : ""}`,
-      {}
+      `/api/articles/embeddings/generate${slug ? `?slug=${slug}` : ''}`,
+      {},
     ),
 };

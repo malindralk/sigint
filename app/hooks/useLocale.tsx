@@ -4,8 +4,8 @@
 // Lightweight EN/SI locale context with localStorage persistence.
 // Only two languages: English and Sinhala.
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { ui, type Locale } from '@/lib/i18n';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { type Locale, ui } from '@/lib/i18n';
 
 type NavStrings = typeof ui.en.nav;
 
@@ -64,9 +64,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const nav = t.nav as NavStrings;
 
   return (
-    <LocaleContext.Provider value={{ locale, setLocale, toggleLocale, t, nav }}>
-      {children}
-    </LocaleContext.Provider>
+    <LocaleContext.Provider value={{ locale, setLocale, toggleLocale, t, nav }}>{children}</LocaleContext.Provider>
   );
 }
 

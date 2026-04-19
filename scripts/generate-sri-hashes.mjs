@@ -5,8 +5,8 @@
 // Outputs data/sri-manifest.json for use in nginx/CDN CSP headers.
 
 import { createHash } from 'node:crypto';
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { join, extname, relative } from 'node:path';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { extname, join, relative } from 'node:path';
 
 const OUT_DIR = './out/_next/static';
 const MANIFEST_PATH = './data/sri-manifest.json';

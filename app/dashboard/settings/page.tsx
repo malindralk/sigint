@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { api } from "@/app/lib/api/client";
-import ProtectedRoute from "@/app/components/auth/ProtectedRoute";
+import { useEffect, useState } from 'react';
+import ProtectedRoute from '@/app/components/auth/ProtectedRoute';
+import { api } from '@/app/lib/api/client';
 
 interface SiteSettings {
   site_name: string;
@@ -14,36 +14,34 @@ interface SiteSettings {
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<SiteSettings>({
-    site_name: "SIGINT Wiki",
-    site_description: "",
+    site_name: 'SIGINT Wiki',
+    site_description: '',
     maintenance_mode: false,
     allow_registration: true,
-    default_article_category: "em-sca",
+    default_article_category: 'em-sca',
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: initial load only
   useEffect(() => {
     loadSettings();
   }, []);
 
   async function loadSettings() {
     try {
-      const response = await api.get<{ settings: Record<string, string> }>(
-        "/api/admin/settings"
-      );
+      const response = await api.get<{ settings: Record<string, string> }>('/api/admin/settings');
       // Convert string values to appropriate types
       setSettings({
-        site_name: response.settings.site_name || "SIGINT Wiki",
-        site_description: response.settings.site_description || "",
-        maintenance_mode: response.settings.maintenance_mode === "true",
-        allow_registration: response.settings.allow_registration !== "false",
-        default_article_category:
-          response.settings.default_article_category || "em-sca",
+        site_name: response.settings.site_name || 'SIGINT Wiki',
+        site_description: response.settings.site_description || '',
+        maintenance_mode: response.settings.maintenance_mode === 'true',
+        allow_registration: response.settings.allow_registration !== 'false',
+        default_article_category: response.settings.default_article_category || 'em-sca',
       });
     } catch (err) {
-      console.error("Failed to load settings:", err);
+      console.error('Failed to load settings:', err);
     } finally {
       setIsLoading(false);
     }
@@ -52,10 +50,10 @@ export default function SettingsPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsSaving(true);
-    setMessage("");
+    setMessage('');
 
     try {
-      await api.patch("/api/admin/settings", {
+      await api.patch('/api/admin/settings', {
         settings: {
           site_name: settings.site_name,
           site_description: settings.site_description,
@@ -64,9 +62,9 @@ export default function SettingsPage() {
           default_article_category: settings.default_article_category,
         },
       });
-      setMessage("Settings saved successfully");
+      setMessage('Settings saved successfully');
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Failed to save settings");
+      setMessage(err instanceof Error ? err.message : 'Failed to save settings');
     } finally {
       setIsSaving(false);
     }
@@ -85,10 +83,10 @@ export default function SettingsPage() {
       <div>
         <h1
           style={{
-            fontSize: "1.75rem",
+            fontSize: '1.75rem',
             fontWeight: 600,
-            marginBottom: "1.5rem",
-            color: "var(--theme-text-primary)",
+            marginBottom: '1.5rem',
+            color: 'var(--theme-text-primary)',
           }}
         >
           Site Settings
@@ -97,18 +95,12 @@ export default function SettingsPage() {
         {message && (
           <div
             style={{
-              padding: "0.75rem",
-              backgroundColor: message.includes("success")
-                ? "rgba(40, 128, 94, 0.1)"
-                : "rgba(190, 51, 72, 0.1)",
-              border: `1px solid ${
-                message.includes("success")
-                  ? "rgba(40, 128, 94, 0.3)"
-                  : "rgba(190, 51, 72, 0.3)"
-              }`,
-              borderRadius: "4px",
-              color: message.includes("success") ? "var(--color-water-fortress)" : "var(--color-war-banner)",
-              marginBottom: "1rem",
+              padding: '0.75rem',
+              backgroundColor: message.includes('success') ? 'rgba(40, 128, 94, 0.1)' : 'rgba(190, 51, 72, 0.1)',
+              border: `1px solid ${message.includes('success') ? 'rgba(40, 128, 94, 0.3)' : 'rgba(190, 51, 72, 0.3)'}`,
+              borderRadius: '4px',
+              color: message.includes('success') ? 'var(--color-water-fortress)' : 'var(--color-war-banner)',
+              marginBottom: '1rem',
             }}
           >
             {message}
@@ -118,27 +110,27 @@ export default function SettingsPage() {
         <form
           onSubmit={handleSubmit}
           style={{
-            backgroundColor: "var(--theme-bg-elevated)",
-            border: "1px solid var(--theme-border)",
-            borderRadius: "8px",
-            padding: "1.5rem",
-            maxWidth: "600px",
+            backgroundColor: 'var(--theme-bg-elevated)',
+            border: '1px solid var(--theme-border)',
+            borderRadius: '8px',
+            padding: '1.5rem',
+            maxWidth: '600px',
           }}
         >
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1.5rem",
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem',
             }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <label
                 htmlFor="site_name"
                 style={{
-                  fontSize: "0.875rem",
+                  fontSize: '0.875rem',
                   fontWeight: 500,
-                  color: "var(--theme-text-primary)",
+                  color: 'var(--theme-text-primary)',
                 }}
               >
                 Site Name
@@ -147,27 +139,25 @@ export default function SettingsPage() {
                 id="site_name"
                 type="text"
                 value={settings.site_name}
-                onChange={(e) =>
-                  setSettings((prev) => ({ ...prev, site_name: e.target.value }))
-                }
+                onChange={(e) => setSettings((prev) => ({ ...prev, site_name: e.target.value }))}
                 style={{
-                  padding: "0.75rem",
-                  border: "1px solid var(--theme-border)",
-                  borderRadius: "4px",
-                  backgroundColor: "var(--theme-bg-base)",
-                  color: "var(--theme-text-primary)",
-                  fontSize: "1rem",
+                  padding: '0.75rem',
+                  border: '1px solid var(--theme-border)',
+                  borderRadius: '4px',
+                  backgroundColor: 'var(--theme-bg-base)',
+                  color: 'var(--theme-text-primary)',
+                  fontSize: '1rem',
                 }}
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <label
                 htmlFor="site_description"
                 style={{
-                  fontSize: "0.875rem",
+                  fontSize: '0.875rem',
                   fontWeight: 500,
-                  color: "var(--theme-text-primary)",
+                  color: 'var(--theme-text-primary)',
                 }}
               >
                 Site Description
@@ -183,24 +173,24 @@ export default function SettingsPage() {
                 }
                 rows={3}
                 style={{
-                  padding: "0.75rem",
-                  border: "1px solid var(--theme-border)",
-                  borderRadius: "4px",
-                  backgroundColor: "var(--theme-bg-base)",
-                  color: "var(--theme-text-primary)",
-                  fontSize: "1rem",
-                  resize: "vertical",
+                  padding: '0.75rem',
+                  border: '1px solid var(--theme-border)',
+                  borderRadius: '4px',
+                  backgroundColor: 'var(--theme-bg-base)',
+                  color: 'var(--theme-text-primary)',
+                  fontSize: '1rem',
+                  resize: 'vertical',
                 }}
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <label
                 htmlFor="default_article_category"
                 style={{
-                  fontSize: "0.875rem",
+                  fontSize: '0.875rem',
                   fontWeight: 500,
-                  color: "var(--theme-text-primary)",
+                  color: 'var(--theme-text-primary)',
                 }}
               >
                 Default Article Category
@@ -215,12 +205,12 @@ export default function SettingsPage() {
                   }))
                 }
                 style={{
-                  padding: "0.75rem",
-                  border: "1px solid var(--theme-border)",
-                  borderRadius: "4px",
-                  backgroundColor: "var(--theme-bg-base)",
-                  color: "var(--theme-text-primary)",
-                  fontSize: "1rem",
+                  padding: '0.75rem',
+                  border: '1px solid var(--theme-border)',
+                  borderRadius: '4px',
+                  backgroundColor: 'var(--theme-bg-base)',
+                  color: 'var(--theme-text-primary)',
+                  fontSize: '1rem',
                 }}
               >
                 <option value="sigint">SIGINT</option>
@@ -231,12 +221,12 @@ export default function SettingsPage() {
 
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "1rem",
-                backgroundColor: "var(--theme-bg-base)",
-                borderRadius: "4px",
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '1rem',
+                backgroundColor: 'var(--theme-bg-base)',
+                borderRadius: '4px',
               }}
             >
               <input
@@ -250,17 +240,17 @@ export default function SettingsPage() {
                   }))
                 }
                 style={{
-                  width: "18px",
-                  height: "18px",
-                  cursor: "pointer",
+                  width: '18px',
+                  height: '18px',
+                  cursor: 'pointer',
                 }}
               />
               <label
                 htmlFor="allow_registration"
                 style={{
-                  fontSize: "0.875rem",
-                  color: "var(--theme-text-primary)",
-                  cursor: "pointer",
+                  fontSize: '0.875rem',
+                  color: 'var(--theme-text-primary)',
+                  cursor: 'pointer',
                 }}
               >
                 Allow new user registration
@@ -269,13 +259,13 @@ export default function SettingsPage() {
 
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "1rem",
-                backgroundColor: "rgba(190, 51, 72, 0.05)",
-                borderRadius: "4px",
-                border: "1px solid rgba(190, 51, 72, 0.2)",
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '1rem',
+                backgroundColor: 'rgba(190, 51, 72, 0.05)',
+                borderRadius: '4px',
+                border: '1px solid rgba(190, 51, 72, 0.2)',
               }}
             >
               <input
@@ -289,17 +279,17 @@ export default function SettingsPage() {
                   }))
                 }
                 style={{
-                  width: "18px",
-                  height: "18px",
-                  cursor: "pointer",
+                  width: '18px',
+                  height: '18px',
+                  cursor: 'pointer',
                 }}
               />
               <label
                 htmlFor="maintenance_mode"
                 style={{
-                  fontSize: "0.875rem",
-                  color: "var(--theme-text-primary)",
-                  cursor: "pointer",
+                  fontSize: '0.875rem',
+                  color: 'var(--theme-text-primary)',
+                  cursor: 'pointer',
                 }}
               >
                 Maintenance Mode (disable public access)
@@ -310,14 +300,14 @@ export default function SettingsPage() {
               type="submit"
               disabled={isSaving}
               style={{
-                padding: "0.75rem 1.5rem",
-                backgroundColor: "var(--theme-accent)",
-                color: "var(--color-ola-leaf)",
+                padding: '0.75rem 1.5rem',
+                backgroundColor: 'var(--theme-accent)',
+                color: 'var(--color-ola-leaf)',
                 opacity: isSaving ? 0.7 : 1,
-                marginTop: "0.5rem",
+                marginTop: '0.5rem',
               }}
             >
-              {isSaving ? "Saving..." : "Save Settings"}
+              {isSaving ? 'Saving...' : 'Save Settings'}
             </button>
           </div>
         </form>

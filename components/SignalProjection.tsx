@@ -89,7 +89,9 @@ const LABELS = {
 };
 
 function TrajectorySVG({ values }: { values: number[] }) {
-  const W = 200, H = 48, pad = 6;
+  const W = 200,
+    H = 48,
+    pad = 6;
   if (!values.length) return null;
   const min = Math.min(...values, 0);
   const max = Math.max(...values, 0.01);
@@ -111,9 +113,7 @@ function TrajectorySVG({ values }: { values: number[] }) {
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      {lastPt && (
-        <circle cx={lastPt[0]} cy={lastPt[1]} r="3.5" fill="var(--color-temple-gold)" />
-      )}
+      {lastPt && <circle cx={lastPt[0]} cy={lastPt[1]} r="3.5" fill="var(--color-temple-gold)" />}
     </svg>
   );
 }
@@ -121,7 +121,13 @@ function TrajectorySVG({ values }: { values: number[] }) {
 function StrengthBar({ value, color }: { value: number; color: string }) {
   return (
     <div
-      style={{ height: '6px', background: 'var(--color-surface)', borderRadius: '3px', border: '1px solid var(--color-border)', overflow: 'hidden' }}
+      style={{
+        height: '6px',
+        background: 'var(--color-surface)',
+        borderRadius: '3px',
+        border: '1px solid var(--color-border)',
+        overflow: 'hidden',
+      }}
       role="progressbar"
       aria-valuenow={Math.round(value * 100)}
       aria-valuemin={0}
@@ -155,9 +161,18 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slug, model_version: 'v2.0' }),
     })
-      .then(r => { if (!r.ok) throw new Error(); return r.json() as Promise<SignalData>; })
-      .then(d => { setData(d); setLoading(false); })
-      .catch(() => { setError(true); setLoading(false); });
+      .then((r) => {
+        if (!r.ok) throw new Error();
+        return r.json() as Promise<SignalData>;
+      })
+      .then((d) => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
   }, [slug]);
 
   const cardBase: React.CSSProperties = {
@@ -168,17 +183,19 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
     fontFamily: 'var(--font-ui)',
   };
 
-  if (loading) return (
-    <div style={cardBase} aria-live="polite" aria-busy="true">
-      <span style={{ fontSize: '0.85rem', color: 'var(--color-stone)' }}>{t.loading}</span>
-    </div>
-  );
+  if (loading)
+    return (
+      <div style={cardBase} aria-live="polite" aria-busy="true">
+        <span style={{ fontSize: '0.85rem', color: 'var(--color-stone)' }}>{t.loading}</span>
+      </div>
+    );
 
-  if (error || !data) return (
-    <div style={cardBase} role="alert">
-      <span style={{ fontSize: '0.85rem', color: 'var(--color-stone)' }}>{t.error}</span>
-    </div>
-  );
+  if (error || !data)
+    return (
+      <div style={cardBase} role="alert">
+        <span style={{ fontSize: '0.85rem', color: 'var(--color-stone)' }}>{t.error}</span>
+      </div>
+    );
 
   const trendMeta = TREND_META[data.trend_direction] ?? TREND_META.stable;
   const sigColor = SIGNAL_COLORS[data.dominant_signal] ?? 'var(--color-parchment)';
@@ -186,17 +203,34 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
   return (
     <section aria-label={t.heading} style={cardBase}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.25rem' }}>
-        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 600, color: 'var(--color-ola)' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          marginBottom: '1.25rem',
+        }}
+      >
+        <span
+          style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 600, color: 'var(--color-ola)' }}
+        >
           {t.heading}
         </span>
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-          <span style={{
-            fontSize: '0.62rem', color: 'var(--color-temple-gold)',
-            background: 'rgba(212,150,40,0.12)', border: '1px solid rgba(212,150,40,0.28)',
-            borderRadius: '2px', padding: '0.1rem 0.4rem', letterSpacing: '0.06em',
-            fontFamily: 'var(--font-mono, monospace)',
-          }}>
+          <span
+            style={{
+              fontSize: '0.62rem',
+              color: 'var(--color-temple-gold)',
+              background: 'rgba(212,150,40,0.12)',
+              border: '1px solid rgba(212,150,40,0.28)',
+              borderRadius: '2px',
+              padding: '0.1rem 0.4rem',
+              letterSpacing: '0.06em',
+              fontFamily: 'var(--font-mono, monospace)',
+            }}
+          >
             {data.model_label}
           </span>
           <span style={{ fontSize: '0.62rem', color: 'var(--color-stone)', fontFamily: 'var(--font-mono, monospace)' }}>
@@ -208,19 +242,42 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
       {/* Dominant signal + trend */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
         <div>
-          <span style={{ fontSize: '0.62rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.3rem' }}>
+          <span
+            style={{
+              fontSize: '0.62rem',
+              color: 'var(--color-stone)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              display: 'block',
+              marginBottom: '0.3rem',
+            }}
+          >
             {t.dominantSignal}
           </span>
-          <span style={{
-            fontSize: '0.75rem', color: sigColor,
-            background: `color-mix(in srgb, ${sigColor} 10%, transparent)`,
-            border: `1px solid color-mix(in srgb, ${sigColor} 25%, transparent)`,
-            borderRadius: '2px', padding: '0.15rem 0.5rem', letterSpacing: '0.04em',
-          }}>
+          <span
+            style={{
+              fontSize: '0.75rem',
+              color: sigColor,
+              background: `color-mix(in srgb, ${sigColor} 10%, transparent)`,
+              border: `1px solid color-mix(in srgb, ${sigColor} 25%, transparent)`,
+              borderRadius: '2px',
+              padding: '0.15rem 0.5rem',
+              letterSpacing: '0.04em',
+            }}
+          >
             {SIGNAL_LABELS[data.dominant_signal] ?? data.dominant_signal}
           </span>
           <div style={{ marginTop: '0.5rem' }}>
-            <span style={{ fontSize: '0.62rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.3rem' }}>
+            <span
+              style={{
+                fontSize: '0.62rem',
+                color: 'var(--color-stone)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                display: 'block',
+                marginBottom: '0.3rem',
+              }}
+            >
               {t.signalStrength}
             </span>
             <StrengthBar value={data.signal_strength} color={sigColor} />
@@ -231,20 +288,49 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
         </div>
 
         <div>
-          <span style={{ fontSize: '0.62rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.3rem' }}>
+          <span
+            style={{
+              fontSize: '0.62rem',
+              color: 'var(--color-stone)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              display: 'block',
+              marginBottom: '0.3rem',
+            }}
+          >
             {t.trendDir}
           </span>
           <span style={{ fontSize: '0.82rem', color: trendMeta.color, fontWeight: 600 }}>
             {trendMeta.icon} {trendMeta.label}
           </span>
           <div style={{ marginTop: '0.75rem' }}>
-            <span style={{ fontSize: '0.62rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.3rem' }}>
+            <span
+              style={{
+                fontSize: '0.62rem',
+                color: 'var(--color-stone)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                display: 'block',
+                marginBottom: '0.3rem',
+              }}
+            >
               {t.projection}
             </span>
             <TrajectorySVG values={data.projected_trajectory} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6rem', color: 'var(--color-stone)', marginTop: '0.2rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '0.6rem',
+                color: 'var(--color-stone)',
+                marginTop: '0.2rem',
+              }}
+            >
               {data.projected_trajectory.map((v, i) => (
-                <span key={i}>Q{i + 1}: {Math.round(v * 100)}%</span>
+                // biome-ignore lint/suspicious/noArrayIndexKey: quarter labels by position
+                <span key={`q-${i}`}>
+                  Q{i + 1}: {Math.round(v * 100)}%
+                </span>
               ))}
             </div>
           </div>
@@ -252,8 +338,25 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
       </div>
 
       {/* Confidence interval */}
-      <div style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: '3px', padding: '0.75rem', marginBottom: '1.25rem' }}>
-        <span style={{ fontSize: '0.62rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.5rem' }}>
+      <div
+        style={{
+          background: 'var(--color-bg)',
+          border: '1px solid var(--color-border)',
+          borderRadius: '3px',
+          padding: '0.75rem',
+          marginBottom: '1.25rem',
+        }}
+      >
+        <span
+          style={{
+            fontSize: '0.62rem',
+            color: 'var(--color-stone)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            display: 'block',
+            marginBottom: '0.5rem',
+          }}
+        >
           {t.confidence}
         </span>
         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
@@ -271,7 +374,14 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
           ))}
           <div>
             <span style={{ fontSize: '0.6rem', color: 'var(--color-stone)', display: 'block' }}>±σ</span>
-            <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-parchment)', fontFamily: 'var(--font-display)' }}>
+            <span
+              style={{
+                fontSize: '1rem',
+                fontWeight: 700,
+                color: 'var(--color-parchment)',
+                fontFamily: 'var(--font-display)',
+              }}
+            >
               {Math.round(data.confidence_interval.std * 100)}%
             </span>
           </div>
@@ -280,7 +390,16 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
 
       {/* All signal scores */}
       <div style={{ marginBottom: '1.25rem' }}>
-        <span style={{ fontSize: '0.62rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.5rem' }}>
+        <span
+          style={{
+            fontSize: '0.62rem',
+            color: 'var(--color-stone)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            display: 'block',
+            marginBottom: '0.5rem',
+          }}
+        >
           {t.allSignals}
         </span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
@@ -288,13 +407,41 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
             .sort((a, b) => b[1] - a[1])
             .map(([sig, score]) => (
               <div key={sig} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '0.7rem', color: SIGNAL_COLORS[sig] ?? 'var(--color-parchment)', minWidth: '160px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                <span
+                  style={{
+                    fontSize: '0.7rem',
+                    color: SIGNAL_COLORS[sig] ?? 'var(--color-parchment)',
+                    minWidth: '160px',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {SIGNAL_LABELS[sig] ?? sig}
                 </span>
-                <div style={{ flex: 1, height: '4px', background: 'var(--color-surface)', borderRadius: '2px', overflow: 'hidden' }}>
-                  <div style={{ width: `${Math.round(score * 100)}%`, height: '100%', background: SIGNAL_COLORS[sig] ?? 'var(--color-parchment)', borderRadius: '2px' }} />
+                <div
+                  style={{
+                    flex: 1,
+                    height: '4px',
+                    background: 'var(--color-surface)',
+                    borderRadius: '2px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${Math.round(score * 100)}%`,
+                      height: '100%',
+                      background: SIGNAL_COLORS[sig] ?? 'var(--color-parchment)',
+                      borderRadius: '2px',
+                    }}
+                  />
                 </div>
-                <span style={{ fontSize: '0.65rem', color: 'var(--color-stone)', minWidth: '32px', textAlign: 'right' }}>{Math.round(score * 100)}%</span>
+                <span
+                  style={{ fontSize: '0.65rem', color: 'var(--color-stone)', minWidth: '32px', textAlign: 'right' }}
+                >
+                  {Math.round(score * 100)}%
+                </span>
               </div>
             ))}
         </div>
@@ -303,12 +450,32 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
       {/* Related articles */}
       {data.related_articles.length > 0 && (
         <div style={{ marginBottom: '1.25rem' }}>
-          <span style={{ fontSize: '0.62rem', color: 'var(--color-stone)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.5rem' }}>
+          <span
+            style={{
+              fontSize: '0.62rem',
+              color: 'var(--color-stone)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              display: 'block',
+              marginBottom: '0.5rem',
+            }}
+          >
             {t.related}
           </span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-            {data.related_articles.slice(0, 5).map(r => (
-              <span key={r.slug} style={{ fontSize: '0.65rem', color: 'var(--color-zheng-he)', background: 'rgba(61,116,168,0.08)', border: '1px solid rgba(61,116,168,0.22)', borderRadius: '2px', padding: '0.1rem 0.4rem', fontFamily: 'var(--font-mono, monospace)' }}>
+            {data.related_articles.slice(0, 5).map((r) => (
+              <span
+                key={r.slug}
+                style={{
+                  fontSize: '0.65rem',
+                  color: 'var(--color-zheng-he)',
+                  background: 'rgba(61,116,168,0.08)',
+                  border: '1px solid rgba(61,116,168,0.22)',
+                  borderRadius: '2px',
+                  padding: '0.1rem 0.4rem',
+                  fontFamily: 'var(--font-mono, monospace)',
+                }}
+              >
                 {r.slug} · {Math.round(r.similarity * 100)}%
               </span>
             ))}
@@ -317,14 +484,33 @@ export default function SignalProjection({ slug, locale = 'en' }: Props) {
       )}
 
       {/* Methodology + disclaimer */}
-      <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', fontSize: '0.68rem', color: 'var(--color-stone)', lineHeight: 1.6 }}>
-        <span style={{ color: 'var(--color-temple-gold)' }}>{t.methodology}:</span> {data.meta.methodology} · Corpus: {data.meta.articles_in_corpus} articles
+      <div
+        style={{
+          paddingTop: '0.75rem',
+          borderTop: '1px solid var(--color-border)',
+          fontSize: '0.68rem',
+          color: 'var(--color-stone)',
+          lineHeight: 1.6,
+        }}
+      >
+        <span style={{ color: 'var(--color-temple-gold)' }}>{t.methodology}:</span> {data.meta.methodology} · Corpus:{' '}
+        {data.meta.articles_in_corpus} articles
         <br />
         <span style={{ color: 'var(--color-war-banner, #be3348)' }}>{t.disclaimer}:</span> {data.meta.disclaimer}
       </div>
 
       {/* Heritage */}
-      <div style={{ marginTop: '0.75rem', fontSize: '0.62rem', color: 'var(--color-stone)', opacity: 0.45, fontFamily: 'var(--font-display)', textAlign: 'center', letterSpacing: '0.08em' }}>
+      <div
+        style={{
+          marginTop: '0.75rem',
+          fontSize: '0.62rem',
+          color: 'var(--color-stone)',
+          opacity: 0.45,
+          fontFamily: 'var(--font-display)',
+          textAlign: 'center',
+          letterSpacing: '0.08em',
+        }}
+      >
         {t.heritage}
       </div>
     </section>

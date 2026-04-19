@@ -13,7 +13,7 @@ router = APIRouter(prefix="/search", tags=["search"])
 class SearchRequest(BaseModel):
     query: str
     limit: int = 10
-    threshold: float = 0.5
+    threshold: float = 0.3
 
 
 class SearchResult(BaseModel):
@@ -69,7 +69,7 @@ async def quick_search(
     results = await embedding_svc.search_similar(
         query=q,
         limit=limit,
-        threshold=0.5,
+        threshold=0.3,
     )
 
     return SearchResponse(

@@ -15,14 +15,12 @@ import {
   Pie,
   PieChart,
   ResponsiveContainer,
-  Scatter,
-  ScatterChart,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
-import type { RegionalOverview } from '@/lib/predictions';
 import { BRAND } from '@/lib/brand-colors';
+import type { RegionalOverview } from '@/lib/predictions';
 
 interface Props {
   overview: RegionalOverview;
@@ -123,7 +121,14 @@ function StatCard({ label, value, accent }: { label: string; value: string | num
       >
         {value}
       </div>
-      <div style={{ fontSize: '0.7rem', color: T.textMuted, marginTop: '0.25rem', fontFamily: 'var(--font-ui, sans-serif)' }}>
+      <div
+        style={{
+          fontSize: '0.7rem',
+          color: T.textMuted,
+          marginTop: '0.25rem',
+          fontFamily: 'var(--font-ui, sans-serif)',
+        }}
+      >
         {label}
       </div>
     </div>
@@ -206,8 +211,8 @@ export default function PredictionsDashboardClient({ overview }: Props) {
           Scenario Analytics
         </h1>
         <p style={{ color: T.textSecondary, fontSize: '0.85rem', marginTop: '0.5rem' }}>
-          Pre-computed Monte Carlo scenarios across {overview.total_articles} intelligence articles.{' '}
-          Model: {overview.model_version} · Generated:{' '}
+          Pre-computed Monte Carlo scenarios across {overview.total_articles} intelligence articles. Model:{' '}
+          {overview.model_version} · Generated:{' '}
           {new Date(overview.generated_at).toLocaleDateString('en-GB', {
             year: 'numeric',
             month: 'short',
@@ -280,7 +285,9 @@ export default function PredictionsDashboardClient({ overview }: Props) {
                 <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
                 <XAxis dataKey="quarter" tick={{ fill: C.stone, fontSize: 11 }} axisLine={false} tickLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fill: C.stone, fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ background: C.surface, border: `1px solid ${C.border}`, color: C.ola, fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{ background: C.surface, border: `1px solid ${C.border}`, color: C.ola, fontSize: 12 }}
+                />
                 <Legend wrapperStyle={{ fontSize: 11, color: C.stone }} />
                 {overview.topic_metrics.map((tm) => (
                   <Line
@@ -327,7 +334,10 @@ export default function PredictionsDashboardClient({ overview }: Props) {
                 </Pie>
                 <Tooltip
                   contentStyle={{ background: C.surface, border: `1px solid ${C.border}`, color: C.ola, fontSize: 12 }}
-                  formatter={(v: number, name: string) => [`${v} (${total > 0 ? Math.round((v / total) * 100) : 0}%)`, name]}
+                  formatter={(v: number, name: string) => [
+                    `${v} (${total > 0 ? Math.round((v / total) * 100) : 0}%)`,
+                    name,
+                  ]}
                 />
                 <Legend wrapperStyle={{ fontSize: 11, color: C.stone }} />
               </PieChart>
@@ -349,15 +359,28 @@ export default function PredictionsDashboardClient({ overview }: Props) {
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={correlationData} layout="vertical" margin={{ top: 0, right: 8, bottom: 0, left: 80 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={C.border} horizontal={false} />
-                <XAxis type="number" domain={[-1, 1]} tick={{ fill: C.stone, fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis dataKey="pair" type="category" tick={{ fill: C.stone, fontSize: 10 }} axisLine={false} tickLine={false} width={80} />
+                <XAxis
+                  type="number"
+                  domain={[-1, 1]}
+                  tick={{ fill: C.stone, fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  dataKey="pair"
+                  type="category"
+                  tick={{ fill: C.stone, fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={80}
+                />
                 <Tooltip
                   contentStyle={{ background: C.surface, border: `1px solid ${C.border}`, color: C.ola, fontSize: 12 }}
                   formatter={(v: number) => [v.toFixed(2), 'Correlation']}
                 />
                 <Bar dataKey="correlation" radius={[0, 2, 2, 0]}>
-                  {correlationData.map((entry, i) => (
-                    <Cell key={i} fill={entry.correlation >= 0 ? C.blue : C.maroon} />
+                  {correlationData.map((entry) => (
+                    <Cell key={entry.pair} fill={entry.correlation >= 0 ? C.blue : C.maroon} />
                   ))}
                 </Bar>
               </BarChart>
@@ -431,7 +454,14 @@ export default function PredictionsDashboardClient({ overview }: Props) {
                         {TREND_ICONS[tm.trend]} {tm.trend}
                       </span>
                     </td>
-                    <td style={{ padding: '0.6rem 0.75rem', color: T.textSecondary, fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem' }}>
+                    <td
+                      style={{
+                        padding: '0.6rem 0.75rem',
+                        color: T.textSecondary,
+                        fontFamily: 'var(--font-mono, monospace)',
+                        fontSize: '0.75rem',
+                      }}
+                    >
                       {tm.forecast_mean.map((v) => `${Math.round(v * 100)}%`).join(' → ')}
                     </td>
                   </tr>
@@ -475,8 +505,6 @@ export default function PredictionsDashboardClient({ overview }: Props) {
           </div>
         </div>
       )}
-
-
     </main>
   );
 }

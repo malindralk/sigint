@@ -22,7 +22,8 @@ export default function Footer() {
           flexShrink: 0,
         }}
       >
-        <div className="footer-inner"
+        <div
+          className="footer-inner"
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
@@ -93,7 +94,8 @@ export default function Footer() {
         flexShrink: 0,
       }}
     >
-      <div className="footer-inner"
+      <div
+        className="footer-inner"
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
@@ -116,7 +118,8 @@ export default function Footer() {
               මලින්ද්‍ර
             </div>
             <div className="t-muted footer-description" style={{ maxWidth: '420px' }}>
-              Data-driven socio-economic and geopolitical analysis for Sri Lanka and the Laccadive Sea region. Static, secure, and heritage-grounded.
+              Data-driven socio-economic and geopolitical analysis for Sri Lanka and the Laccadive Sea region. Static,
+              secure, and heritage-grounded.
             </div>
           </div>
 
@@ -133,9 +136,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="heritage-tag footer-heritage">
-          මලින්ද්‍ර
-        </div>
+        <div className="heritage-tag footer-heritage">මලින්ද්‍ර</div>
       </div>
     </footer>
   );

@@ -14,9 +14,9 @@
 // Run via: node scripts/generate-og-images.mjs
 // Invoked by: npm run postbuild
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -46,7 +46,7 @@ function parseFrontmatter(raw) {
   let arrayValues = [];
 
   for (const line of lines) {
-    const listMatch = line.match(/^  - (.+)$/);
+    const listMatch = line.match(/^ {2}- (.+)$/);
     if (listMatch && arrayMode && currentKey) {
       arrayValues.push(listMatch[1].trim().replace(/^["']|["']$/g, ''));
       continue;
@@ -241,8 +241,7 @@ async function loadGoogleFont(family, weight = 700) {
   try {
     const css = await fetch(url, {
       headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
       },
     }).then((r) => r.text());
 
@@ -330,9 +329,7 @@ async function main() {
           }),
           { width: 1200, height: 630, fonts },
         );
-        const pngEn = new Resvg(svgEn, { fitTo: { mode: 'width', value: 1200 } })
-          .render()
-          .asPng();
+        const pngEn = new Resvg(svgEn, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
         writeFileSync(enPath, pngEn);
       }
 
@@ -347,9 +344,7 @@ async function main() {
           }),
           { width: 1200, height: 630, fonts },
         );
-        const pngSi = new Resvg(svgSi, { fitTo: { mode: 'width', value: 1200 } })
-          .render()
-          .asPng();
+        const pngSi = new Resvg(svgSi, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
         writeFileSync(siPath, pngSi);
       }
 

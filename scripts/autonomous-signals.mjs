@@ -6,9 +6,9 @@
 // Runs lightweight similarity scoring + regression trend projection
 // Outputs ./data/signals/[slug].json with [MODEL v2.0] attribution
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -23,7 +23,11 @@ const MODEL_VERSION = 'v2.0';
 // ── Lightweight cosine similarity (no deps) ───────────────────────────────────
 
 function tokenize(text) {
-  return text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
 }
 
 function tfVector(tokens) {
@@ -37,9 +41,12 @@ function tfVector(tokens) {
 
 function cosineSim(a, b) {
   const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
-  let dot = 0, normA = 0, normB = 0;
+  let dot = 0,
+    normA = 0,
+    normB = 0;
   for (const k of keys) {
-    const va = a[k] ?? 0, vb = b[k] ?? 0;
+    const va = a[k] ?? 0,
+      vb = b[k] ?? 0;
     dot += va * vb;
     normA += va * va;
     normB += vb * vb;
@@ -65,9 +72,9 @@ function linReg(ys) {
 function project(ys, periods = 4) {
   const { slope, intercept } = linReg(ys);
   const n = ys.length;
-  return Array.from({ length: periods }, (_, i) =>
-    Math.max(0, Math.min(1, intercept + slope * (n + i)))
-  ).map(v => Math.round(v * 1000) / 1000);
+  return Array.from({ length: periods }, (_, i) => Math.max(0, Math.min(1, intercept + slope * (n + i)))).map(
+    (v) => Math.round(v * 1000) / 1000,
+  );
 }
 
 // ── Signal strength scoring ───────────────────────────────────────────────────
@@ -82,10 +89,10 @@ const SIGNAL_KEYWORDS = {
 
 function scoreSignals(text) {
   const tokens = tokenize(text);
-  const total = tokens.length || 1;
+  const _total = tokens.length || 1;
   const scores = {};
   for (const [signal, keywords] of Object.entries(SIGNAL_KEYWORDS)) {
-    const hits = keywords.filter(kw => text.includes(kw)).length;
+    const hits = keywords.filter((kw) => text.includes(kw)).length;
     scores[signal] = Math.round((hits / keywords.length) * 1000) / 1000;
   }
   return scores;
@@ -94,7 +101,7 @@ function scoreSignals(text) {
 // ── Cross-article similarity ──────────────────────────────────────────────────
 
 function buildSimilarityIndex(articles) {
-  const vecs = articles.map(a => tfVector(tokenize(a.text)));
+  const vecs = articles.map((a) => tfVector(tokenize(a.text)));
   const sim = {};
   for (let i = 0; i < articles.length; i++) {
     const top = [];
@@ -124,7 +131,9 @@ function loadArticles() {
         text: [d.slug, d.category, ...(d.dataPoints || []).map(String)].join(' '),
         enriched: d,
       });
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
   return articles;
 }
@@ -132,7 +141,11 @@ function loadArticles() {
 function loadPrediction(slug) {
   const p = join(PREDICTIONS_DIR, `${slug}.json`);
   if (!existsSync(p)) return null;
-  try { return JSON.parse(readFileSync(p, 'utf-8')); } catch { return null; }
+  try {
+    return JSON.parse(readFileSync(p, 'utf-8'));
+  } catch {
+    return null;
+  }
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -157,10 +170,11 @@ for (const article of articles) {
 
   // Use prediction confidence series if available
   const baseConf = pred?.aggregate_confidence?.mean ?? 0.5;
-  const scenarioForecasts = (pred?.scenarios ?? []).flatMap(s => s.forecast_quarters ?? []);
-  const histSeries = scenarioForecasts.length >= 2
-    ? scenarioForecasts.slice(0, 8)
-    : [baseConf * 0.9, baseConf * 0.95, baseConf, baseConf * 1.02];
+  const scenarioForecasts = (pred?.scenarios ?? []).flatMap((s) => s.forecast_quarters ?? []);
+  const histSeries =
+    scenarioForecasts.length >= 2
+      ? scenarioForecasts.slice(0, 8)
+      : [baseConf * 0.9, baseConf * 0.95, baseConf, baseConf * 1.02];
 
   const projectedTrajectory = project(histSeries);
   const trendSlope = linReg(histSeries).slope;
@@ -168,7 +182,9 @@ for (const article of articles) {
 
   // Confidence interval (simple ±1 std from projected)
   const projMean = projectedTrajectory.reduce((a, b) => a + b, 0) / projectedTrajectory.length;
-  const projStd = Math.sqrt(projectedTrajectory.reduce((s, v) => s + (v - projMean) ** 2, 0) / projectedTrajectory.length);
+  const projStd = Math.sqrt(
+    projectedTrajectory.reduce((s, v) => s + (v - projMean) ** 2, 0) / projectedTrajectory.length,
+  );
 
   const signal = {
     slug: article.slug,
@@ -197,11 +213,7 @@ for (const article of articles) {
     },
   };
 
-  writeFileSync(
-    join(SIGNALS_DIR, `${article.slug}.json`),
-    JSON.stringify(signal, null, 2),
-    'utf-8'
-  );
+  writeFileSync(join(SIGNALS_DIR, `${article.slug}.json`), JSON.stringify(signal, null, 2), 'utf-8');
   generated++;
 }
 
@@ -211,12 +223,19 @@ const index = {
   generated_at: new Date().toISOString(),
   total: generated,
   entries: readdirSync(SIGNALS_DIR)
-    .filter(f => f.endsWith('.json') && f !== 'index.json')
-    .map(f => {
+    .filter((f) => f.endsWith('.json') && f !== 'index.json')
+    .map((f) => {
       try {
         const d = JSON.parse(readFileSync(join(SIGNALS_DIR, f), 'utf-8'));
-        return { slug: d.slug, dominant_signal: d.dominant_signal, trend_direction: d.trend_direction, signal_strength: d.signal_strength };
-      } catch { return null; }
+        return {
+          slug: d.slug,
+          dominant_signal: d.dominant_signal,
+          trend_direction: d.trend_direction,
+          signal_strength: d.signal_strength,
+        };
+      } catch {
+        return null;
+      }
     })
     .filter(Boolean),
 };

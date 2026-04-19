@@ -5,8 +5,8 @@
 // critical CSS detection, and Lighthouse CI target validation.
 // Outputs data/build-logs/performance-report.json
 
-import { readdirSync, statSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { join, extname, relative } from 'node:path';
+import { existsSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { extname, join, relative } from 'node:path';
 
 const OUT_DIR = './out';
 const NEXT_STATIC = './out/_next/static';
@@ -14,11 +14,11 @@ const REPORT_PATH = './data/build-logs/performance-report.json';
 
 // Lighthouse 98+ target thresholds
 const THRESHOLDS = {
-  maxJsBundleKB: 400,     // Per JS chunk — warn if exceeded (Next.js vendor bundles are large)
-  maxCssBundleKB: 120,    // Per CSS file
-  maxImageKB: 500,        // Per image — warn if exceeded
-  maxHtmlKB: 200,         // Per HTML page (Next.js hydration adds ~30-60KB overhead)
-  maxTotalStaticMB: 25,   // Total static output
+  maxJsBundleKB: 400, // Per JS chunk — warn if exceeded (Next.js vendor bundles are large)
+  maxCssBundleKB: 120, // Per CSS file
+  maxImageKB: 500, // Per image — warn if exceeded
+  maxHtmlKB: 200, // Per HTML page (Next.js hydration adds ~30-60KB overhead)
+  maxTotalStaticMB: 25, // Total static output
 };
 
 function humanBytes(bytes) {
@@ -40,7 +40,9 @@ function walkDir(dir, exts = null) {
         results.push(full);
       }
     }
-  } catch { /* skip */ }
+  } catch {
+    /* skip */
+  }
   return results;
 }
 
@@ -53,7 +55,9 @@ function analyzeFiles(dir, exts) {
       const size = statSync(f).size;
       totalBytes += size;
       report.push({ path: relative(OUT_DIR, f).replace(/\\/g, '/'), size, sizeHuman: humanBytes(size) });
-    } catch { /* skip */ }
+    } catch {
+      /* skip */
+    }
   }
   report.sort((a, b) => b.size - a.size);
   return { files: report, totalBytes, totalHuman: humanBytes(totalBytes) };
@@ -62,41 +66,46 @@ function analyzeFiles(dir, exts) {
 // ── JS bundles ────────────────────────────────────────────────────────────────
 const jsReport = analyzeFiles(NEXT_STATIC, ['.js']);
 const jsWarnings = jsReport.files
-  .filter(f => f.size > THRESHOLDS.maxJsBundleKB * 1024)
-  .map(f => `JS chunk ${f.path} is ${f.sizeHuman} (>${THRESHOLDS.maxJsBundleKB}KB)`);
+  .filter((f) => f.size > THRESHOLDS.maxJsBundleKB * 1024)
+  .map((f) => `JS chunk ${f.path} is ${f.sizeHuman} (>${THRESHOLDS.maxJsBundleKB}KB)`);
 
 // ── CSS bundles ───────────────────────────────────────────────────────────────
 const cssReport = analyzeFiles(NEXT_STATIC, ['.css']);
 const cssWarnings = cssReport.files
-  .filter(f => f.size > THRESHOLDS.maxCssBundleKB * 1024)
-  .map(f => `CSS file ${f.path} is ${f.sizeHuman} (>${THRESHOLDS.maxCssBundleKB}KB)`);
+  .filter((f) => f.size > THRESHOLDS.maxCssBundleKB * 1024)
+  .map((f) => `CSS file ${f.path} is ${f.sizeHuman} (>${THRESHOLDS.maxCssBundleKB}KB)`);
 
 // ── HTML pages ────────────────────────────────────────────────────────────────
 const htmlReport = analyzeFiles(OUT_DIR, ['.html']);
 const htmlWarnings = htmlReport.files
-  .filter(f => f.size > THRESHOLDS.maxHtmlKB * 1024)
-  .map(f => `HTML page ${f.path} is ${f.sizeHuman} (>${THRESHOLDS.maxHtmlKB}KB)`);
+  .filter((f) => f.size > THRESHOLDS.maxHtmlKB * 1024)
+  .map((f) => `HTML page ${f.path} is ${f.sizeHuman} (>${THRESHOLDS.maxHtmlKB}KB)`);
 
 // ── Images ────────────────────────────────────────────────────────────────────
 const imgReport = analyzeFiles(OUT_DIR, ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg']);
 const imgWarnings = imgReport.files
-  .filter(f => f.size > THRESHOLDS.maxImageKB * 1024)
-  .map(f => `Image ${f.path} is ${f.sizeHuman} (>${THRESHOLDS.maxImageKB}KB)`);
+  .filter((f) => f.size > THRESHOLDS.maxImageKB * 1024)
+  .map((f) => `Image ${f.path} is ${f.sizeHuman} (>${THRESHOLDS.maxImageKB}KB)`);
 
 // ── Total output size ─────────────────────────────────────────────────────────
 const allFiles = walkDir(OUT_DIR);
 let totalBytes = 0;
 for (const f of allFiles) {
-  try { totalBytes += statSync(f).size; } catch { /* skip */ }
+  try {
+    totalBytes += statSync(f).size;
+  } catch {
+    /* skip */
+  }
 }
 const totalMB = totalBytes / 1024 / 1024;
-const totalWarning = totalMB > THRESHOLDS.maxTotalStaticMB
-  ? [`Total static output is ${totalMB.toFixed(2)}MB (>${THRESHOLDS.maxTotalStaticMB}MB)`]
-  : [];
+const totalWarning =
+  totalMB > THRESHOLDS.maxTotalStaticMB
+    ? [`Total static output is ${totalMB.toFixed(2)}MB (>${THRESHOLDS.maxTotalStaticMB}MB)`]
+    : [];
 
 // ── Lighthouse target estimates ───────────────────────────────────────────────
 // Heuristic scoring based on bundle sizes (not actual LH run)
-const jsKB = jsReport.totalBytes / 1024;
+const _jsKB = jsReport.totalBytes / 1024;
 const cssKB = cssReport.totalBytes / 1024;
 const pageCount = htmlReport.files.length;
 
@@ -109,9 +118,9 @@ const pageCount = htmlReport.files.length;
 const largestChunkKB = jsReport.files.length > 0 ? jsReport.files[0].size / 1024 : 0;
 const performanceScore = Math.max(
   60,
-  95
-  - Math.max(0, (largestChunkKB - 350) / 20)  // -1pt per 20KB over 350KB per chunk
-  - Math.max(0, (cssKB - 100) / 10)            // -1pt per 10KB over 100KB CSS
+  95 -
+    Math.max(0, (largestChunkKB - 350) / 20) - // -1pt per 20KB over 350KB per chunk
+    Math.max(0, (cssKB - 100) / 10), // -1pt per 10KB over 100KB CSS
 );
 
 // ── Report ────────────────────────────────────────────────────────────────────
@@ -150,7 +159,9 @@ console.log(`[perf] LH perf est.:    ${Math.round(performanceScore)}/100`);
 
 if (allWarnings.length > 0) {
   console.log(`\n[perf] ⚠ ${allWarnings.length} warning(s):`);
-  allWarnings.forEach(w => console.log(`  - ${w}`));
+  allWarnings.forEach((w) => {
+    console.log(`  - ${w}`);
+  });
 } else {
   console.log('\n[perf] All checks passed.');
 }
@@ -160,7 +171,7 @@ console.log(`[perf] Report → ${REPORT_PATH}\n`);
 // Top 5 largest JS chunks
 if (jsReport.files.length > 0) {
   console.log('[perf] Top JS chunks:');
-  jsReport.files.slice(0, 5).forEach(f => {
+  jsReport.files.slice(0, 5).forEach((f) => {
     const warn = f.size > THRESHOLDS.maxJsBundleKB * 1024 ? ' ⚠' : '';
     console.log(`  ${f.sizeHuman.padEnd(8)} ${f.path}${warn}`);
   });

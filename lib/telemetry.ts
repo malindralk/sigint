@@ -4,9 +4,9 @@
 // Cookieless session IDs, consent-based event firing, A/B variant resolution.
 // Zero external SDK dependencies.
 
-"use client";
+'use client';
 
-export type ConsentLevel = "none" | "analytics" | "full";
+export type ConsentLevel = 'none' | 'analytics' | 'full';
 
 interface TelemetryConfig {
   endpoint: string;
@@ -15,12 +15,12 @@ interface TelemetryConfig {
 }
 
 let _config: TelemetryConfig = {
-  endpoint: "/api/telemetry",
-  consent: "none",
+  endpoint: '/api/telemetry',
+  consent: 'none',
 };
 
 let _sessionId: string | null = null;
-let _abCache: Record<string, string> = {};
+const _abCache: Record<string, string> = {};
 
 // ── Session ───────────────────────────────────────────────────────────────────
 
@@ -30,12 +30,16 @@ let _abCache: Record<string, string> = {};
  */
 function generateSessionId(): string {
   const arr = new Uint8Array(12);
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
     crypto.getRandomValues(arr);
   } else {
-    arr.forEach((_, i) => { arr[i] = Math.floor(Math.random() * 256); });
+    arr.forEach((_, i) => {
+      arr[i] = Math.floor(Math.random() * 256);
+    });
   }
-  return Array.from(arr).map((b) => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(arr)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 export function getSessionId(): string {
@@ -48,27 +52,31 @@ export function getSessionId(): string {
 export function setConsent(level: ConsentLevel): void {
   _config.consent = level;
   try {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem("malindra_consent", level);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('malindra_consent', level);
     }
-  } catch { /* storage blocked */ }
+  } catch {
+    /* storage blocked */
+  }
 }
 
 export function getConsent(): ConsentLevel {
   try {
-    if (typeof localStorage !== "undefined") {
-      const stored = localStorage.getItem("malindra_consent") as ConsentLevel | null;
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem('malindra_consent') as ConsentLevel | null;
       if (stored) {
         _config.consent = stored;
         return stored;
       }
     }
-  } catch { /* storage blocked */ }
+  } catch {
+    /* storage blocked */
+  }
   return _config.consent;
 }
 
 function hasAnalyticsConsent(): boolean {
-  return getConsent() === "analytics" || getConsent() === "full";
+  return getConsent() === 'analytics' || getConsent() === 'full';
 }
 
 // ── Event tracking ────────────────────────────────────────────────────────────
@@ -83,25 +91,22 @@ export interface TrackEventOptions {
   properties?: Record<string, unknown>;
 }
 
-export async function trackEvent(
-  event: string,
-  options: TrackEventOptions = {}
-): Promise<void> {
+export async function trackEvent(event: string, options: TrackEventOptions = {}): Promise<void> {
   if (!hasAnalyticsConsent()) return;
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   try {
     await fetch(`${_config.endpoint}/event`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "X-Consent": "analytics",
+        'Content-Type': 'application/json',
+        'X-Consent': 'analytics',
       },
       body: JSON.stringify({
         event,
         session_id: getSessionId(),
         path: options.path ?? window.location.pathname,
-        referrer: options.referrer ?? (typeof document !== "undefined" ? document.referrer : undefined),
+        referrer: options.referrer ?? (typeof document !== 'undefined' ? document.referrer : undefined),
         ...options,
       }),
       keepalive: true,
@@ -112,24 +117,24 @@ export async function trackEvent(
 }
 
 export async function trackPageView(path?: string): Promise<void> {
-  await trackEvent("page_view", {
-    path: path ?? (typeof window !== "undefined" ? window.location.pathname : undefined),
+  await trackEvent('page_view', {
+    path: path ?? (typeof window !== 'undefined' ? window.location.pathname : undefined),
   });
 }
 
 export async function trackConversion(
   goal: string,
-  opts: { experiment?: string; variant?: string; value_usd?: number } = {}
+  opts: { experiment?: string; variant?: string; value_usd?: number } = {},
 ): Promise<void> {
   if (!hasAnalyticsConsent()) return;
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   try {
     await fetch(`${_config.endpoint}/conversion`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "X-Consent": "analytics",
+        'Content-Type': 'application/json',
+        'X-Consent': 'analytics',
       },
       body: JSON.stringify({
         goal,
@@ -147,17 +152,17 @@ export async function trackConversion(
 
 export async function getVariant(experiment: string): Promise<string> {
   if (_abCache[experiment]) return _abCache[experiment];
-  if (typeof window === "undefined") return "control";
+  if (typeof window === 'undefined') return 'control';
 
   try {
     const res = await fetch(`${_config.endpoint}/ab/assign`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ experiment, session_id: getSessionId() }),
     });
     if (res.ok) {
       const data = await res.json();
-      const variant: string = data.variant ?? "control";
+      const variant: string = data.variant ?? 'control';
       _abCache[experiment] = variant;
       return variant;
     }
@@ -165,8 +170,8 @@ export async function getVariant(experiment: string): Promise<string> {
     /* fallback to control */
   }
 
-  _abCache[experiment] = "control";
-  return "control";
+  _abCache[experiment] = 'control';
+  return 'control';
 }
 
 // ── Scroll depth tracking ─────────────────────────────────────────────────────
@@ -175,7 +180,7 @@ let _scrollTracked = false;
 let _scrollMilestones = new Set<number>();
 
 export function initScrollTracking(path?: string): () => void {
-  if (typeof window === "undefined" || _scrollTracked) return () => {};
+  if (typeof window === 'undefined' || _scrollTracked) return () => {};
   _scrollTracked = true;
   _scrollMilestones = new Set();
 
@@ -187,7 +192,7 @@ export function initScrollTracking(path?: string): () => void {
     for (const milestone of [25, 50, 75, 90, 100]) {
       if (pct >= milestone && !_scrollMilestones.has(milestone)) {
         _scrollMilestones.add(milestone);
-        void trackEvent("scroll_depth", {
+        void trackEvent('scroll_depth', {
           scroll_depth: milestone,
           path,
         });
@@ -195,9 +200,9 @@ export function initScrollTracking(path?: string): () => void {
     }
   };
 
-  window.addEventListener("scroll", handler, { passive: true });
+  window.addEventListener('scroll', handler, { passive: true });
   return () => {
-    window.removeEventListener("scroll", handler);
+    window.removeEventListener('scroll', handler);
     _scrollTracked = false;
   };
 }
@@ -205,23 +210,23 @@ export function initScrollTracking(path?: string): () => void {
 // ── Time-on-page tracking ─────────────────────────────────────────────────────
 
 export function initTimeOnPage(path?: string): () => void {
-  if (typeof window === "undefined") return () => {};
+  if (typeof window === 'undefined') return () => {};
   const startTime = Date.now();
 
   const reportTime = () => {
     const duration_ms = Date.now() - startTime;
     if (duration_ms > 3000) {
-      void trackEvent("time_on_page", { duration_ms, path });
+      void trackEvent('time_on_page', { duration_ms, path });
     }
   };
 
-  window.addEventListener("beforeunload", reportTime);
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") reportTime();
+  window.addEventListener('beforeunload', reportTime);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') reportTime();
   });
 
   return () => {
-    window.removeEventListener("beforeunload", reportTime);
+    window.removeEventListener('beforeunload', reportTime);
   };
 }
 

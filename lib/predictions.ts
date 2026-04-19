@@ -4,8 +4,8 @@
 // Loads ./data/predictions/ at build time (Node.js context).
 // Exports: getPredictionMetrics(slug), getRegionalOverview()
 
-import { existsSync, readdirSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const PREDICTIONS_DIR = join(process.cwd(), 'data', 'predictions');
 
@@ -109,9 +109,7 @@ function loadIndex(): PredictionIndex | null {
 
 function loadAllPredictions(): Prediction[] {
   if (!existsSync(PREDICTIONS_DIR)) return [];
-  const files = readdirSync(PREDICTIONS_DIR).filter(
-    (f) => f.endsWith('.json') && f !== 'index.json'
-  );
+  const files = readdirSync(PREDICTIONS_DIR).filter((f) => f.endsWith('.json') && f !== 'index.json');
   return files.flatMap((f) => {
     const slug = f.replace('.json', '');
     const pred = loadPrediction(slug);
@@ -153,11 +151,7 @@ export function getRegionalOverview(): RegionalOverview {
   const topic_metrics: TopicMetrics[] = Object.entries(topicMap).map(([topic, tm]) => {
     const avg_confidence = tm.conf.reduce((a, b) => a + b, 0) / (tm.conf.length || 1);
     const trend: 'increasing' | 'decreasing' | 'mixed' =
-      tm.increasing > tm.decreasing * 1.5
-        ? 'increasing'
-        : tm.decreasing > tm.increasing * 1.5
-        ? 'decreasing'
-        : 'mixed';
+      tm.increasing > tm.decreasing * 1.5 ? 'increasing' : tm.decreasing > tm.increasing * 1.5 ? 'decreasing' : 'mixed';
 
     // Average forecast across articles
     const qLen = tm.forecasts[0]?.length ?? 4;
@@ -183,8 +177,8 @@ export function getRegionalOverview(): RegionalOverview {
   for (let i = 0; i < topics.length; i++) {
     for (let j = i + 1; j < topics.length; j++) {
       const key = `${topics[i]}__${topics[j]}`;
-      const tm_i = topicMap[topics[i]];
-      const tm_j = topicMap[topics[j]];
+      const _tm_i = topicMap[topics[i]];
+      const _tm_j = topicMap[topics[j]];
       // Pearson on forecast_mean series
       const f_i = topic_metrics[i].forecast_mean;
       const f_j = topic_metrics[j].forecast_mean;
@@ -197,14 +191,11 @@ export function getRegionalOverview(): RegionalOverview {
       const num = f_i.reduce((s, v, k) => s + (v - mean_i) * (f_j[k] - mean_j), 0);
       const den_i = Math.sqrt(f_i.reduce((s, v) => s + (v - mean_i) ** 2, 0));
       const den_j = Math.sqrt(f_j.reduce((s, v) => s + (v - mean_j) ** 2, 0));
-      cross_signal_correlation[key] =
-        den_i * den_j === 0 ? 0 : Math.round((num / (den_i * den_j)) * 1000) / 1000;
+      cross_signal_correlation[key] = den_i * den_j === 0 ? 0 : Math.round((num / (den_i * den_j)) * 1000) / 1000;
     }
   }
 
-  const high_risk_slugs = predictions
-    .filter((p) => p.aggregate_confidence.label === 'HIGH')
-    .map((p) => p.slug);
+  const high_risk_slugs = predictions.filter((p) => p.aggregate_confidence.label === 'HIGH').map((p) => p.slug);
 
   return {
     total_articles: predictions.length,

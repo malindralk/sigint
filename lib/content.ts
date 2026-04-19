@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import matter from 'gray-matter';
 
 const contentDir = path.join(process.cwd(), 'content');
@@ -38,7 +38,8 @@ export const categories: CategoryMeta[] = [
   {
     id: 'em-sca',
     label: 'EM Side-Channel',
-    description: 'Electromagnetic side-channel analysis — theory, equipment tiers, market analysis, and TEMPEST standards.',
+    description:
+      'Electromagnetic side-channel analysis — theory, equipment tiers, market analysis, and TEMPEST standards.',
     color: 'text-sinha-maroon',
     accent: 'var(--color-water-fortress)',
     icon: '⚡',
@@ -46,7 +47,8 @@ export const categories: CategoryMeta[] = [
   {
     id: 'sigint',
     label: 'SIGINT',
-    description: 'Signals intelligence — academic research, RF fingerprinting, geolocation, and private industry landscape.',
+    description:
+      'Signals intelligence — academic research, RF fingerprinting, geolocation, and private industry landscape.',
     color: 'text-zheng-he',
     accent: 'var(--color-zheng-he)',
     icon: '📡',
@@ -64,9 +66,7 @@ export const categories: CategoryMeta[] = [
 function extractTitle(content: string, filename: string): string {
   const h1 = content.match(/^#\s+(.+)$/m);
   if (h1) return h1[1].trim();
-  return filename
-    .replace(/-/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return filename.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function extractDescription(content: string): string {

@@ -39,7 +39,7 @@ interface GDPRConsentProps {
 export default function GDPRConsent({ locale = 'en' }: GDPRConsentProps) {
   const t = LABELS[locale] ?? LABELS.en;
   const [visible, setVisible] = useState(false);
-  const [decided, setDecided] = useState(false);
+  const [_decided, setDecided] = useState(false);
 
   const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -102,11 +102,17 @@ export default function GDPRConsent({ locale = 'en' }: GDPRConsentProps) {
       }}
     >
       {/* Top accent */}
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
-        background: 'var(--color-temple-gold)',
-        borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '2px',
+          background: 'var(--color-temple-gold)',
+          borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
+        }}
+      />
 
       <div id="consent-heading" className="t-label" style={{ marginBottom: '8px' }}>
         {t.heading}
@@ -121,6 +127,7 @@ export default function GDPRConsent({ locale = 'en' }: GDPRConsentProps) {
 
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
         <button
+          type="button"
           className="btn btn-primary"
           onClick={() => decide('granted')}
           style={{ flex: 1, justifyContent: 'center', minWidth: '140px' }}
@@ -128,6 +135,7 @@ export default function GDPRConsent({ locale = 'en' }: GDPRConsentProps) {
           {t.accept}
         </button>
         <button
+          type="button"
           className="btn btn-ghost"
           onClick={() => decide('declined')}
           style={{ minWidth: '100px' }}

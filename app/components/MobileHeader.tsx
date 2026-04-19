@@ -1,14 +1,15 @@
 'use client';
+
 // MALINDRA PHASE 1
 // MobileHeader.tsx
 // Mobile navigation with locale-aware translated strings
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTheme } from '@/hooks/use-theme';
-import { useAuth, usePermissions } from '@/app/lib/auth/hooks';
+import { useEffect, useState } from 'react';
 import { useLocale } from '@/app/hooks/useLocale';
+import { useAuth, usePermissions } from '@/app/lib/auth/hooks';
+import { useTheme } from '@/hooks/use-theme';
 
 const vizNav = [
   { href: '/graph', key: 'knowledgeGraph' as const },
@@ -56,6 +57,7 @@ const wikiGroups = [
 function HamburgerIcon({ open }: { open: boolean }) {
   return (
     <svg
+      aria-hidden="true"
       width="20"
       height="20"
       viewBox="0 0 20 20"
@@ -83,7 +85,17 @@ function HamburgerIcon({ open }: { open: boolean }) {
 
 function SunIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="4" />
       <line x1="12" y1="2" x2="12" y2="4" />
       <line x1="12" y1="20" x2="12" y2="22" />
@@ -99,7 +111,17 @@ function SunIcon() {
 
 function MoonIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
@@ -108,6 +130,7 @@ function MoonIcon() {
 function ChevronIcon({ open }: { open: boolean }) {
   return (
     <svg
+      aria-hidden="true"
       width="16"
       height="16"
       viewBox="0 0 24 24"
@@ -139,7 +162,7 @@ export default function MobileHeader() {
   // Close drawer on route change
   useEffect(() => {
     setOpen(false);
-  }, [pathname]);
+  }, []);
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -153,8 +176,7 @@ export default function MobileHeader() {
     };
   }, [open]);
 
-  const toggle = (key: string) =>
-    setOpenGroups(prev => ({ ...prev, [key]: !prev[key] }));
+  const toggle = (key: string) => setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
 
   return (
     <>
@@ -171,6 +193,7 @@ export default function MobileHeader() {
 
         <div className="mobile-header-actions">
           <button
+            type="button"
             className="mobile-icon-btn mobile-locale-btn"
             onClick={toggleLocale}
             aria-label={locale === 'en' ? 'Switch to Sinhala — සිංහල' : 'Switch to English'}
@@ -178,6 +201,7 @@ export default function MobileHeader() {
             {locale === 'en' ? 'සි' : 'EN'}
           </button>
           <button
+            type="button"
             className="mobile-icon-btn"
             onClick={toggleTheme}
             aria-label={theme === 'dark' ? nav.lightMode : nav.darkMode}
@@ -185,8 +209,9 @@ export default function MobileHeader() {
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
           <button
+            type="button"
             className="mobile-icon-btn mobile-menu-btn"
-            onClick={() => setOpen(o => !o)}
+            onClick={() => setOpen((o) => !o)}
             aria-label={open ? t.closeMenu : t.openMenu}
             aria-expanded={open}
           >
@@ -203,10 +228,7 @@ export default function MobileHeader() {
       />
 
       {/* Drawer */}
-      <nav
-        className={`mobile-drawer lg:hidden ${open ? 'mobile-drawer-open' : ''}`}
-        aria-label="Navigation"
-      >
+      <nav className={`mobile-drawer lg:hidden ${open ? 'mobile-drawer-open' : ''}`} aria-label="Navigation">
         <div className="mobile-drawer-scroll">
           {/* Analysis section */}
           <div className="mobile-nav-section">
@@ -219,14 +241,18 @@ export default function MobileHeader() {
               className={`mobile-nav-item ${pathname === '/blog' || pathname.startsWith('/blog/') ? 'active' : ''}`}
             >
               <span className="mobile-nav-item-text">{nav.analysis}</span>
-              {(pathname === '/blog' || pathname.startsWith('/blog/')) && <span className="mobile-nav-active-indicator" />}
+              {(pathname === '/blog' || pathname.startsWith('/blog/')) && (
+                <span className="mobile-nav-active-indicator" />
+              )}
             </Link>
             <Link
               href="/archive"
               className={`mobile-nav-item ${pathname === '/archive' || pathname.startsWith('/archive/') ? 'active' : ''}`}
             >
               <span className="mobile-nav-item-text">{nav.archive}</span>
-              {(pathname === '/archive' || pathname.startsWith('/archive/')) && <span className="mobile-nav-active-indicator" />}
+              {(pathname === '/archive' || pathname.startsWith('/archive/')) && (
+                <span className="mobile-nav-active-indicator" />
+              )}
             </Link>
           </div>
 
@@ -238,6 +264,7 @@ export default function MobileHeader() {
           <div className="mobile-nav-group">
             {/* Learning Path */}
             <button
+              type="button"
               className="mobile-nav-item mobile-nav-toggle"
               onClick={() => toggle('learning')}
               aria-expanded={!!openGroups.learning}
@@ -257,9 +284,10 @@ export default function MobileHeader() {
             </div>
 
             {/* Wiki groups */}
-            {wikiGroups.map(group => (
+            {wikiGroups.map((group) => (
               <div key={group.id}>
                 <button
+                  type="button"
                   className="mobile-nav-item mobile-nav-toggle"
                   onClick={() => toggle(group.id)}
                   aria-expanded={!!openGroups[group.id]}
@@ -267,17 +295,15 @@ export default function MobileHeader() {
                   <span className="mobile-nav-item-text">{nav[group.labelKey]}</span>
                   <ChevronIcon open={!!openGroups[group.id]} />
                 </button>
-                <div className={`mobile-nav-subtree-wrapper ${openGroups[group.id] ? 'mobile-nav-subtree-expanded' : ''}`}>
+                <div
+                  className={`mobile-nav-subtree-wrapper ${openGroups[group.id] ? 'mobile-nav-subtree-expanded' : ''}`}
+                >
                   <div className="mobile-nav-subtree">
-                    {group.items.map(item => {
+                    {group.items.map((item) => {
                       const href = `/${group.id}/${item.slug}`;
                       const active = pathname === href || pathname === `${href}/`;
                       return (
-                        <Link
-                          key={item.slug}
-                          href={href}
-                          className={`mobile-nav-subitem ${active ? 'active' : ''}`}
-                        >
+                        <Link key={item.slug} href={href} className={`mobile-nav-subitem ${active ? 'active' : ''}`}>
                           {item.label}
                         </Link>
                       );
@@ -316,52 +342,55 @@ export default function MobileHeader() {
             {nav.account}
           </div>
           <div className="mobile-nav-group">
-            {!isLoading && (isAuthenticated && user ? (
-              <>
-                <Link href="/dashboard" className="mobile-nav-item mobile-nav-user">
-                  <span className="mobile-nav-item-text">{nav.dashboard}</span>
-                  <span className="mobile-nav-user-badge">{user.role}</span>
-                </Link>
-                {hasRole('editor') && (
-                  <Link
-                    href="/dashboard/articles"
-                    className={`mobile-nav-item ${pathname.startsWith('/dashboard/articles') ? 'active' : ''}`}
-                  >
-                    <span className="mobile-nav-item-text">{nav.articles}</span>
+            {!isLoading &&
+              (isAuthenticated && user ? (
+                <>
+                  <Link href="/dashboard" className="mobile-nav-item mobile-nav-user">
+                    <span className="mobile-nav-item-text">{nav.dashboard}</span>
+                    <span className="mobile-nav-user-badge">{user.role}</span>
                   </Link>
-                )}
-                {hasRole('admin') && (
-                  <>
+                  {hasRole('editor') && (
                     <Link
-                      href="/dashboard/users"
-                      className={`mobile-nav-item ${pathname.startsWith('/dashboard/users') ? 'active' : ''}`}
+                      href="/dashboard/articles"
+                      className={`mobile-nav-item ${pathname.startsWith('/dashboard/articles') ? 'active' : ''}`}
                     >
-                      <span className="mobile-nav-item-text">{nav.users}</span>
+                      <span className="mobile-nav-item-text">{nav.articles}</span>
                     </Link>
-                    <Link
-                      href="/dashboard/settings"
-                      className={`mobile-nav-item ${pathname.startsWith('/dashboard/settings') ? 'active' : ''}`}
-                    >
-                      <span className="mobile-nav-item-text">{nav.settings}</span>
-                    </Link>
-                  </>
-                )}
-                <button
-                  className="mobile-nav-item mobile-nav-logout"
-                  onClick={() => logout().then(() => { window.location.href = '/'; })}
-                >
-                  <span className="mobile-nav-item-text">{nav.signOut}</span>
-                </button>
-              </>
-            ) : (
-              <>
+                  )}
+                  {hasRole('admin') && (
+                    <>
+                      <Link
+                        href="/dashboard/users"
+                        className={`mobile-nav-item ${pathname.startsWith('/dashboard/users') ? 'active' : ''}`}
+                      >
+                        <span className="mobile-nav-item-text">{nav.users}</span>
+                      </Link>
+                      <Link
+                        href="/dashboard/settings"
+                        className={`mobile-nav-item ${pathname.startsWith('/dashboard/settings') ? 'active' : ''}`}
+                      >
+                        <span className="mobile-nav-item-text">{nav.settings}</span>
+                      </Link>
+                    </>
+                  )}
+                  <button
+                    type="button"
+                    className="mobile-nav-item mobile-nav-logout"
+                    onClick={() =>
+                      logout().then(() => {
+                        window.location.href = '/';
+                      })
+                    }
+                  >
+                    <span className="mobile-nav-item-text">{nav.signOut}</span>
+                  </button>
+                </>
+              ) : (
                 <Link href="/login" className="mobile-nav-item">
                   <span className="mobile-nav-item-text">{nav.signIn}</span>
                 </Link>
-              </>
-            ))}
+              ))}
           </div>
-
         </div>
       </nav>
     </>

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useAuth, User } from "./context";
+import { type User, useAuth } from './context';
 
 export { useAuth };
 
@@ -12,7 +12,7 @@ export function useUser(): User | null {
 export function usePermissions() {
   const { user } = useAuth();
 
-  const hasRole = (role: "user" | "editor" | "admin"): boolean => {
+  const hasRole = (role: 'user' | 'editor' | 'admin'): boolean => {
     if (!user) return false;
 
     const roleHierarchy = { user: 0, editor: 1, admin: 2 };
@@ -22,9 +22,8 @@ export function usePermissions() {
     return userLevel >= requiredLevel;
   };
 
-  const isAdmin = (): boolean => user?.role === "admin";
-  const isEditor = (): boolean =>
-    user?.role === "editor" || user?.role === "admin";
+  const isAdmin = (): boolean => user?.role === 'admin';
+  const isEditor = (): boolean => user?.role === 'editor' || user?.role === 'admin';
 
   return {
     hasRole,

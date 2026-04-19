@@ -1,16 +1,17 @@
 """Admin API routes."""
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import CurrentUser, get_db, require_roles
 from app.models.article import Article
+from app.models.session import Session
 from app.models.settings import SiteSettings
 from app.models.user import User
 
@@ -53,6 +54,35 @@ def require_admin():
 def require_editor():
     """Require editor or admin role."""
     return require_roles("editor", "admin")
+
+
+# Stats endpoint
+@router.get("/stats")
+async def get_stats(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_admin()),
+):
+    """Get dashboard overview statistics."""
+    # Article count
+    article_result = await db.execute(select(func.count(Article.id)))
+    article_count = article_result.scalar() or 0
+
+    # User count
+    user_result = await db.execute(select(func.count(User.id)))
+    user_count = user_result.scalar() or 0
+
+    # Active sessions (not expired)
+    now = datetime.now(timezone.utc)
+    session_result = await db.execute(
+        select(func.count(Session.id)).where(Session.expires_at > now)
+    )
+    active_sessions = session_result.scalar() or 0
+
+    return {
+        "article_count": article_count,
+        "user_count": user_count,
+        "active_sessions": active_sessions,
+    }
 
 
 # User management routes

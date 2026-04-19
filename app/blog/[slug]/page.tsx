@@ -7,12 +7,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getAllSlugs, getArticleContent, getBlogData } from '@/lib/blog-data';
-import { markdownToHtml, extractToc } from '@/lib/markdown';
-import { findRelatedSignals, extractEntities, type Signal } from '@/lib/sigint';
 import ReadingProgress from '@/app/blog/components/ReadingProgress';
 import TableOfContents from '@/app/blog/components/TableOfContents';
 import SigintCrossRef from '@/components/SigintCrossRef';
+import { getAllSlugs, getArticleContent, getBlogData } from '@/lib/blog-data';
+import { extractToc, markdownToHtml } from '@/lib/markdown';
+import { extractEntities, findRelatedSignals, type Signal } from '@/lib/sigint';
 
 // ── Static generation ─────────────────────────────────────────────────────────
 
@@ -21,11 +21,7 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticleContent(slug);
   if (!article) return { title: 'Not Found' };
@@ -67,11 +63,7 @@ export async function generateMetadata({
 
 // ── Page component ────────────────────────────────────────────────────────────
 
-export default async function ArticlePage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = await getArticleContent(slug);
   if (!article) notFound();
@@ -110,9 +102,7 @@ export default async function ArticlePage({
 
   const related = findRelatedSignals(currentSignal, allSignals, 3);
 
-  const categoryLabel = article.category
-    .replace(/-/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const categoryLabel = article.category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
     <>
@@ -147,11 +137,7 @@ export default async function ArticlePage({
             <span className="t-muted" style={{ fontSize: '13px' }}>
               /
             </span>
-            <Link
-              href={`/archive/category/${article.category}`}
-              className="t-muted"
-              style={{ fontSize: '13px' }}
-            >
+            <Link href={`/archive/category/${article.category}`} className="t-muted" style={{ fontSize: '13px' }}>
               {categoryLabel}
             </Link>
             <span className="t-muted" style={{ fontSize: '13px' }}>
@@ -167,10 +153,7 @@ export default async function ArticlePage({
             <div className="t-eyebrow">SIGINT ANALYSIS</div>
             <h1 className="article-hero-title">{article.title}</h1>
             {article.description && (
-              <p
-                className="t-body"
-                style={{ maxWidth: '640px', marginTop: 'var(--spacing-sm)' }}
-              >
+              <p className="t-body" style={{ maxWidth: '640px', marginTop: 'var(--spacing-sm)' }}>
                 {article.description}
               </p>
             )}
@@ -195,9 +178,7 @@ export default async function ArticlePage({
                     {article.tags.slice(0, 4).map((tag) => (
                       <Link
                         key={tag}
-                        href={`/archive/tag/${encodeURIComponent(
-                          tag.toLowerCase().replace(/\s+/g, '-'),
-                        )}`}
+                        href={`/archive/tag/${encodeURIComponent(tag.toLowerCase().replace(/\s+/g, '-'))}`}
                         className="badge badge-hold"
                         style={{ textDecoration: 'none' }}
                       >
@@ -214,6 +195,7 @@ export default async function ArticlePage({
           <div
             className="prose"
             style={{ marginTop: 'var(--spacing-2xl)' }}
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized markdown output
             dangerouslySetInnerHTML={{ __html: html }}
           />
 
@@ -221,10 +203,14 @@ export default async function ArticlePage({
           {related.length > 0 && <SigintCrossRef signals={related} locale="en" />}
 
           {/* Footer heritage tag + prev/next navigation */}
-          <footer style={{ marginTop: 'var(--spacing-3xl)', paddingTop: 'var(--spacing-lg)', borderTop: '1px solid var(--color-border-default)' }}>
-            <div className="t-heritage">
-              Malindra · මලින්ද්‍ර
-            </div>
+          <footer
+            style={{
+              marginTop: 'var(--spacing-3xl)',
+              paddingTop: 'var(--spacing-lg)',
+              borderTop: '1px solid var(--color-border-default)',
+            }}
+          >
+            <div className="t-heritage">Malindra · මලින්ද්‍ර</div>
             <div
               style={{
                 display: 'flex',
@@ -251,13 +237,17 @@ export default async function ArticlePage({
                     <span className="article-nav-label">&larr; Previous</span>
                     <span className="article-nav-title">{prevArticle.title}</span>
                   </Link>
-                ) : <div />}
+                ) : (
+                  <div />
+                )}
                 {nextArticle ? (
                   <Link href={`/blog/${nextArticle.slug}`} className="article-nav-link article-nav-link--next">
                     <span className="article-nav-label">Next &rarr;</span>
                     <span className="article-nav-title">{nextArticle.title}</span>
                   </Link>
-                ) : <div />}
+                ) : (
+                  <div />
+                )}
               </div>
             )}
           </footer>

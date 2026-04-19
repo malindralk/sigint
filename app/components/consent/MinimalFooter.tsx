@@ -80,6 +80,7 @@ export default function MinimalFooter() {
           </Link>
           {/* Reset consent link - allows users to re-open the dialog */}
           <button
+            type="button"
             onClick={resetConsent}
             style={{
               fontFamily: 'var(--font-ui)',

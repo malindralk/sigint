@@ -8,7 +8,7 @@ from typing import Any
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from jose import JWTError, jwt
+import jwt
 
 from app.core.config import get_settings
 
@@ -115,7 +115,7 @@ def decode_token(token: str) -> dict[str, Any] | None:
             algorithms=[settings.jwt_algorithm],
         )
         return payload
-    except JWTError:
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
         return None
 
 

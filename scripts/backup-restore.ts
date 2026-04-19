@@ -6,11 +6,9 @@
 //   node --experimental-vm-modules scripts/backup-restore.mjs backup
 //   node --experimental-vm-modules scripts/backup-restore.mjs restore ./backups/2026-04-19T12-00-00.tar.gz
 
-import { createWriteStream, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
-import { copyFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
-import { join, basename, dirname, relative } from 'path';
-import { execSync } from 'child_process';
-import { tmpdir } from 'os';
+import { execSync } from 'node:child_process';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { basename, join } from 'node:path';
 
 // This script is designed to be called as: node scripts/backup-restore.mjs [backup|restore] [archivePath]
 
@@ -62,11 +60,7 @@ function backup(): void {
       sources_included: sources,
       size_bytes: size,
     };
-    writeFileSync(
-      join(BACKUPS_DIR, `${archiveName}.manifest.json`),
-      JSON.stringify(manifest, null, 2),
-      'utf-8'
-    );
+    writeFileSync(join(BACKUPS_DIR, `${archiveName}.manifest.json`), JSON.stringify(manifest, null, 2), 'utf-8');
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
     console.error(`[backup] Failed to create archive: ${msg}`);
@@ -76,11 +70,7 @@ function backup(): void {
       note: 'tar unavailable — metadata-only backup',
       sources: sources,
     };
-    writeFileSync(
-      join(BACKUPS_DIR, `malindra-meta-${ts}.json`),
-      JSON.stringify(meta, null, 2),
-      'utf-8'
-    );
+    writeFileSync(join(BACKUPS_DIR, `malindra-meta-${ts}.json`), JSON.stringify(meta, null, 2), 'utf-8');
     console.log(`[backup] Metadata-only backup written to backups/malindra-meta-${ts}.json`);
   }
 

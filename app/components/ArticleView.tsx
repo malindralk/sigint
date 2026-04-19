@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const MarkdownRenderer = dynamic(() => import('./MarkdownRenderer'), { ssr: false });
 
@@ -68,6 +68,7 @@ function parseLinkedArticles(content: string, category: string): LinkedArticle[]
   const links: LinkedArticle[] = [];
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   let m: RegExpExecArray | null;
+  // biome-ignore lint/suspicious/noAssignInExpressions: standard regex exec loop pattern
   while ((m = linkRegex.exec(navMatch[1])) !== null) {
     const label = m[1];
     let href = m[2];
@@ -78,14 +79,22 @@ function parseLinkedArticles(content: string, category: string): LinkedArticle[]
     // Fix cross-category links (em-sca articles from sigint category)
     if (!href.startsWith('http') && !href.startsWith('#')) {
       // Check if the slug exists in a different category by checking known prefixes
-      if (href.includes('/em-sca-') || href.includes('/electromagnetic-') || href.includes('/tempest-') || href.includes('/pqc-em-sca') || href.includes('/entry-level-') || href.includes('/research-grade-') || href.includes('/professional-em-')) {
+      if (
+        href.includes('/em-sca-') ||
+        href.includes('/electromagnetic-') ||
+        href.includes('/tempest-') ||
+        href.includes('/pqc-em-sca') ||
+        href.includes('/entry-level-') ||
+        href.includes('/research-grade-') ||
+        href.includes('/professional-em-')
+      ) {
         if (!href.startsWith('/em-sca/')) {
-          href = '/em-sca/' + href.split('/').pop();
+          href = `/em-sca/${href.split('/').pop()}`;
         }
       }
       if (href.includes('/coursera-')) {
         if (!href.startsWith('/learning/')) {
-          href = '/learning/' + href.split('/').pop();
+          href = `/learning/${href.split('/').pop()}`;
         }
       }
     }
@@ -97,13 +106,18 @@ function parseLinkedArticles(content: string, category: string): LinkedArticle[]
 /* Strip the preamble metadata (h1, date line, wiki nav, first ---) from content
    since the hero header now shows this info */
 function stripPreamble(content: string): string {
-  let lines = content.split('\n');
+  const lines = content.split('\n');
   let startIdx = 0;
 
   // Skip leading # heading
   while (startIdx < lines.length && (lines[startIdx].trim() === '' || lines[startIdx].startsWith('# '))) startIdx++;
   // Skip date/source italic lines
-  while (startIdx < lines.length && (lines[startIdx].trim().startsWith('*') && !lines[startIdx].trim().startsWith('**Wiki'))) startIdx++;
+  while (
+    startIdx < lines.length &&
+    lines[startIdx].trim().startsWith('*') &&
+    !lines[startIdx].trim().startsWith('**Wiki')
+  )
+    startIdx++;
   // Skip blank lines
   while (startIdx < lines.length && lines[startIdx].trim() === '') startIdx++;
   // Skip wiki navigation line
@@ -121,64 +135,152 @@ function stripPreamble(content: string): string {
 /* ── Icons ───────────────────────────────────────────────── */
 function FocusIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
     </svg>
   );
 }
 function CloseIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
 }
 function SunIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1" y1="12" x2="3" y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
     </svg>
   );
 }
 function MoonIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
 }
 function BookmarkIcon({ filled }: { filled: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill={filled ? 'currentColor' : 'none'}
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
     </svg>
   );
 }
 function ShareIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+      <polyline points="16 6 12 2 8 6" />
+      <line x1="12" y1="2" x2="12" y2="15" />
     </svg>
   );
 }
 function ChevronLeftIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="15 18 9 12 15 6" />
     </svg>
   );
 }
 function ChevronRightIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="9 18 15 12 9 6" />
     </svg>
   );
 }
 function ListIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="8" y1="6" x2="21" y2="6" />
+      <line x1="8" y1="12" x2="21" y2="12" />
+      <line x1="8" y1="18" x2="21" y2="18" />
+      <line x1="3" y1="6" x2="3.01" y2="6" />
+      <line x1="3" y1="12" x2="3.01" y2="12" />
+      <line x1="3" y1="18" x2="3.01" y2="18" />
     </svg>
   );
 }
@@ -186,18 +288,34 @@ function ListIcon() {
 /* ── Bookmark persistence ────────────────────────────────── */
 function getBookmarks(): string[] {
   if (typeof window === 'undefined') return [];
-  try { return JSON.parse(localStorage.getItem('malindra-bookmarks') || '[]'); } catch { return []; }
+  try {
+    return JSON.parse(localStorage.getItem('malindra-bookmarks') || '[]');
+  } catch {
+    return [];
+  }
 }
 function toggleBookmarkStorage(path: string): boolean {
   const bm = getBookmarks();
   const idx = bm.indexOf(path);
-  if (idx >= 0) { bm.splice(idx, 1); } else { bm.push(path); }
+  if (idx >= 0) {
+    bm.splice(idx, 1);
+  } else {
+    bm.push(path);
+  }
   localStorage.setItem('malindra-bookmarks', JSON.stringify(bm));
   return idx < 0; // returns new state
 }
 
 /* ── Component ───────────────────────────────────────────── */
-export default function ArticleView({ title, content, category, categoryLabel, categoryAccent, prevArticle, nextArticle }: Props) {
+export default function ArticleView({
+  title,
+  content,
+  category,
+  categoryLabel,
+  categoryAccent,
+  prevArticle,
+  nextArticle,
+}: Props) {
   const updatedAt = useMemo(() => parseUpdatedDate(content), [content]);
   const readingTime = useMemo(() => estimateReadingTime(content), [content]);
   const linkedArticles = useMemo(() => parseLinkedArticles(content, category), [content, category]);
@@ -265,8 +383,21 @@ export default function ArticleView({ title, content, category, categoryLabel, c
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
         {/* Breadcrumb */}
-        <div className="t-muted" style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontFamily: 'var(--font-ui)', marginBottom: '20px' }}>
-          <Link href="/" className="hover:opacity-80" style={{ color: 'var(--color-zheng-he)' }}>home</Link>
+        <div
+          className="t-muted"
+          style={{
+            fontSize: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flexWrap: 'wrap',
+            fontFamily: 'var(--font-ui)',
+            marginBottom: '20px',
+          }}
+        >
+          <Link href="/" className="hover:opacity-80" style={{ color: 'var(--color-zheng-he)' }}>
+            home
+          </Link>
           <span>/</span>
           <Link href={`/${category}`} className="hover:opacity-80" style={{ color: categoryAccent }}>
             {categoryLabel}
@@ -276,7 +407,14 @@ export default function ArticleView({ title, content, category, categoryLabel, c
         {/* Hero header */}
         <div className="article-hero">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span className="article-badge" style={{ background: `color-mix(in srgb, ${categoryAccent} 15%, transparent)`, color: categoryAccent, border: `1px solid color-mix(in srgb, ${categoryAccent} 25%, transparent)` }}>
+            <span
+              className="article-badge"
+              style={{
+                background: `color-mix(in srgb, ${categoryAccent} 15%, transparent)`,
+                color: categoryAccent,
+                border: `1px solid color-mix(in srgb, ${categoryAccent} 25%, transparent)`,
+              }}
+            >
               {categoryLabel}
             </span>
             {updatedAt && (
@@ -294,16 +432,27 @@ export default function ArticleView({ title, content, category, categoryLabel, c
 
           {/* Toolbar */}
           <div className="article-toolbar">
-            <button className="toolbar-btn" onClick={() => setFocusMode(true)} title="Focus mode">
+            <button type="button" className="toolbar-btn" onClick={() => setFocusMode(true)} title="Focus mode">
               <FocusIcon /> Focus
             </button>
-            <button className="toolbar-btn" onClick={handleBookmark} data-active={isBookmarked} title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}>
+            <button
+              type="button"
+              className="toolbar-btn"
+              onClick={handleBookmark}
+              data-active={isBookmarked}
+              title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+            >
               <BookmarkIcon filled={isBookmarked} /> {isBookmarked ? 'Saved' : 'Save'}
             </button>
-            <button className="toolbar-btn" onClick={handleShare} title="Copy link">
+            <button type="button" className="toolbar-btn" onClick={handleShare} title="Copy link">
               <ShareIcon /> {shareMsg || 'Share'}
             </button>
-            <button className="toolbar-btn" onClick={() => setShowSectionPicker(p => !p)} title="Jump to section">
+            <button
+              type="button"
+              className="toolbar-btn"
+              onClick={() => setShowSectionPicker((p) => !p)}
+              title="Jump to section"
+            >
               <ListIcon /> Sections
             </button>
           </div>
@@ -313,7 +462,13 @@ export default function ArticleView({ title, content, category, categoryLabel, c
         {showSectionPicker && (
           <div className="section-picker">
             {sections.map((s, i) => (
-              <button key={i} className="section-picker-chip" data-active={i === currentSection} onClick={() => goTo(i)}>
+              <button
+                type="button"
+                key={`section-${s.title}`}
+                className="section-picker-chip"
+                data-active={i === currentSection}
+                onClick={() => goTo(i)}
+              >
                 {s.title}
               </button>
             ))}
@@ -323,8 +478,8 @@ export default function ArticleView({ title, content, category, categoryLabel, c
         {/* Interconnects */}
         {linkedArticles.length > 0 && (
           <div className="article-links">
-            {linkedArticles.map((link, i) => (
-              <Link key={i} href={link.href} className="article-link-chip">
+            {linkedArticles.map((link) => (
+              <Link key={link.href} href={link.href} className="article-link-chip">
                 {link.label}
               </Link>
             ))}
@@ -340,13 +495,23 @@ export default function ArticleView({ title, content, category, categoryLabel, c
 
         {/* Section navigation */}
         <div className="section-nav">
-          <button className="section-nav-btn" disabled={currentSection === 0} onClick={() => goTo(currentSection - 1)}>
+          <button
+            type="button"
+            className="section-nav-btn"
+            disabled={currentSection === 0}
+            onClick={() => goTo(currentSection - 1)}
+          >
             <ChevronLeftIcon /> Prev
           </button>
           <span className="section-counter">
             {currentSection + 1} / {sections.length}
           </span>
-          <button className="section-nav-btn" disabled={currentSection === sections.length - 1} onClick={() => goTo(currentSection + 1)}>
+          <button
+            type="button"
+            className="section-nav-btn"
+            disabled={currentSection === sections.length - 1}
+            onClick={() => goTo(currentSection + 1)}
+          >
             Next <ChevronRightIcon />
           </button>
         </div>
@@ -359,13 +524,17 @@ export default function ArticleView({ title, content, category, categoryLabel, c
                 <span className="article-nav-label">&larr; Previous</span>
                 <span className="article-nav-title">{prevArticle.title}</span>
               </Link>
-            ) : <div />}
+            ) : (
+              <div />
+            )}
             {nextArticle ? (
               <Link href={`/${category}/${nextArticle.slug}`} className="article-nav-link article-nav-link--next">
                 <span className="article-nav-label">Next &rarr;</span>
                 <span className="article-nav-title">{nextArticle.title}</span>
               </Link>
-            ) : <div />}
+            ) : (
+              <div />
+            )}
           </div>
         )}
       </div>
@@ -375,7 +544,13 @@ export default function ArticleView({ title, content, category, categoryLabel, c
         <div className="focus-overlay" data-mode={focusTheme}>
           <div className="focus-topbar">
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <button className="toolbar-btn" onClick={() => setFocusMode(false)} title="Exit focus mode" style={{ border: 'none', padding: '6px' }}>
+              <button
+                type="button"
+                className="toolbar-btn"
+                onClick={() => setFocusMode(false)}
+                title="Exit focus mode"
+                style={{ border: 'none', padding: '6px' }}
+              >
                 <CloseIcon />
               </button>
               <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 500, opacity: 0.7 }}>
@@ -383,10 +558,23 @@ export default function ArticleView({ title, content, category, categoryLabel, c
               </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <button className="toolbar-btn" onClick={handleBookmark} data-active={isBookmarked} style={{ border: 'none', padding: '6px' }} title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}>
+              <button
+                type="button"
+                className="toolbar-btn"
+                onClick={handleBookmark}
+                data-active={isBookmarked}
+                style={{ border: 'none', padding: '6px' }}
+                title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+              >
                 <BookmarkIcon filled={isBookmarked} />
               </button>
-              <button className="toolbar-btn" onClick={() => setFocusTheme(t => t === 'dark' ? 'light' : 'dark')} style={{ border: 'none', padding: '6px' }} title="Toggle reading theme">
+              <button
+                type="button"
+                className="toolbar-btn"
+                onClick={() => setFocusTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+                style={{ border: 'none', padding: '6px' }}
+                title="Toggle reading theme"
+              >
                 {focusTheme === 'dark' ? <SunIcon /> : <MoonIcon />}
               </button>
               <span className="section-counter" style={{ marginLeft: '4px' }}>
@@ -397,30 +585,60 @@ export default function ArticleView({ title, content, category, categoryLabel, c
 
           <div className="focus-body">
             <div className="prose">
-              {currentSectionData && (
-                <MarkdownRenderer content={currentSectionData.content} category={category} />
-              )}
+              {currentSectionData && <MarkdownRenderer content={currentSectionData.content} category={category} />}
             </div>
           </div>
 
           <div className="focus-nav">
-            <button className="section-nav-btn" disabled={currentSection === 0} onClick={() => goTo(currentSection - 1)}>
+            <button
+              type="button"
+              className="section-nav-btn"
+              disabled={currentSection === 0}
+              onClick={() => goTo(currentSection - 1)}
+            >
               <ChevronLeftIcon /> Prev
             </button>
-            <button className="section-nav-btn" onClick={() => setShowSectionPicker(p => !p)}>
+            <button type="button" className="section-nav-btn" onClick={() => setShowSectionPicker((p) => !p)}>
               <ListIcon /> {sections[currentSection]?.title}
             </button>
-            <button className="section-nav-btn" disabled={currentSection === sections.length - 1} onClick={() => goTo(currentSection + 1)}>
+            <button
+              type="button"
+              className="section-nav-btn"
+              disabled={currentSection === sections.length - 1}
+              onClick={() => goTo(currentSection + 1)}
+            >
               Next <ChevronRightIcon />
             </button>
           </div>
 
           {/* Section picker in focus mode */}
           {showSectionPicker && (
-            <div style={{ position: 'fixed', bottom: '56px', left: '50%', transform: 'translateX(-50%)', zIndex: 10001, maxWidth: '600px', width: '90vw', maxHeight: '50vh', overflowY: 'auto', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--theme-border, var(--color-border-default))', background: focusTheme === 'dark' ? 'var(--color-manuscript)' : 'var(--theme-bg-elevated)' }}>
+            <div
+              style={{
+                position: 'fixed',
+                bottom: '56px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 10001,
+                maxWidth: '600px',
+                width: '90vw',
+                maxHeight: '50vh',
+                overflowY: 'auto',
+                padding: '12px',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--theme-border, var(--color-border-default))',
+                background: focusTheme === 'dark' ? 'var(--color-manuscript)' : 'var(--theme-bg-elevated)',
+              }}
+            >
               <div className="section-picker">
                 {sections.map((s, i) => (
-                  <button key={i} className="section-picker-chip" data-active={i === currentSection} onClick={() => goTo(i)}>
+                  <button
+                    type="button"
+                    key={`focus-section-${s.title}`}
+                    className="section-picker-chip"
+                    data-active={i === currentSection}
+                    onClick={() => goTo(i)}
+                  >
                     {s.title}
                   </button>
                 ))}

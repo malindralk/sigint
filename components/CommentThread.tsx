@@ -1,13 +1,14 @@
 'use client';
+
 // MALINDRA PHASE 3
 // components/CommentThread.tsx
 // Static-compatible comment submission + display.
 // Comments are fetched at build time; new comments POST to FastAPI and show
 // a pending state until next rebuild approves them.
 
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { detectLocale } from '@/lib/i18n';
-import { usePathname } from 'next/navigation';
 
 const LABELS = {
   en: {
@@ -52,7 +53,7 @@ export default function CommentThread({ slug, initialComments = [] }: CommentThr
   const locale = detectLocale(pathname) as 'en' | 'si';
   const t = LABELS[locale] ?? LABELS.en;
 
-  const [comments, setComments] = useState<Comment[]>(initialComments);
+  const [comments, _setComments] = useState<Comment[]>(initialComments);
   const [author, setAuthor] = useState('');
   const [body, setBody] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'pending' | 'error'>('idle');
@@ -81,32 +82,68 @@ export default function CommentThread({ slug, initialComments = [] }: CommentThr
   function formatDate(iso: string) {
     try {
       return new Date(iso).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
-    } catch { return iso.slice(0, 10); }
+    } catch {
+      return iso.slice(0, 10);
+    }
   }
 
   return (
     <section style={{ marginTop: 'var(--spacing-2xl)' }}>
       <div style={{ borderTop: '1px solid var(--color-border-default)', paddingTop: 'var(--spacing-xl)' }}>
-        <div className="t-label" style={{ marginBottom: 'var(--spacing-lg)' }}>{t.heading}</div>
+        <div className="t-label" style={{ marginBottom: 'var(--spacing-lg)' }}>
+          {t.heading}
+        </div>
 
         {/* Existing comments */}
         {comments.length === 0 ? (
-          <p className="t-muted" style={{ marginBottom: 'var(--spacing-xl)' }}>{t.noComments}</p>
+          <p className="t-muted" style={{ marginBottom: 'var(--spacing-xl)' }}>
+            {t.noComments}
+          </p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--spacing-md)',
+              marginBottom: 'var(--spacing-xl)',
+            }}
+          >
             {comments.map((c) => (
               <div
                 key={c.id}
                 className="card"
                 style={{ padding: '16px 20px', borderLeft: '2px solid var(--color-sinha-maroon-20)' }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 600, color: 'var(--color-parchment)' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      color: 'var(--color-parchment)',
+                    }}
+                  >
                     {c.author}
                   </span>
-                  <span className="t-muted" style={{ fontSize: '11px' }}>{formatDate(c.createdAt)}</span>
+                  <span className="t-muted" style={{ fontSize: '11px' }}>
+                    {formatDate(c.createdAt)}
+                  </span>
                 </div>
-                <p style={{ fontFamily: 'var(--font-ui)', fontSize: '14px', lineHeight: 1.65, color: 'var(--color-parchment)' }}>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: '14px',
+                    lineHeight: 1.65,
+                    color: 'var(--color-parchment)',
+                  }}
+                >
                   {c.body}
                 </p>
               </div>
@@ -142,15 +179,23 @@ export default function CommentThread({ slug, initialComments = [] }: CommentThr
                 required
                 style={{ resize: 'vertical', minHeight: '96px', fontSize: '14px', paddingBottom: '28px' }}
               />
-              <span className="t-muted" style={{
-                position: 'absolute', bottom: '8px', right: '12px',
-                fontSize: '11px', pointerEvents: 'none',
-              }}>
+              <span
+                className="t-muted"
+                style={{
+                  position: 'absolute',
+                  bottom: '8px',
+                  right: '12px',
+                  fontSize: '11px',
+                  pointerEvents: 'none',
+                }}
+              >
                 {t.charCount(body.length)}
               </span>
             </div>
             {status === 'error' && (
-              <p className="t-muted" style={{ color: 'var(--color-war-banner)', fontSize: '12px' }}>{t.error}</p>
+              <p className="t-muted" style={{ color: 'var(--color-war-banner)', fontSize: '12px' }}>
+                {t.error}
+              </p>
             )}
             <button
               type="submit"

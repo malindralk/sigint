@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { Locale } from '@/lib/i18n';
 import { getUI } from '@/lib/i18n';
 
@@ -20,7 +20,7 @@ type Status = 'idle' | 'loading' | 'success' | 'error';
 const TOPIC_IDS = ['debt', 'digital', 'tourism', 'geopolitics', 'energy'] as const;
 type TopicId = (typeof TOPIC_IDS)[number];
 
-const TOPIC_ACCENT: Record<TopicId, string> = {
+const _TOPIC_ACCENT: Record<TopicId, string> = {
   debt: 'card-accent-gold',
   digital: 'card-accent-blue',
   tourism: 'card-accent-green',
@@ -40,9 +40,7 @@ export default function NewsletterForm({ locale = 'en' }: NewsletterFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
   function toggleTopic(id: TopicId) {
-    setTopics((prev) =>
-      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id],
-    );
+    setTopics((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]));
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -73,9 +71,7 @@ export default function NewsletterForm({ locale = 'en' }: NewsletterFormProps) {
       } else {
         const body = await res.json().catch(() => ({}));
         setStatus('error');
-        setErrorMessage(
-          (body as { detail?: string }).detail ?? t.subscribeError,
-        );
+        setErrorMessage((body as { detail?: string }).detail ?? t.subscribeError);
       }
     } catch {
       setStatus('error');
@@ -84,10 +80,7 @@ export default function NewsletterForm({ locale = 'en' }: NewsletterFormProps) {
   }
 
   return (
-    <div
-      className="card"
-      style={{ maxWidth: '560px', padding: 'var(--spacing-xl)' }}
-    >
+    <div className="card" style={{ maxWidth: '560px', padding: 'var(--spacing-xl)' }}>
       <div className="card-accent card-accent-maroon" />
 
       <div className="t-eyebrow" style={{ marginBottom: 'var(--spacing-sm)' }}>
@@ -120,12 +113,7 @@ export default function NewsletterForm({ locale = 'en' }: NewsletterFormProps) {
       {status === 'error' && (
         <div className="alert alert-danger" style={{ marginBottom: 'var(--spacing-md)' }}>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path
-              d="M8 5v4M8 11v.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
+            <path d="M8 5v4M8 11v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1" />
           </svg>
           {errorMessage}
@@ -164,10 +152,7 @@ export default function NewsletterForm({ locale = 'en' }: NewsletterFormProps) {
 
         {/* Topic segmentation */}
         <div>
-          <div
-            className="t-eyebrow"
-            style={{ marginBottom: 'var(--spacing-sm)', fontSize: '11px' }}
-          >
+          <div className="t-eyebrow" style={{ marginBottom: 'var(--spacing-sm)', fontSize: '11px' }}>
             {t.topicsLabel}
           </div>
           <div
@@ -189,9 +174,7 @@ export default function NewsletterForm({ locale = 'en' }: NewsletterFormProps) {
                     cursor: 'pointer',
                     padding: '4px 10px',
                     borderRadius: 'var(--radius-sm)',
-                    border: selected
-                      ? '1px solid var(--color-sinha-maroon)'
-                      : '1px solid var(--color-border-default)',
+                    border: selected ? '1px solid var(--color-sinha-maroon)' : '1px solid var(--color-border-default)',
                     background: selected
                       ? 'color-mix(in srgb, var(--color-sinha-maroon) 10%, transparent)'
                       : 'transparent',
@@ -211,9 +194,7 @@ export default function NewsletterForm({ locale = 'en' }: NewsletterFormProps) {
                       height: '6px',
                       borderRadius: '50%',
                       flexShrink: 0,
-                      background: selected
-                        ? 'var(--color-sinha-maroon)'
-                        : 'var(--color-warm-stone)',
+                      background: selected ? 'var(--color-sinha-maroon)' : 'var(--color-warm-stone)',
                       transition: 'background 150ms ease',
                     }}
                   />

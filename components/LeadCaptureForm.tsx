@@ -1,16 +1,17 @@
 'use client';
+
 // MALINDRA PHASE 3
 // components/LeadCaptureForm.tsx
 // Full lead capture with name, email, org, role, topics, GDPR consent.
 // POSTs to FastAPI /api/leads/capture.
 // Sinhala/English parity with t-label, t-sinhala-logo, input classes.
 
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { detectLocale } from '@/lib/i18n';
-import { usePathname } from 'next/navigation';
 
 const TOPICS = ['debt', 'digital', 'tourism', 'geopolitics', 'energy'] as const;
-type Topic = typeof TOPICS[number];
+type Topic = (typeof TOPICS)[number];
 
 const ROLES = ['analyst', 'journalist', 'researcher', 'policymaker', 'investor', 'student', 'other'] as const;
 
@@ -31,8 +32,22 @@ const LABELS = {
     submitting: 'Subscribing…',
     success: 'Confirmed. The signal will reach you.',
     error: 'Subscription failed. Please try again.',
-    topicNames: { debt: 'Debt Restructuring', digital: 'Digital Policy', tourism: 'Tourism', geopolitics: 'Geopolitics', energy: 'Renewable Energy' },
-    roleNames: { analyst: 'Analyst', journalist: 'Journalist', researcher: 'Researcher', policymaker: 'Policymaker', investor: 'Investor', student: 'Student', other: 'Other' },
+    topicNames: {
+      debt: 'Debt Restructuring',
+      digital: 'Digital Policy',
+      tourism: 'Tourism',
+      geopolitics: 'Geopolitics',
+      energy: 'Renewable Energy',
+    },
+    roleNames: {
+      analyst: 'Analyst',
+      journalist: 'Journalist',
+      researcher: 'Researcher',
+      policymaker: 'Policymaker',
+      investor: 'Investor',
+      student: 'Student',
+      other: 'Other',
+    },
   },
   si: {
     heading: 'බුද්ධිය දායකත්වය',
@@ -50,8 +65,22 @@ const LABELS = {
     submitting: 'සලකා බලමින්…',
     success: 'තහවුරු කෙරිණ. සංඥාව ඔබ වෙත ළඟා වේ.',
     error: 'දායකත්වය අසාර්ථක විය. නැවත උත්සාහ කරන්න.',
-    topicNames: { debt: 'ණය ප්‍රතිව්‍යූහගත', digital: 'ඩිජිටල් ප්‍රතිපත්ති', tourism: 'සංචාරක', geopolitics: 'භූ-දේශපාලන', energy: 'බලශක්ති' },
-    roleNames: { analyst: 'විශ්ලේෂක', journalist: 'මාධ්‍යවේදී', researcher: 'පර්යේෂක', policymaker: 'ප්‍රතිපත්ති立案ිදේශක', investor: 'ආයෝජක', student: 'ශිෂ්‍ය', other: 'වෙනත්' },
+    topicNames: {
+      debt: 'ණය ප්‍රතිව්‍යූහගත',
+      digital: 'ඩිජිටල් ප්‍රතිපත්ති',
+      tourism: 'සංචාරක',
+      geopolitics: 'භූ-දේශපාලන',
+      energy: 'බලශක්ති',
+    },
+    roleNames: {
+      analyst: 'විශ්ලේෂක',
+      journalist: 'මාධ්‍යවේදී',
+      researcher: 'පර්යේෂක',
+      policymaker: 'ප්‍රතිපත්ති立案ිදේශක',
+      investor: 'ආයෝජක',
+      student: 'ශිෂ්‍ය',
+      other: 'වෙනත්',
+    },
   },
 };
 
@@ -71,7 +100,7 @@ export default function LeadCaptureForm() {
   const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
   function toggleTopic(topic: Topic) {
-    setTopics(prev => {
+    setTopics((prev) => {
       const next = new Set(prev);
       if (next.has(topic)) next.delete(topic);
       else next.add(topic);
@@ -111,7 +140,9 @@ export default function LeadCaptureForm() {
         <div className="t-sinhala-logo" style={{ fontSize: '28px', marginBottom: '12px' }}>
           {'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}
         </div>
-        <p className="t-body" style={{ marginBottom: '8px' }}>{t.success}</p>
+        <p className="t-body" style={{ marginBottom: '8px' }}>
+          {t.success}
+        </p>
         <p className="t-heritage">{locale === 'en' ? 'Malindra · මලින්ද්‍ර' : 'මලින්ද්‍ර'}</p>
       </div>
     );
@@ -131,31 +162,67 @@ export default function LeadCaptureForm() {
 
       {/* Name */}
       <div style={{ marginBottom: '12px' }}>
-        <label className="input-label">{t.nameLabel}</label>
-        <input className="input" type="text" placeholder={t.namePlaceholder} value={name}
-          onChange={e => setName(e.target.value)} maxLength={120} required />
+        <label htmlFor="lead-name" className="input-label">
+          {t.nameLabel}
+        </label>
+        <input
+          id="lead-name"
+          className="input"
+          type="text"
+          placeholder={t.namePlaceholder}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          maxLength={120}
+          required
+        />
       </div>
 
       {/* Email */}
       <div style={{ marginBottom: '12px' }}>
-        <label className="input-label">{t.emailLabel}</label>
-        <input className="input" type="email" placeholder={t.emailPlaceholder} value={email}
-          onChange={e => setEmail(e.target.value)} maxLength={254} required />
+        <label htmlFor="lead-email" className="input-label">
+          {t.emailLabel}
+        </label>
+        <input
+          id="lead-email"
+          className="input"
+          type="email"
+          placeholder={t.emailPlaceholder}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          maxLength={254}
+          required
+        />
       </div>
 
       {/* Organization */}
       <div style={{ marginBottom: '12px' }}>
-        <label className="input-label">{t.orgLabel}</label>
-        <input className="input" type="text" placeholder={t.orgPlaceholder} value={org}
-          onChange={e => setOrg(e.target.value)} maxLength={200} />
+        <label htmlFor="lead-org" className="input-label">
+          {t.orgLabel}
+        </label>
+        <input
+          id="lead-org"
+          className="input"
+          type="text"
+          placeholder={t.orgPlaceholder}
+          value={org}
+          onChange={(e) => setOrg(e.target.value)}
+          maxLength={200}
+        />
       </div>
 
       {/* Role */}
       <div style={{ marginBottom: '16px' }}>
-        <label className="input-label">{t.roleLabel}</label>
-        <select className="input" value={role} onChange={e => setRole(e.target.value)}
-          style={{ cursor: 'pointer' }}>
-          {ROLES.map(r => (
+        <label htmlFor="lead-role" className="input-label">
+          {t.roleLabel}
+        </label>
+        <select
+          id="lead-role"
+          className="input"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          style={{ cursor: 'pointer' }}
+        >
+          {ROLES.map((r) => (
             <option key={r} value={r}>
               {(t.roleNames as Record<string, string>)[r] ?? r}
             </option>
@@ -165,9 +232,11 @@ export default function LeadCaptureForm() {
 
       {/* Topics */}
       <div style={{ marginBottom: '16px' }}>
-        <div className="input-label" style={{ marginBottom: '8px' }}>{t.topicsLabel}</div>
+        <div className="input-label" style={{ marginBottom: '8px' }}>
+          {t.topicsLabel}
+        </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-          {TOPICS.map(topic => {
+          {TOPICS.map((topic) => {
             const active = topics.has(topic);
             return (
               <button
@@ -176,7 +245,8 @@ export default function LeadCaptureForm() {
                 onClick={() => toggleTopic(topic)}
                 style={{
                   padding: '5px 12px',
-                  fontSize: '12px', fontFamily: 'var(--font-ui)',
+                  fontSize: '12px',
+                  fontFamily: 'var(--font-ui)',
                   fontWeight: active ? 600 : 400,
                   borderRadius: '9999px',
                   border: `1px solid ${active ? 'var(--color-temple-gold)' : 'var(--color-border-default)'}`,
@@ -194,15 +264,19 @@ export default function LeadCaptureForm() {
       </div>
 
       {/* Consent */}
-      <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '16px', cursor: 'pointer' }}>
+      <label
+        style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '16px', cursor: 'pointer' }}
+      >
         <input
           type="checkbox"
           checked={consent}
-          onChange={e => setConsent(e.target.checked)}
+          onChange={(e) => setConsent(e.target.checked)}
           required
           style={{ marginTop: '3px', accentColor: 'var(--color-sinha-maroon)', flexShrink: 0 }}
         />
-        <span className="t-muted" style={{ fontSize: '12px', lineHeight: 1.5 }}>{t.consentLabel}</span>
+        <span className="t-muted" style={{ fontSize: '12px', lineHeight: 1.5 }}>
+          {t.consentLabel}
+        </span>
       </label>
 
       {status === 'error' && (

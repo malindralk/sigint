@@ -30,20 +30,13 @@ export default function LanguageToggle({ currentLocale }: LanguageToggleProps) {
 
   return (
     <button
+      type="button"
       onClick={toggle}
       className="btn btn-ghost"
       style={{ padding: '6px 14px', fontSize: '12px', letterSpacing: '0.06em' }}
-      aria-label={
-        currentLocale === 'en'
-          ? 'Switch to Sinhala — සිංහල'
-          : 'Switch to English'
-      }
+      aria-label={currentLocale === 'en' ? 'Switch to Sinhala — සිංහල' : 'Switch to English'}
     >
-      {currentLocale === 'en' ? (
-        <span style={{ fontFamily: 'var(--font-sinhala)' }}>සිංහල</span>
-      ) : (
-        'English'
-      )}
+      {currentLocale === 'en' ? <span style={{ fontFamily: 'var(--font-sinhala)' }}>සිංහල</span> : 'English'}
     </button>
   );
 }

@@ -1,12 +1,13 @@
 'use client';
+
 // MALINDRA PHASE 3
 // components/FeedbackForm.tsx
 // Static feedback form — POSTs to FastAPI /api/engagement/feedback.
 // Stars rating + optional comment. Locale-aware labels.
 
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { detectLocale } from '@/lib/i18n';
-import { usePathname } from 'next/navigation';
 
 const LABELS = {
   en: {
@@ -65,7 +66,9 @@ export default function FeedbackForm({ slug }: FeedbackFormProps) {
   if (status === 'success') {
     return (
       <div className="card" style={{ padding: '20px 24px', textAlign: 'center' }}>
-        <div className="t-label" style={{ color: 'var(--color-water-fortress)', marginBottom: '4px' }}>✓</div>
+        <div className="t-label" style={{ color: 'var(--color-water-fortress)', marginBottom: '4px' }}>
+          ✓
+        </div>
         <p className="t-muted">{t.success}</p>
       </div>
     );
@@ -75,11 +78,14 @@ export default function FeedbackForm({ slug }: FeedbackFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="card" style={{ padding: '20px 24px' }}>
-      <div className="t-label" style={{ marginBottom: '12px' }}>{t.heading}</div>
+      <div className="t-label" style={{ marginBottom: '12px' }}>
+        {t.heading}
+      </div>
 
       {/* Star rating */}
       <div role="radiogroup" style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
         {[1, 2, 3, 4, 5].map((star) => (
+          // biome-ignore lint/a11y/useSemanticElements: star rating button with radio semantics
           <button
             key={star}
             type="button"

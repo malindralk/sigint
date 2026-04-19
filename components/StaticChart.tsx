@@ -5,8 +5,8 @@
 // Server component — no 'use client' needed.
 
 interface ChartTooltip {
-  x: string;   // CSS left %
-  y: string;   // CSS top %
+  x: string; // CSS left %
+  y: string; // CSS top %
   label: string;
 }
 
@@ -51,13 +51,20 @@ export default function StaticChart({
         }}
       >
         {/* Top accent bar */}
-        <div style={{
-          position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
-          background: 'var(--color-sinha-maroon)',
-        }} />
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '2px',
+            background: 'var(--color-sinha-maroon)',
+          }}
+        />
 
         {/* SVG image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* biome-ignore lint/performance/noImgElement: static SVG chart image */}
         <img
           src={src}
           alt={title}
@@ -71,7 +78,8 @@ export default function StaticChart({
         {/* CSS hover tooltip overlays */}
         {tooltips.map((tip, i) => (
           <div
-            key={i}
+            // biome-ignore lint/suspicious/noArrayIndexKey: positional tooltip overlays
+            key={`tip-${i}`}
             className="tooltip"
             style={{
               position: 'absolute',

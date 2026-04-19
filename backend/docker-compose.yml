@@ -19,13 +19,13 @@ services:
   redis:
     image: redis:7-alpine
     container_name: sigint-redis
-    command: redis-server --requirepass changeme_redis_password_rotate_this
+    command: redis-server --requirepass ${REDIS_PASSWORD:-changeme_redis_password_rotate_this}
     ports:
       - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:
       - ./data/redis:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "changeme_redis_password_rotate_this", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-changeme_redis_password_rotate_this}", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -38,7 +38,7 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
-      REDIS_URL: redis://:changeme_redis_password_rotate_this@redis:6379/0
+      REDIS_URL: redis://:${REDIS_PASSWORD:-changeme_redis_password_rotate_this}@redis:6379/0
       CONTENT_PATH: /app/content
     volumes:
       - ./models_cache:/home/appuser/.cache/huggingface

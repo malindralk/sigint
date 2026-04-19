@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export type ConsentDecision = 'granted' | 'declined' | null;
 
@@ -47,13 +47,13 @@ export function useConsent() {
       timestamp: new Date().toISOString(),
       version: CONSENT_VERSION,
     };
-    
+
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(newState));
     } catch {
       // localStorage unavailable
     }
-    
+
     setConsentState(newState);
 
     // Log consent to backend for audit trail (if granted or declined)

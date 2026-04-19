@@ -6,9 +6,9 @@
 // Logs result to ./data/build-logs/build-log.json.
 // Usage: node scripts/trigger-rebuild.mjs [--slug=some-slug] [--event=content_published]
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -18,8 +18,8 @@ mkdirSync(join(ROOT, 'data', 'build-logs'), { recursive: true });
 
 // ── Parse args ────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
-const slug = args.find(a => a.startsWith('--slug='))?.replace('--slug=', '') ?? 'manual';
-const event = args.find(a => a.startsWith('--event='))?.replace('--event=', '') ?? 'manual_rebuild';
+const slug = args.find((a) => a.startsWith('--slug='))?.replace('--slug=', '') ?? 'manual';
+const event = args.find((a) => a.startsWith('--event='))?.replace('--event=', '') ?? 'manual_rebuild';
 
 // ── Load env ──────────────────────────────────────────────────────────────────
 function loadEnv() {
@@ -31,7 +31,10 @@ function loadEnv() {
     for (const line of lines) {
       const [key, ...rest] = line.split('=');
       if (key && !key.startsWith('#') && rest.length) {
-        process.env[key.trim()] = rest.join('=').trim().replace(/^["']|["']$/g, '');
+        process.env[key.trim()] = rest
+          .join('=')
+          .trim()
+          .replace(/^["']|["']$/g, '');
       }
     }
   }
@@ -45,7 +48,9 @@ const WEBHOOK_URL = process.env.REBUILD_WEBHOOK_URL ?? '';
 function appendLog(entry) {
   let log = [];
   if (existsSync(LOG_FILE)) {
-    try { log = JSON.parse(readFileSync(LOG_FILE, 'utf-8')); } catch {}
+    try {
+      log = JSON.parse(readFileSync(LOG_FILE, 'utf-8'));
+    } catch {}
   }
   log.push({ ...entry, timestamp: new Date().toISOString() });
   log = log.slice(-200); // keep last 200

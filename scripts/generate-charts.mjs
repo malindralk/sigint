@@ -7,9 +7,9 @@
 // Uses brand token values (no CSS vars — inline SVG requires resolved values).
 // Charts: time-series (line), topic-distribution (bar), vote-breakdown (donut).
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -62,16 +62,21 @@ function escXml(s) {
 
 function text(x, y, content, opts = {}) {
   const {
-    fill = C.ola, fontSize = 12, fontFamily = C.fontUI,
-    fontWeight = 400, textAnchor = 'start', opacity = 1,
+    fill = C.ola,
+    fontSize = 12,
+    fontFamily = C.fontUI,
+    fontWeight = 400,
+    textAnchor = 'start',
+    opacity = 1,
   } = opts;
   return `<text x="${x}" y="${y}" fill="${fill}" font-size="${fontSize}" font-family="${escXml(fontFamily)}" font-weight="${fontWeight}" text-anchor="${textAnchor}" opacity="${opacity}">${escXml(content)}</text>`;
 }
 
 // ── Bar chart: topic tag distribution ─────────────────────────────────────────
 
-function generateBarChart(slug, tagCounts, title) {
-  const W = 560, H = 280;
+function generateBarChart(_slug, tagCounts, title) {
+  const W = 560,
+    H = 280;
   const PAD = { top: 40, right: 20, bottom: 32, left: 120 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
@@ -93,15 +98,27 @@ function generateBarChart(slug, tagCounts, title) {
     const color = TOPIC_COLORS[label.toLowerCase()] ?? C.blue;
 
     bars += `<rect x="${PAD.left}" y="${y}" width="${barW}" height="${barH}" fill="${color}" opacity="0.85" rx="2"/>`;
-    bars += text(PAD.left - 8, y + barH / 2 + 4, label.slice(0, 18), { fill: C.stone, fontSize: 11, textAnchor: 'end' });
+    bars += text(PAD.left - 8, y + barH / 2 + 4, label.slice(0, 18), {
+      fill: C.stone,
+      fontSize: 11,
+      textAnchor: 'end',
+    });
     bars += text(PAD.left + barW + 6, y + barH / 2 + 4, String(value), { fill: color, fontSize: 11, fontWeight: 600 });
   });
 
   // Title
-  const titleEl = text(PAD.left, 22, title.slice(0, 60), { fill: C.ola, fontSize: 13, fontWeight: 600, fontFamily: C.fontDisplay });
+  const titleEl = text(PAD.left, 22, title.slice(0, 60), {
+    fill: C.ola,
+    fontSize: 13,
+    fontWeight: 600,
+    fontFamily: C.fontDisplay,
+  });
   // Heritage
   const heritage = text(W / 2, H - 6, 'Malindra · Kotte Kingdom 1412–1467 CE', {
-    fill: C.stone, fontSize: 10, textAnchor: 'middle', opacity: 0.5,
+    fill: C.stone,
+    fontSize: 10,
+    textAnchor: 'middle',
+    opacity: 0.5,
   });
 
   return svgWrap(`${titleEl}${bars}${heritage}`, W, H, title);
@@ -110,7 +127,8 @@ function generateBarChart(slug, tagCounts, title) {
 // ── Line chart: article timeline ──────────────────────────────────────────────
 
 function generateTimelineChart(articles) {
-  const W = 720, H = 200;
+  const W = 720,
+    H = 200;
   const PAD = { top: 36, right: 20, bottom: 40, left: 48 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
@@ -136,19 +154,25 @@ function generateTimelineChart(articles) {
   });
 
   const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
-  const areaD = pathD + ` L${points[points.length - 1].x},${PAD.top + chartH} L${points[0].x},${PAD.top + chartH} Z`;
+  const areaD = `${pathD} L${points[points.length - 1].x},${PAD.top + chartH} L${points[0].x},${PAD.top + chartH} Z`;
 
-  const dots = points.map(p =>
-    `<circle cx="${p.x}" cy="${p.y}" r="3" fill="${C.maroon}" stroke="${C.bg}" stroke-width="1.5"/>`
-  ).join('');
+  const dots = points
+    .map((p) => `<circle cx="${p.x}" cy="${p.y}" r="3" fill="${C.maroon}" stroke="${C.bg}" stroke-width="1.5"/>`)
+    .join('');
 
-  const xLabels = points.filter((_, i) => i % Math.ceil(points.length / 6) === 0).map(p =>
-    text(p.x, PAD.top + chartH + 18, p.m.slice(0, 7), { fill: C.stone, fontSize: 10, textAnchor: 'middle' })
-  ).join('');
+  const xLabels = points
+    .filter((_, i) => i % Math.ceil(points.length / 6) === 0)
+    .map((p) =>
+      text(p.x, PAD.top + chartH + 18, p.m.slice(0, 7), { fill: C.stone, fontSize: 10, textAnchor: 'middle' }),
+    )
+    .join('');
 
   const titleEl = text(PAD.left, 20, 'Publication Timeline', { fill: C.ola, fontSize: 12, fontWeight: 600 });
   const heritage = text(W / 2, H - 4, 'Malindra · Kotte Kingdom 1412–1467 CE', {
-    fill: C.stone, fontSize: 9, textAnchor: 'middle', opacity: 0.45,
+    fill: C.stone,
+    fontSize: 9,
+    textAnchor: 'middle',
+    opacity: 0.45,
   });
 
   const svg = `
@@ -166,8 +190,12 @@ function generateTimelineChart(articles) {
 // ── Donut chart: vote breakdown ────────────────────────────────────────────────
 
 function generateDonutChart(votes) {
-  const W = 320, H = 260;
-  const cx = 130, cy = 130, R = 90, r = 54;
+  const W = 320,
+    H = 260;
+  const cx = 130,
+    cy = 130,
+    R = 90,
+    r = 54;
   const total = Object.values(votes).reduce((s, n) => s + n, 0);
   if (total === 0) return null;
 
@@ -211,7 +239,10 @@ function generateDonutChart(votes) {
   `;
 
   const heritage = text(W / 2, H - 6, 'Malindra · Kotte Kingdom 1412–1467 CE', {
-    fill: C.stone, fontSize: 9, textAnchor: 'middle', opacity: 0.45,
+    fill: C.stone,
+    fontSize: 9,
+    textAnchor: 'middle',
+    opacity: 0.45,
   });
 
   return svgWrap(`${arcs}${centerLabel}${legend}${heritage}`, W, H, 'Topic Vote Breakdown');
@@ -236,7 +267,7 @@ if (existsSync(ENRICHED_DIR)) {
 // Tag aggregation across all articles
 const globalTagCounts = {};
 for (const a of articles) {
-  const tags = a.data?.sources?.map(s => s.tags || []).flat() || [];
+  const tags = a.data?.sources?.flatMap((s) => s.tags || []) || [];
   for (const tag of tags) {
     globalTagCounts[tag] = (globalTagCounts[tag] ?? 0) + 1;
   }
@@ -254,7 +285,7 @@ if (Object.keys(globalTagCounts).length > 0) {
 // Per-article charts (if article has tag data)
 for (const a of articles) {
   const tagCounts = {};
-  const tags = a.data?.sources?.map(s => s.tags || []).flat() || [];
+  const tags = a.data?.sources?.flatMap((s) => s.tags || []) || [];
   if (!tags.length) continue;
   for (const tag of tags) tagCounts[tag] = (tagCounts[tag] ?? 0) + 1;
 
@@ -292,9 +323,24 @@ if (existsSync(VOTES_FILE)) {
 // Write chart index
 const index = {
   charts: [
-    existsSync(join(CHARTS_DIR, 'tag-distribution.svg')) && { id: 'tag-distribution', path: '/charts/tag-distribution.svg', type: 'bar', title: 'Signal Distribution by Topic' },
-    existsSync(join(CHARTS_DIR, 'timeline.svg')) && { id: 'timeline', path: '/charts/timeline.svg', type: 'line', title: 'Publication Timeline' },
-    existsSync(join(CHARTS_DIR, 'votes.svg')) && { id: 'votes', path: '/charts/votes.svg', type: 'donut', title: 'Topic Vote Breakdown' },
+    existsSync(join(CHARTS_DIR, 'tag-distribution.svg')) && {
+      id: 'tag-distribution',
+      path: '/charts/tag-distribution.svg',
+      type: 'bar',
+      title: 'Signal Distribution by Topic',
+    },
+    existsSync(join(CHARTS_DIR, 'timeline.svg')) && {
+      id: 'timeline',
+      path: '/charts/timeline.svg',
+      type: 'line',
+      title: 'Publication Timeline',
+    },
+    existsSync(join(CHARTS_DIR, 'votes.svg')) && {
+      id: 'votes',
+      path: '/charts/votes.svg',
+      type: 'donut',
+      title: 'Topic Vote Breakdown',
+    },
   ].filter(Boolean),
   generatedAt: new Date().toISOString(),
 };

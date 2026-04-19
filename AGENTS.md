@@ -47,6 +47,25 @@ curl "http://localhost:8000/api/search?q=SDR+hardware&limit=5"
 
 No lint or test commands are configured.
 
+### Backend Testing (pytest)
+```bash
+cd backend
+.venv/bin/python -m pytest tests/ -v          # Run all backend tests
+.venv/bin/python -m pytest tests/ -v --tb=short  # Shorter tracebacks
+```
+
+Environment variables required for tests: `SECRET_KEY`, `APP_ENV=testing`. The test suite uses in-memory SQLite via `aiosqlite` with `StaticPool`. Redis is disabled. JSONB columns are patched to JSON for SQLite compatibility. Tests cover auth (login 200/401), articles (list/get/404), semantic search (mocked embeddings), and admin CRUD (create/read/update/delete with role checks).
+
+### Linting & Formatting (Biome)
+```bash
+pnpm lint             # Check for lint errors and formatting issues
+pnpm lint:fix         # Auto-fix lint and formatting issues
+pnpm format           # Check formatting only
+pnpm format:fix       # Auto-fix formatting only
+```
+
+Biome is used for linting and formatting (replaces ESLint + Prettier). Configuration is in `biome.json`. Scoped to frontend directories: `app/`, `lib/`, `components/`, `hooks/`, `scripts/`.
+
 ## Technology Stack
 
 ### Frontend
@@ -280,6 +299,8 @@ All Docker data is stored in `backend/data/` (bind mounts):
 - Monitors: SSH, nginx auth, bots, bad requests
 - Nginx auth_request protects `/dashboard` routes
 - GDPR consent tracking via `ConsentDialog` component
+- **Credential rotation procedures:** See `SECURITY.md` for step-by-step rotation of all secrets
+- **Settings management:** `backend/app/core/config.py` uses `pydantic-settings` v2 with `BaseSettings` and `SettingsConfigDict`; all secrets loaded from `backend/.env` (gitignored)
 - **Critical action:** Rotate all exposed secrets before any further deployments
 
 ### Useful Scripts
@@ -435,7 +456,7 @@ Full security audit completed. 15 of 18 findings remediated in code.
 | Critical | 3 | 0 | 3 (manual credential rotation required) |
 | High | 5 | 5 | 0 |
 | Medium | 6 | 6 | 0 |
-| Low | 4 | 3 | 1 (L2: python-jose migration) |
+| Low | 4 | 4 | 0 |
 
 **Remaining manual actions:**
 - Rotate all exposed credentials (C1-C3) — Google OAuth secret, JWT SECRET_KEY, DB password, Brave API key, AI provider keys
@@ -446,7 +467,7 @@ Full security audit completed. 15 of 18 findings remediated in code.
 - Rebuild frontend: `mal build-frontend`
 
 **Still open (requires code migration):**
-- L2: Replace `python-jose` with `PyJWT` or `joserfc`
+- ~~L2: Replace `python-jose` with `PyJWT` or `joserfc`~~ **DONE** -- Migrated to PyJWT 2.x (2026-04-19)
 - H2 partial: Replace CSP `unsafe-inline` with nonce-based policy
 **Positive controls in place:**
 Argon2id hashing, short-lived JWTs (15 min), HttpOnly/Secure/SameSite cookies, HSTS, Fail2ban (7 jails), DB ports bound to localhost, `.env` gitignored, request fingerprinting/audit logging, rehype-sanitize on markdown pipeline, non-root Docker container, Redis authentication, rate limiter using trusted X-Real-IP only.

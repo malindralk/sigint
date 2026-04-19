@@ -6,15 +6,30 @@ const EquipmentViz = dynamic(() => import('@/app/components/EquipmentViz'));
 
 export const metadata: Metadata = { title: 'Equipment Comparison' };
 
-const TIER_COLORS: Record<string, string> = { entry: 'var(--brand-primary)', mid: 'var(--brand-accent)', pro: 'var(--info)' };
-const TIER_LABELS: Record<string, string> = { entry: 'Entry (<$1k)', mid: 'Mid ($300–1.5k)', pro: 'Professional ($5k+)' };
+const TIER_COLORS: Record<string, string> = {
+  entry: 'var(--brand-primary)',
+  mid: 'var(--brand-accent)',
+  pro: 'var(--info)',
+};
+const TIER_LABELS: Record<string, string> = {
+  entry: 'Entry (<$1k)',
+  mid: 'Mid ($300–1.5k)',
+  pro: 'Professional ($5k+)',
+};
 
 export default function EquipmentPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
       <div>
-        <div className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)', marginBottom: 'var(--space-xs)' }}>&gt; equipment / sdr_comparison / {SDR_HARDWARE.length} devices</div>
-        <h1 className="t-heading" style={{ color: 'var(--brand-accent)' }}>Equipment Comparison</h1>
+        <div
+          className="t-muted"
+          style={{ fontSize: '10px', fontFamily: 'var(--font-ui)', marginBottom: 'var(--space-xs)' }}
+        >
+          &gt; equipment / sdr_comparison / {SDR_HARDWARE.length} devices
+        </div>
+        <h1 className="t-heading" style={{ color: 'var(--brand-accent)' }}>
+          Equipment Comparison
+        </h1>
         <p className="t-body" style={{ fontSize: '13px', marginTop: 'var(--space-xs)' }}>
           SDR hardware specs — price vs. bandwidth scatter, ADC resolution, frequency range, and upgrade path.
         </p>
@@ -38,33 +53,112 @@ export default function EquipmentPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b" style={{ borderColor: 'var(--border)' }}>
-              {['Device', 'Price', 'Freq Range', 'Bandwidth', 'ADC Bits', 'TX', 'Tier'].map(h => (
-                <th key={h} className="text-left t-label" style={{ padding: 'var(--space-sm) var(--space-md)', whiteSpace: 'nowrap' }}>{h}</th>
+              {['Device', 'Price', 'Freq Range', 'Bandwidth', 'ADC Bits', 'TX', 'Tier'].map((h) => (
+                <th
+                  key={h}
+                  className="text-left t-label"
+                  style={{ padding: 'var(--space-sm) var(--space-md)', whiteSpace: 'nowrap' }}
+                >
+                  {h}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {[...SDR_HARDWARE].sort((a, b) => a.price - b.price).map(d => (
-              <tr key={d.name} className="border-b hover:bg-white/[0.02] transition-colors" style={{ borderColor: 'var(--border)' }}>
-                <td className="text-left" style={{ padding: 'var(--space-sm) var(--space-md)', whiteSpace: 'nowrap', fontWeight: 500, color: 'var(--text-primary)' }}>{d.name}</td>
-                <td className="text-left t-muted" style={{ padding: 'var(--space-sm) var(--space-md)', fontFamily: 'var(--font-ui)', whiteSpace: 'nowrap', fontSize: '12px', color: TIER_COLORS[d.tier] }}>${d.price.toLocaleString()}</td>
-                <td className="text-left t-muted" style={{ padding: 'var(--space-sm) var(--space-md)', fontFamily: 'var(--font-ui)', whiteSpace: 'nowrap', fontSize: '12px' }}>
-                  {d.freqGhz < 0.1 ? `${d.freqGhz * 1000}MHz` : `${d.freqGhz}GHz`}
-                </td>
-                <td className="text-left t-muted" style={{ padding: 'var(--space-sm) var(--space-md)', fontFamily: 'var(--font-ui)', whiteSpace: 'nowrap', fontSize: '12px' }}>{d.bwMhz} MS/s</td>
-                <td className="text-left t-muted" style={{ padding: 'var(--space-sm) var(--space-md)', fontFamily: 'var(--font-ui)', whiteSpace: 'nowrap', fontSize: '12px' }}>{d.adcBits}-bit</td>
-                <td className="text-left" style={{ padding: 'var(--space-sm) var(--space-md)' }}>
-                  <span className="text-xs" style={{ fontFamily: 'var(--font-ui)', padding: '2px 8px', borderRadius: 'var(--radius-sm)', color: d.txCapable ? 'var(--success)' : 'var(--text-muted)', background: d.txCapable ? 'rgba(30,107,82,0.15)' : 'transparent' }}>
-                    {d.txCapable ? 'Full-duplex' : 'RX only'}
-                  </span>
-                </td>
-                <td className="text-left" style={{ padding: 'var(--space-sm) var(--space-md)' }}>
-                  <span className="text-xs" style={{ fontFamily: 'var(--font-ui)', padding: '2px 8px', borderRadius: 'var(--radius-sm)', color: TIER_COLORS[d.tier], background: `${TIER_COLORS[d.tier]}15` }}>
-                    {d.tier}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {[...SDR_HARDWARE]
+              .sort((a, b) => a.price - b.price)
+              .map((d) => (
+                <tr
+                  key={d.name}
+                  className="border-b hover:bg-white/[0.02] transition-colors"
+                  style={{ borderColor: 'var(--border)' }}
+                >
+                  <td
+                    className="text-left"
+                    style={{
+                      padding: 'var(--space-sm) var(--space-md)',
+                      whiteSpace: 'nowrap',
+                      fontWeight: 500,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    {d.name}
+                  </td>
+                  <td
+                    className="text-left t-muted"
+                    style={{
+                      padding: 'var(--space-sm) var(--space-md)',
+                      fontFamily: 'var(--font-ui)',
+                      whiteSpace: 'nowrap',
+                      fontSize: '12px',
+                      color: TIER_COLORS[d.tier],
+                    }}
+                  >
+                    ${d.price.toLocaleString()}
+                  </td>
+                  <td
+                    className="text-left t-muted"
+                    style={{
+                      padding: 'var(--space-sm) var(--space-md)',
+                      fontFamily: 'var(--font-ui)',
+                      whiteSpace: 'nowrap',
+                      fontSize: '12px',
+                    }}
+                  >
+                    {d.freqGhz < 0.1 ? `${d.freqGhz * 1000}MHz` : `${d.freqGhz}GHz`}
+                  </td>
+                  <td
+                    className="text-left t-muted"
+                    style={{
+                      padding: 'var(--space-sm) var(--space-md)',
+                      fontFamily: 'var(--font-ui)',
+                      whiteSpace: 'nowrap',
+                      fontSize: '12px',
+                    }}
+                  >
+                    {d.bwMhz} MS/s
+                  </td>
+                  <td
+                    className="text-left t-muted"
+                    style={{
+                      padding: 'var(--space-sm) var(--space-md)',
+                      fontFamily: 'var(--font-ui)',
+                      whiteSpace: 'nowrap',
+                      fontSize: '12px',
+                    }}
+                  >
+                    {d.adcBits}-bit
+                  </td>
+                  <td className="text-left" style={{ padding: 'var(--space-sm) var(--space-md)' }}>
+                    <span
+                      className="text-xs"
+                      style={{
+                        fontFamily: 'var(--font-ui)',
+                        padding: '2px 8px',
+                        borderRadius: 'var(--radius-sm)',
+                        color: d.txCapable ? 'var(--success)' : 'var(--text-muted)',
+                        background: d.txCapable ? 'rgba(30,107,82,0.15)' : 'transparent',
+                      }}
+                    >
+                      {d.txCapable ? 'Full-duplex' : 'RX only'}
+                    </span>
+                  </td>
+                  <td className="text-left" style={{ padding: 'var(--space-sm) var(--space-md)' }}>
+                    <span
+                      className="text-xs"
+                      style={{
+                        fontFamily: 'var(--font-ui)',
+                        padding: '2px 8px',
+                        borderRadius: 'var(--radius-sm)',
+                        color: TIER_COLORS[d.tier],
+                        background: `${TIER_COLORS[d.tier]}15`,
+                      }}
+                    >
+                      {d.tier}
+                    </span>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </section>
@@ -74,15 +168,38 @@ export default function EquipmentPage() {
         <div className="t-eyebrow">/ Upgrade Path for EM-SCA</div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" style={{ marginTop: 'var(--space-sm)' }}>
           {[
-            { label: 'RTL-SDR v4', price: '$40', note: 'SEMA, TEMPEST basics', color: 'var(--brand-primary)', step: '01' },
-            { label: 'HackRF 2.0', price: '$600', note: 'Active EM-SCA, MIMO', color: 'var(--brand-accent)', step: '02' },
+            {
+              label: 'RTL-SDR v4',
+              price: '$40',
+              note: 'SEMA, TEMPEST basics',
+              color: 'var(--brand-primary)',
+              step: '01',
+            },
+            {
+              label: 'HackRF 2.0',
+              price: '$600',
+              note: 'Active EM-SCA, MIMO',
+              color: 'var(--brand-accent)',
+              step: '02',
+            },
             { label: 'USRP X410', price: '$18k', note: '400 MHz BW, FIPS testing', color: 'var(--info)', step: '03' },
-          ].map((item, i) => (
-            <div key={i} className="card" style={{ padding: 'var(--space-sm)' }}>
-              <div className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)', marginBottom: 'var(--space-xs)' }}>Step {item.step}</div>
-              <div className="t-card-heading" style={{ fontSize: '13px', color: item.color }}>{item.label}</div>
-              <div className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>{item.price}</div>
-              <div className="t-muted" style={{ fontSize: '11px', marginTop: 'var(--space-xs)' }}>{item.note}</div>
+          ].map((item) => (
+            <div key={item.step} className="card" style={{ padding: 'var(--space-sm)' }}>
+              <div
+                className="t-muted"
+                style={{ fontSize: '10px', fontFamily: 'var(--font-ui)', marginBottom: 'var(--space-xs)' }}
+              >
+                Step {item.step}
+              </div>
+              <div className="t-card-heading" style={{ fontSize: '13px', color: item.color }}>
+                {item.label}
+              </div>
+              <div className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>
+                {item.price}
+              </div>
+              <div className="t-muted" style={{ fontSize: '11px', marginTop: 'var(--space-xs)' }}>
+                {item.note}
+              </div>
             </div>
           ))}
         </div>

@@ -10,9 +10,9 @@
 // Run via: node scripts/enrich-data.mjs
 // Invoked by: npm run prebuild
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -137,7 +137,7 @@ function readArticleSlugs() {
   return slugs;
 }
 
-function matchSourcesForSlug(slug, category, sourceResults) {
+function matchSourcesForSlug(_slug, _category, sourceResults) {
   // Match sources to article by tag overlap
   // Reads frontmatter tags from the cached source records
   const matched = sourceResults

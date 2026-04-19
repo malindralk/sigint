@@ -1,12 +1,13 @@
 'use client';
+
 // MALINDRA PHASE 1
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTheme } from '@/hooks/use-theme';
-import { useAuth, usePermissions } from '@/app/lib/auth/hooks';
+import { useState } from 'react';
 import { useLocale } from '@/app/hooks/useLocale';
+import { useAuth, usePermissions } from '@/app/lib/auth/hooks';
+import { useTheme } from '@/hooks/use-theme';
 
 const vizNav = [
   { href: '/graph', key: 'knowledgeGraph' as const, shield: 'blue' as const },
@@ -61,11 +62,7 @@ function SubItems({ items, basePath }: { items: { slug: string; label: string }[
         const href = `${basePath}/${item.slug}`;
         const active = pathname === href || pathname === `${href}/`;
         return (
-          <Link
-            key={item.slug}
-            href={href}
-            className={`sidebar-subitem ${active ? 'active' : ''}`}
-          >
+          <Link key={item.slug} href={href} className={`sidebar-subitem ${active ? 'active' : ''}`}>
             {item.label}
           </Link>
         );
@@ -76,20 +73,29 @@ function SubItems({ items, basePath }: { items: { slug: string; label: string }[
 
 function GroupToggle({ label, expanded, onToggle }: { label: string; expanded: boolean; onToggle: () => void }) {
   return (
-    <button
-      onClick={onToggle}
-      aria-expanded={expanded}
-      className="sidebar-item sidebar-group-toggle"
-    >
+    <button type="button" onClick={onToggle} aria-expanded={expanded} className="sidebar-item sidebar-group-toggle">
       {label}
-      <span className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`} style={{ color: 'var(--theme-text-muted)', flexShrink: 0, marginLeft: 'auto' }}>{'\u203a'}</span>
+      <span
+        className={`transition-transform duration-200 text-xs ${expanded ? 'rotate-90' : ''}`}
+        style={{ color: 'var(--theme-text-muted)', flexShrink: 0, marginLeft: 'auto' }}
+      >
+        {'\u203a'}
+      </span>
     </button>
   );
 }
 
 function SunIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="5" />
       <line x1="12" y1="1" x2="12" y2="3" />
       <line x1="12" y1="21" x2="12" y2="23" />
@@ -105,7 +111,15 @@ function SunIcon() {
 
 function MoonIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
@@ -123,7 +137,7 @@ export default function Sidebar() {
     sigint: pathname.startsWith('/sigint'),
   });
 
-  const toggle = (key: string) => setOpenGroups(prev => ({ ...prev, [key]: !prev[key] }));
+  const toggle = (key: string) => setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
 
   return (
     <aside className="sidebar hidden lg:flex">
@@ -132,7 +146,9 @@ export default function Sidebar() {
         <div className="wordmark-static">
           {locale === 'si' ? (
             <>
-              <span className="sidebar-wordmark-sinhala">{'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}</span>
+              <span className="sidebar-wordmark-sinhala">
+                {'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}
+              </span>
               <span className="sidebar-wordmark-line" />
             </>
           ) : (
@@ -148,10 +164,16 @@ export default function Sidebar() {
       <nav className="flex-1 overflow-y-auto">
         {/* Analysis */}
         <div className="sidebar-section">{nav.analysis}</div>
-        <Link href="/blog" className={`sidebar-item ${pathname === '/blog' || pathname.startsWith('/blog/') ? 'active' : ''}`}>
+        <Link
+          href="/blog"
+          className={`sidebar-item ${pathname === '/blog' || pathname.startsWith('/blog/') ? 'active' : ''}`}
+        >
           {nav.analysis}
         </Link>
-        <Link href="/archive" className={`sidebar-item ${pathname === '/archive' || pathname.startsWith('/archive/') ? 'active' : ''}`}>
+        <Link
+          href="/archive"
+          className={`sidebar-item ${pathname === '/archive' || pathname.startsWith('/archive/') ? 'active' : ''}`}
+        >
           {nav.archive}
         </Link>
 
@@ -163,10 +185,12 @@ export default function Sidebar() {
         )}
         {wikiGroups.map((group) => (
           <div key={group.id}>
-            <GroupToggle label={nav[group.labelKey]} expanded={!!openGroups[group.id]} onToggle={() => toggle(group.id)} />
-            {openGroups[group.id] && (
-              <SubItems items={group.items} basePath={`/${group.id}`} />
-            )}
+            <GroupToggle
+              label={nav[group.labelKey]}
+              expanded={!!openGroups[group.id]}
+              onToggle={() => toggle(group.id)}
+            />
+            {openGroups[group.id] && <SubItems items={group.items} basePath={`/${group.id}`} />}
           </div>
         ))}
 
@@ -221,6 +245,7 @@ export default function Sidebar() {
 
       {/* Language toggle */}
       <button
+        type="button"
         className="theme-toggle"
         onClick={toggleLocale}
         aria-label={locale === 'en' ? 'Switch to Sinhala — සිංහල' : 'Switch to English'}
@@ -231,53 +256,92 @@ export default function Sidebar() {
         ) : (
           <span>English</span>
         )}
-        <span style={{ marginLeft: 'auto', fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <span
+          style={{
+            marginLeft: 'auto',
+            fontSize: '10px',
+            color: 'var(--text-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+          }}
+        >
           {locale === 'en' ? 'SI' : 'EN'}
         </span>
       </button>
 
       {/* Auth section */}
-      {!isLoading && (isAuthenticated && user ? (
-        <div className="sidebar-auth-user">
-          <Link href="/dashboard" className="sidebar-auth-avatar" title={nav.dashboard}>
-            {(user.username?.[0] ?? user.email[0]).toUpperCase()}
-          </Link>
-          <div className="sidebar-auth-info">
-            <span className="sidebar-auth-name">{user.username ?? user.email}</span>
-            <span className="sidebar-auth-role">{user.role}</span>
+      {!isLoading &&
+        (isAuthenticated && user ? (
+          <div className="sidebar-auth-user">
+            <Link href="/dashboard" className="sidebar-auth-avatar" title={nav.dashboard}>
+              {(user.username?.[0] ?? user.email[0]).toUpperCase()}
+            </Link>
+            <div className="sidebar-auth-info">
+              <span className="sidebar-auth-name">{user.username ?? user.email}</span>
+              <span className="sidebar-auth-role">{user.role}</span>
+            </div>
+            <Link
+              href={user.role === 'admin' ? '/dashboard/settings' : '/settings'}
+              className="sidebar-auth-settings"
+              title={nav.settings}
+              aria-label={nav.settings}
+            >
+              <svg
+                aria-hidden="true"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </Link>
+            <button
+              type="button"
+              className="sidebar-auth-logout"
+              onClick={() =>
+                logout().then(() => {
+                  window.location.href = '/';
+                })
+              }
+              title={nav.signOut}
+              aria-label={nav.signOut}
+            >
+              <svg
+                aria-hidden="true"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </button>
           </div>
-          <Link
-            href={user.role === 'admin' ? '/dashboard/settings' : '/settings'}
-            className="sidebar-auth-settings"
-            title={nav.settings}
-            aria-label={nav.settings}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-            </svg>
+        ) : (
+          <Link href="/login" className="sidebar-auth-login">
+            {nav.signIn}
           </Link>
-          <button
-            className="sidebar-auth-logout"
-            onClick={() => logout().then(() => { window.location.href = '/'; })}
-            title={nav.signOut}
-            aria-label={nav.signOut}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-          </button>
-        </div>
-      ) : (
-        <Link href="/login" className="sidebar-auth-login">
-          {nav.signIn}
-        </Link>
-      ))}
+        ))}
 
       {/* Theme toggle */}
-      <button className="theme-toggle" onClick={toggleTheme} aria-label={theme === 'dark' ? nav.lightMode : nav.darkMode}>
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={toggleTheme}
+        aria-label={theme === 'dark' ? nav.lightMode : nav.darkMode}
+      >
         {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
         <span>{theme === 'dark' ? nav.lightMode : nav.darkMode}</span>
       </button>

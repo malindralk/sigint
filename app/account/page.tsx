@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAuth } from "@/app/lib/auth/hooks";
-import ProtectedRoute from "@/app/components/auth/ProtectedRoute";
+import { useState } from 'react';
+import ProtectedRoute from '@/app/components/auth/ProtectedRoute';
+import { useAuth } from '@/app/lib/auth/hooks';
 
 export default function UserSettingsPage() {
   const { user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   async function handleLogout() {
     setIsLoggingOut(true);
     try {
       await logout();
-      window.location.href = "/";
-    } catch (err) {
-      setMessage("Failed to log out. Please try again.");
+      window.location.href = '/';
+    } catch (_err) {
+      setMessage('Failed to log out. Please try again.');
       setIsLoggingOut(false);
     }
   }
@@ -26,9 +26,7 @@ export default function UserSettingsPage() {
         <h1 className="settings-title">Account Settings</h1>
 
         {message && (
-          <div className={`settings-message ${message.includes("success") ? "success" : "error"}`}>
-            {message}
-          </div>
+          <div className={`settings-message ${message.includes('success') ? 'success' : 'error'}`}>{message}</div>
         )}
 
         {/* Profile Section */}
@@ -36,13 +34,9 @@ export default function UserSettingsPage() {
           <h2 className="settings-section-title">Profile</h2>
           <div className="settings-card">
             <div className="settings-profile">
-              <div className="settings-avatar">
-                {(user?.username?.[0] ?? user?.email?.[0] ?? "U").toUpperCase()}
-              </div>
+              <div className="settings-avatar">{(user?.username?.[0] ?? user?.email?.[0] ?? 'U').toUpperCase()}</div>
               <div className="settings-profile-info">
-                <div className="settings-profile-name">
-                  {user?.username ?? "No username"}
-                </div>
+                <div className="settings-profile-name">{user?.username ?? 'No username'}</div>
                 <div className="settings-profile-email">{user?.email}</div>
                 <span className="settings-role-badge">{user?.role}</span>
               </div>
@@ -56,20 +50,20 @@ export default function UserSettingsPage() {
           <div className="settings-card">
             <div className="settings-info-grid">
               <div className="settings-info-item">
-                <label>Email</label>
+                <span className="settings-info-label">Email</span>
                 <span>{user?.email}</span>
               </div>
               <div className="settings-info-item">
-                <label>Username</label>
-                <span>{user?.username ?? "Not set"}</span>
+                <span className="settings-info-label">Username</span>
+                <span>{user?.username ?? 'Not set'}</span>
               </div>
               <div className="settings-info-item">
-                <label>Role</label>
+                <span className="settings-info-label">Role</span>
                 <span className="settings-role">{user?.role}</span>
               </div>
               <div className="settings-info-item">
-                <label>Verified</label>
-                <span>{user?.isVerified ? "Yes" : "No"}</span>
+                <span className="settings-info-label">Verified</span>
+                <span>{user?.isVerified ? 'Yes' : 'No'}</span>
               </div>
             </div>
           </div>
@@ -79,27 +73,19 @@ export default function UserSettingsPage() {
         <section className="settings-section">
           <h2 className="settings-section-title">Session</h2>
           <div className="settings-card">
-            <p className="settings-text">
-              Sign out of your account on this device.
-            </p>
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="settings-logout-btn"
-            >
-              {isLoggingOut ? "Signing out..." : "Sign out"}
+            <p className="settings-text">Sign out of your account on this device.</p>
+            <button type="button" onClick={handleLogout} disabled={isLoggingOut} className="settings-logout-btn">
+              {isLoggingOut ? 'Signing out...' : 'Sign out'}
             </button>
           </div>
         </section>
 
         {/* Admin Link (if admin) */}
-        {user?.role === "admin" && (
+        {user?.role === 'admin' && (
           <section className="settings-section">
             <h2 className="settings-section-title">Administration</h2>
             <div className="settings-card">
-              <p className="settings-text">
-                Access the admin dashboard to manage users, articles, and site settings.
-              </p>
+              <p className="settings-text">Access the admin dashboard to manage users, articles, and site settings.</p>
               <a href="/dashboard" className="settings-admin-link">
                 Go to Admin Dashboard →
               </a>

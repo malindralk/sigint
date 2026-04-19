@@ -16,10 +16,7 @@ export default function SigintCrossRef({ signals, locale = 'en' }: SigintCrossRe
   if (signals.length === 0) return null;
 
   const label = locale === 'si' ? 'අදාළ බුද්ධිය' : 'Related Intelligence';
-  const heritageText =
-    locale === 'si'
-      ? 'මලින්ද්‍ර'
-      : 'Malindra · මලින්ද්‍ර';
+  const heritageText = locale === 'si' ? 'මලින්ද්‍ර' : 'Malindra · මලින්ද්‍ර';
 
   return (
     <aside
@@ -68,11 +65,7 @@ export default function SigintCrossRef({ signals, locale = 'en' }: SigintCrossRe
               {signal.title}
             </span>
             {/* Date */}
-            <time
-              dateTime={signal.date}
-              className="t-muted"
-              style={{ fontSize: '11px' }}
-            >
+            <time dateTime={signal.date} className="t-muted" style={{ fontSize: '11px' }}>
               {new Date(signal.date).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',

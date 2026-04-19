@@ -5,8 +5,8 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getBlogData, getFeaturedArticle } from '@/lib/blog-data';
 import NewsletterForm from '@/components/NewsletterForm';
+import { getBlogData, getFeaturedArticle } from '@/lib/blog-data';
 
 export const metadata: Metadata = {
   title: 'Analysis — Malindra',
@@ -49,18 +49,12 @@ export default async function BlogIndexPage() {
       {/* ── Masthead ── */}
       <header style={{ borderBottom: '1px solid var(--color-border-default)', paddingBottom: 'var(--spacing-2xl)' }}>
         <div className="t-eyebrow">MALINDRA · මලින්ද්‍ර</div>
-        <h1
-          className="t-display"
-          style={{ marginTop: 'var(--spacing-sm)', maxWidth: '700px' }}
-        >
+        <h1 className="t-display" style={{ marginTop: 'var(--spacing-sm)', maxWidth: '700px' }}>
           Intelligence for the Laccadive Sea Age
         </h1>
-        <p
-          className="t-body"
-          style={{ maxWidth: '580px', marginTop: 'var(--spacing-md)' }}
-        >
-          Sovereign strategy analysis grounded in Sri Lankan reality. Data-driven, calm in register,
-          precise in implication. SIGINT structure: Signal → Context → Implication → Action.
+        <p className="t-body" style={{ maxWidth: '580px', marginTop: 'var(--spacing-md)' }}>
+          Sovereign strategy analysis grounded in Sri Lankan reality. Data-driven, calm in register, precise in
+          implication. SIGINT structure: Signal → Context → Implication → Action.
         </p>
 
         {/* Tag filter pills */}
@@ -120,10 +114,7 @@ export default async function BlogIndexPage() {
             <p className="t-body" style={{ maxWidth: '680px' }}>
               {featured.excerpt}
             </p>
-            <div
-              className="article-hero-meta"
-              style={{ marginTop: 'var(--spacing-md)' }}
-            >
+            <div className="article-hero-meta" style={{ marginTop: 'var(--spacing-md)' }}>
               <time dateTime={featured.date}>
                 {new Date(featured.date).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -166,17 +157,22 @@ export default async function BlogIndexPage() {
               key={article.slug}
               href={`/blog/${article.slug}`}
               className="card"
-              style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', padding: 'var(--spacing-lg) var(--spacing-lg) var(--spacing-md)' }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                textDecoration: 'none',
+                padding: 'var(--spacing-lg) var(--spacing-lg) var(--spacing-md)',
+              }}
             >
               <div
                 className={`card-accent ${
                   i % 4 === 0
                     ? 'card-accent-gold'
                     : i % 4 === 1
-                    ? 'card-accent-blue'
-                    : i % 4 === 2
-                    ? 'card-accent-green'
-                    : 'card-accent-maroon'
+                      ? 'card-accent-blue'
+                      : i % 4 === 2
+                        ? 'card-accent-green'
+                        : 'card-accent-maroon'
                 }`}
               />
               {/* Tags */}
@@ -223,8 +219,6 @@ export default async function BlogIndexPage() {
       <section>
         <NewsletterForm locale="en" />
       </section>
-
-
     </div>
   );
 }

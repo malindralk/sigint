@@ -157,20 +157,13 @@ export default async function ArchivePage() {
                   ))}
                 </div>
                 <h3 className="t-card-heading">{article.title}</h3>
-                <p
-                  className="t-muted"
-                  style={{ fontSize: '13px', marginTop: 'var(--spacing-xs)', lineHeight: 1.5 }}
-                >
+                <p className="t-muted" style={{ fontSize: '13px', marginTop: 'var(--spacing-xs)', lineHeight: 1.5 }}>
                   {article.excerpt.slice(0, 160)}
                   {article.excerpt.length > 160 ? '…' : ''}
                 </p>
               </div>
               <div style={{ flexShrink: 0, textAlign: 'right' }}>
-                <time
-                  dateTime={article.date}
-                  className="t-muted"
-                  style={{ fontSize: '12px', display: 'block' }}
-                >
+                <time dateTime={article.date} className="t-muted" style={{ fontSize: '12px', display: 'block' }}>
                   {new Date(article.date).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -185,8 +178,6 @@ export default async function ArchivePage() {
           </Link>
         ))}
       </div>
-
-
     </div>
   );
 }

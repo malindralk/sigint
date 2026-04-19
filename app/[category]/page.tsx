@@ -1,9 +1,11 @@
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { categories, getArticles, getCategoryMeta, type Category, isValidCategory } from '@/lib/content';
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { type Category, categories, getArticles, getCategoryMeta, isValidCategory } from '@/lib/content';
 
-interface Props { params: Promise<{ category: string }>; }
+interface Props {
+  params: Promise<{ category: string }>;
+}
 
 export function generateStaticParams() {
   return categories.map((c) => ({ category: c.id }));
@@ -33,15 +35,24 @@ export default async function CategoryPage({ params }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
       {/* Header */}
       <div>
-        <div className="t-muted" style={{ fontSize: '12px', marginBottom: 'var(--space-sm)', fontFamily: 'var(--font-ui)' }}>
-          <Link href="/" className="hover:opacity-80" style={{ color: 'var(--info)' }}>home</Link>
+        <div
+          className="t-muted"
+          style={{ fontSize: '12px', marginBottom: 'var(--space-sm)', fontFamily: 'var(--font-ui)' }}
+        >
+          <Link href="/" className="hover:opacity-80" style={{ color: 'var(--info)' }}>
+            home
+          </Link>
           <span style={{ margin: '0 var(--space-sm)' }}>/</span>
           <span style={{ color: meta.accent }}>{meta.label}</span>
         </div>
         <div className="flex items-center gap-4" style={{ marginBottom: 'var(--space-sm)' }}>
           <div>
-            <h1 className="t-heading" style={{ color: meta.accent }}>{meta.label}</h1>
-            <p className="t-body" style={{ fontSize: '13px', marginTop: 'var(--space-xs)' }}>{meta.description}</p>
+            <h1 className="t-heading" style={{ color: meta.accent }}>
+              {meta.label}
+            </h1>
+            <p className="t-body" style={{ fontSize: '13px', marginTop: 'var(--space-xs)' }}>
+              {meta.description}
+            </p>
           </div>
         </div>
         <span className="badge badge-blue">{articles.length} articles</span>
@@ -54,20 +65,47 @@ export default async function CategoryPage({ params }: Props) {
             key={article.slug}
             href={`/${category}/${article.slug}`}
             className="card group"
-            style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-md)', padding: 'var(--space-md)', textDecoration: 'none' }}
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 'var(--space-md)',
+              padding: 'var(--space-md)',
+              textDecoration: 'none',
+            }}
           >
-            <span className="t-muted" style={{ fontFamily: 'var(--font-ui)', fontSize: '11px', minWidth: '20px', textAlign: 'right', marginTop: '2px' }}>
+            <span
+              className="t-muted"
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: '11px',
+                minWidth: '20px',
+                textAlign: 'right',
+                marginTop: '2px',
+              }}
+            >
               {String(i + 1).padStart(2, '0')}
             </span>
             <div className="flex-1 min-w-0">
               <h2 className="t-card-heading" style={{ fontSize: '14px', marginBottom: 'var(--space-xs)' }}>
                 {article.title}
               </h2>
-              <p className="t-muted" style={{ fontSize: '12px', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <p
+                className="t-muted"
+                style={{
+                  fontSize: '12px',
+                  lineHeight: 1.5,
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
+              >
                 {article.description}
               </p>
             </div>
-            <span className="t-muted" style={{ fontSize: '16px', marginTop: '2px', flexShrink: 0 }}>&#x203a;</span>
+            <span className="t-muted" style={{ fontSize: '16px', marginTop: '2px', flexShrink: 0 }}>
+              &#x203a;
+            </span>
           </Link>
         ))}
       </div>

@@ -8,7 +8,10 @@ export default function ReadingProgress() {
   useEffect(() => {
     function handleScroll() {
       const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      if (docHeight <= 0) { setProgress(0); return; }
+      if (docHeight <= 0) {
+        setProgress(0);
+        return;
+      }
       setProgress(Math.min(100, (window.scrollY / docHeight) * 100));
     }
     window.addEventListener('scroll', handleScroll, { passive: true });

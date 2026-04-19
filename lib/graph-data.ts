@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export interface GraphNode {
   id: string;
@@ -21,10 +21,10 @@ export interface GraphData {
 
 const GROUP_MAP: Record<GraphNode['category'], number> = {
   'em-sca': 1,
-  'sigint': 2,
-  'learning': 3,
-  'infrastructure': 4,
-  'reference': 5,
+  sigint: 2,
+  learning: 3,
+  infrastructure: 4,
+  reference: 5,
 };
 
 function extractTitle(content: string, slug: string): string {
@@ -36,20 +36,20 @@ function extractTitle(content: string, slug: string): string {
 function extractDescription(content: string): string {
   const lines = content
     .split('\n')
-    .filter(
-      (l) =>
-        l.trim() &&
-        !l.startsWith('#') &&
-        !l.startsWith('|') &&
-        !l.startsWith('!')
-    );
-  return lines[0]?.replace(/[*_`[\]]/g, '').trim().slice(0, 120) || '';
+    .filter((l) => l.trim() && !l.startsWith('#') && !l.startsWith('|') && !l.startsWith('!'));
+  return (
+    lines[0]
+      ?.replace(/[*_`[\]]/g, '')
+      .trim()
+      .slice(0, 120) || ''
+  );
 }
 
 function extractLinks(content: string): string[] {
   const linkRegex = /\[([^\]]+)\]\(([^)#\s]+\.md)\)/g;
   const links: string[] = [];
-  let match;
+  let match: RegExpExecArray | null;
+  // biome-ignore lint/suspicious/noAssignInExpressions: standard regex exec loop
   while ((match = linkRegex.exec(content)) !== null) {
     const target = match[2].replace(/^\.\//, '').replace(/\.md$/, '');
     links.push(target);
@@ -64,7 +64,7 @@ export function buildGraphData(): GraphData {
     console.error(
       '[graph-data] Content directory not found:',
       contentDir,
-      '— ensure the content git submodule is initialized.'
+      '— ensure the content git submodule is initialized.',
     );
     return { nodes: [], edges: [] };
   }
@@ -77,9 +77,7 @@ export function buildGraphData(): GraphData {
 
   let categories: string[];
   try {
-    categories = fs
-      .readdirSync(contentDir)
-      .filter((d) => fs.statSync(path.join(contentDir, d)).isDirectory());
+    categories = fs.readdirSync(contentDir).filter((d) => fs.statSync(path.join(contentDir, d)).isDirectory());
   } catch (err) {
     console.error('[graph-data] Failed to read content directory:', err);
     return { nodes: [], edges: [] };
@@ -111,11 +109,7 @@ export function buildGraphData(): GraphData {
     let category: GraphNode['category'] = 'em-sca';
 
     for (const d of categories) {
-      if (
-        fs
-          .readdirSync(path.join(contentDir, d))
-          .some((f) => f.replace(/\.md$/, '') === slug)
-      ) {
+      if (fs.readdirSync(path.join(contentDir, d)).some((f) => f.replace(/\.md$/, '') === slug)) {
         if (d === 'sigint') category = 'sigint';
         else if (d === 'learning') category = 'learning';
         else if (d === 'em-sca') {

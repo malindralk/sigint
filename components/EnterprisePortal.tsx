@@ -138,10 +138,9 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
     setExporting(true);
     setExportError('');
     try {
-      const res = await fetch(
-        `${API_BASE}/api/enterprise/export?dataset=${exportDataset}&format=${exportFormat}`,
-        { headers: { 'X-API-Key': exportKey } }
-      );
+      const res = await fetch(`${API_BASE}/api/enterprise/export?dataset=${exportDataset}&format=${exportFormat}`, {
+        headers: { 'X-API-Key': exportKey },
+      });
       if (!res.ok) throw new Error(await res.text());
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -225,7 +224,15 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
 
       {/* Key creation form */}
       <div style={cardStyle}>
-        <h2 style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-ola)', marginTop: 0, marginBottom: '1.25rem' }}>
+        <h2
+          style={{
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            color: 'var(--color-ola)',
+            marginTop: 0,
+            marginBottom: '1.25rem',
+          }}
+        >
           {t.keyHeading}
         </h2>
 
@@ -249,19 +256,36 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
             >
               {keyResult.key}
             </div>
-            <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.75rem', color: 'var(--color-stone)', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '1.5rem',
+                fontSize: '0.75rem',
+                color: 'var(--color-stone)',
+                flexWrap: 'wrap',
+              }}
+            >
               <span>ID: {keyResult.key_id}</span>
               <span>Org: {keyResult.organization}</span>
-              <span>Tier: <span style={{ color: 'var(--color-temple-gold)' }}>{keyResult.tier}</span></span>
+              <span>
+                Tier: <span style={{ color: 'var(--color-temple-gold)' }}>{keyResult.tier}</span>
+              </span>
               <span>Quota: {keyResult.quota.toLocaleString()}/month</span>
             </div>
           </div>
         ) : (
-          <form onSubmit={(e) => { void handleKeySubmit(e); }}>
+          <form
+            onSubmit={(e) => {
+              void handleKeySubmit(e);
+            }}
+          >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
               <div>
-                <label style={labelStyle}>{t.name}</label>
+                <label htmlFor="ep-name" style={labelStyle}>
+                  {t.name}
+                </label>
                 <input
+                  id="ep-name"
                   style={inputStyle}
                   value={keyForm.name}
                   onChange={(e) => setKeyForm((f) => ({ ...f, name: e.target.value }))}
@@ -269,8 +293,11 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
                 />
               </div>
               <div>
-                <label style={labelStyle}>{t.email}</label>
+                <label htmlFor="ep-email" style={labelStyle}>
+                  {t.email}
+                </label>
                 <input
+                  id="ep-email"
                   type="email"
                   style={inputStyle}
                   value={keyForm.email}
@@ -279,8 +306,11 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
                 />
               </div>
               <div>
-                <label style={labelStyle}>{t.organization}</label>
+                <label htmlFor="ep-organization" style={labelStyle}>
+                  {t.organization}
+                </label>
                 <input
+                  id="ep-organization"
                   style={inputStyle}
                   value={keyForm.organization}
                   onChange={(e) => setKeyForm((f) => ({ ...f, organization: e.target.value }))}
@@ -288,28 +318,44 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
                 />
               </div>
               <div>
-                <label style={labelStyle}>{t.role}</label>
+                <label htmlFor="ep-role" style={labelStyle}>
+                  {t.role}
+                </label>
                 <select
+                  id="ep-role"
                   style={inputStyle}
                   value={keyForm.role}
                   onChange={(e) => setKeyForm((f) => ({ ...f, role: e.target.value }))}
                 >
-                  {t.roles.map((r) => <option key={r} value={r}>{r}</option>)}
+                  {t.roles.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label style={labelStyle}>{t.tier}</label>
+                <label htmlFor="ep-tier" style={labelStyle}>
+                  {t.tier}
+                </label>
                 <select
+                  id="ep-tier"
                   style={inputStyle}
                   value={keyForm.tier}
                   onChange={(e) => setKeyForm((f) => ({ ...f, tier: e.target.value }))}
                 >
-                  {t.tiers.map((t) => <option key={t} value={t}>{t}</option>)}
+                  {t.tiers.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
             {keyError && (
-              <p style={{ color: 'var(--color-sinha-maroon)', fontSize: '0.8rem', marginBottom: '0.75rem' }}>{keyError}</p>
+              <p style={{ color: 'var(--color-sinha-maroon)', fontSize: '0.8rem', marginBottom: '0.75rem' }}>
+                {keyError}
+              </p>
             )}
             <button
               type="submit"
@@ -336,10 +382,23 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
 
       {/* Usage dashboard */}
       <div style={cardStyle}>
-        <h2 style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-ola)', marginTop: 0, marginBottom: '1.25rem' }}>
+        <h2
+          style={{
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            color: 'var(--color-ola)',
+            marginTop: 0,
+            marginBottom: '1.25rem',
+          }}
+        >
           {t.usageHeading}
         </h2>
-        <form onSubmit={(e) => { void handleUsageCheck(e); }} style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        <form
+          onSubmit={(e) => {
+            void handleUsageCheck(e);
+          }}
+          style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}
+        >
           <input
             style={{ ...inputStyle, flex: '1', minWidth: '200px' }}
             placeholder={t.apiKeyLabel}
@@ -372,7 +431,11 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
             {[
               { label: t.quota, value: usageData.quota.toLocaleString(), accent: 'var(--color-temple-gold)' },
               { label: t.used, value: usageData.used_this_month.toLocaleString(), accent: 'var(--color-zheng-he)' },
-              { label: t.remaining, value: usageData.remaining.toLocaleString(), accent: 'var(--color-water-fortress)' },
+              {
+                label: t.remaining,
+                value: usageData.remaining.toLocaleString(),
+                accent: 'var(--color-water-fortress)',
+              },
               { label: t.total, value: usageData.total_requests.toLocaleString(), accent: 'var(--color-parchment)' },
             ].map(({ label, value, accent }) => (
               <div
@@ -387,8 +450,20 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
                   flex: '1',
                 }}
               >
-                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: accent, fontFamily: 'var(--font-display)' }}>{value}</div>
-                <div style={{ fontSize: '0.65rem', color: 'var(--color-stone)', marginTop: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: accent, fontFamily: 'var(--font-display)' }}>
+                  {value}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.65rem',
+                    color: 'var(--color-stone)',
+                    marginTop: '0.2rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                  }}
+                >
+                  {label}
+                </div>
               </div>
             ))}
           </div>
@@ -397,14 +472,37 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
 
       {/* Data export */}
       <div style={cardStyle}>
-        <h2 style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-ola)', marginTop: 0, marginBottom: '1.25rem' }}>
+        <h2
+          style={{
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            color: 'var(--color-ola)',
+            marginTop: 0,
+            marginBottom: '1.25rem',
+          }}
+        >
           {t.exportHeading}
         </h2>
-        <form onSubmit={(e) => { void handleExport(e); }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+        <form
+          onSubmit={(e) => {
+            void handleExport(e);
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 1fr',
+              gap: '0.75rem',
+              marginBottom: '0.75rem',
+              flexWrap: 'wrap',
+            }}
+          >
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={labelStyle}>{t.apiKeyLabel}</label>
+              <label htmlFor="ep-apikey" style={labelStyle}>
+                {t.apiKeyLabel}
+              </label>
               <input
+                id="ep-apikey"
                 style={inputStyle}
                 value={exportKey}
                 onChange={(e) => setExportKey(e.target.value)}
@@ -412,19 +510,45 @@ export default function EnterprisePortal({ locale = 'en' }: { locale?: 'en' }) {
               />
             </div>
             <div>
-              <label style={labelStyle}>{t.dataset}</label>
-              <select style={inputStyle} value={exportDataset} onChange={(e) => setExportDataset(e.target.value)}>
-                {t.datasets.map((d) => <option key={d} value={d}>{d}</option>)}
+              <label htmlFor="ep-dataset" style={labelStyle}>
+                {t.dataset}
+              </label>
+              <select
+                id="ep-dataset"
+                style={inputStyle}
+                value={exportDataset}
+                onChange={(e) => setExportDataset(e.target.value)}
+              >
+                {t.datasets.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
-              <label style={labelStyle}>{t.format}</label>
-              <select style={inputStyle} value={exportFormat} onChange={(e) => setExportFormat(e.target.value)}>
-                {t.formats.map((f) => <option key={f} value={f}>{f.toUpperCase()}</option>)}
+              <label htmlFor="ep-format" style={labelStyle}>
+                {t.format}
+              </label>
+              <select
+                id="ep-format"
+                style={inputStyle}
+                value={exportFormat}
+                onChange={(e) => setExportFormat(e.target.value)}
+              >
+                {t.formats.map((f) => (
+                  <option key={f} value={f}>
+                    {f.toUpperCase()}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
-          {exportError && <p style={{ color: 'var(--color-sinha-maroon)', fontSize: '0.8rem', marginBottom: '0.75rem' }}>{exportError}</p>}
+          {exportError && (
+            <p style={{ color: 'var(--color-sinha-maroon)', fontSize: '0.8rem', marginBottom: '0.75rem' }}>
+              {exportError}
+            </p>
+          )}
           <button
             type="submit"
             disabled={exporting}

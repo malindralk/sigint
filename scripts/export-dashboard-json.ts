@@ -3,8 +3,8 @@
 // Runs at build time. Outputs public/dashboard/predictions.json
 // for client-side chart hydration in the static dashboard.
 
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 // Import build-time functions directly
 import { getRegionalOverview } from '../lib/predictions.js';
@@ -58,5 +58,5 @@ const outPath = join(OUT_DIR, 'predictions.json');
 writeFileSync(outPath, JSON.stringify(chartData, null, 2), 'utf-8');
 
 console.log(
-  `[export-dashboard-json] Done: ${overview.total_articles} articles, ${overview.topic_metrics.length} topics → ${outPath}`
+  `[export-dashboard-json] Done: ${overview.total_articles} articles, ${overview.topic_metrics.length} topics → ${outPath}`,
 );

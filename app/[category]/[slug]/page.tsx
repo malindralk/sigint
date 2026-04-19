@@ -1,14 +1,22 @@
-import { notFound } from 'next/navigation';
-import { categories, getArticle, getArticles, getCategoryMeta, type Category, isValidCategory, isValidSlug } from '@/lib/content';
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import ArticleView from '@/app/components/ArticleView';
+import {
+  type Category,
+  categories,
+  getArticle,
+  getArticles,
+  getCategoryMeta,
+  isValidCategory,
+  isValidSlug,
+} from '@/lib/content';
 
-interface Props { params: Promise<{ category: string; slug: string }>; }
+interface Props {
+  params: Promise<{ category: string; slug: string }>;
+}
 
 export function generateStaticParams() {
-  return categories.flatMap((cat) =>
-    getArticles(cat.id).map((a) => ({ category: cat.id, slug: a.slug }))
-  );
+  return categories.flatMap((cat) => getArticles(cat.id).map((a) => ({ category: cat.id, slug: a.slug })));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

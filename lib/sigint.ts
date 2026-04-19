@@ -18,13 +18,32 @@ export interface Signal {
 // Recognise common Sri Lankan / Laccadive Sea entities from article content.
 
 const KNOWN_ENTITIES = [
-  'CBSL', 'IMF', 'World Bank', 'ADB', 'Paris Club',
-  'Sri Lanka', 'India', 'China', 'Japan', 'USA',
-  'Colombo Port', 'Hambantota', 'Trincomalee',
-  'LKR', 'USD', 'SDR',
-  'BOC', 'NSB', 'CSE',
-  'SLTDA', 'CEB', 'LECO',
-  'Belt and Road', 'BRI', 'Quad', 'BRICS',
+  'CBSL',
+  'IMF',
+  'World Bank',
+  'ADB',
+  'Paris Club',
+  'Sri Lanka',
+  'India',
+  'China',
+  'Japan',
+  'USA',
+  'Colombo Port',
+  'Hambantota',
+  'Trincomalee',
+  'LKR',
+  'USD',
+  'SDR',
+  'BOC',
+  'NSB',
+  'CSE',
+  'SLTDA',
+  'CEB',
+  'LECO',
+  'Belt and Road',
+  'BRI',
+  'Quad',
+  'BRICS',
 ];
 
 /**
@@ -85,11 +104,7 @@ function buildVector(signal: Signal): Map<string, number> {
  * Find the top-N related signals for a given signal.
  * Excludes self. Scores by cosine similarity on tags + entities.
  */
-export function findRelatedSignals(
-  current: Signal,
-  all: Signal[],
-  limit = 3,
-): Signal[] {
+export function findRelatedSignals(current: Signal, all: Signal[], limit = 3): Signal[] {
   const currentVec = buildVector(current);
 
   const scored = all
@@ -108,15 +123,15 @@ export function findRelatedSignals(
 
 const TAG_BADGE_MAP: Record<string, string> = {
   'debt restructuring': 'badge-gold',
-  'digital policy':     'badge-hold',
-  'tourism':            'badge-buy',
-  'geopolitics':        'badge-hold',
-  'renewable energy':   'badge-buy',
+  'digital policy': 'badge-hold',
+  tourism: 'badge-buy',
+  geopolitics: 'badge-hold',
+  'renewable energy': 'badge-buy',
   'china-india triangulation': 'badge-gold',
-  'laccadive sea':      'badge-hold',
-  'finance':            'badge-gold',
-  'infrastructure':     'badge-hold',
-  'sri lanka':          'badge-hold',
+  'laccadive sea': 'badge-hold',
+  finance: 'badge-gold',
+  infrastructure: 'badge-hold',
+  'sri lanka': 'badge-hold',
 };
 
 export function getBadgeVariant(tag: string): string {

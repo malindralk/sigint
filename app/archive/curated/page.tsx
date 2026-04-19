@@ -11,8 +11,7 @@ import { getRegionalOverview } from '@/lib/predictions';
 
 export const metadata: Metadata = {
   title: 'Curated Archive · Malindra',
-  description:
-    'Curated intelligence archive with confidence scoring, topic classification, and scenario metadata.',
+  description: 'Curated intelligence archive with confidence scoring, topic classification, and scenario metadata.',
 };
 
 const TOPIC_LABELS: Record<string, string> = {
@@ -48,7 +47,7 @@ const CARD_ACCENT: Record<string, string> = {
 export default async function CuratedArchivePage() {
   const blogData = await getBlogData();
   const allArticles = blogData.articles;
-  const overview = getRegionalOverview();
+  const _overview = getRegionalOverview();
 
   // Build confidence map: slug → confidence label
   const confidenceMap: Record<string, { label: string; mean: number; topics: string[] }> = {};
@@ -56,8 +55,8 @@ export default async function CuratedArchivePage() {
     typeof process !== 'undefined'
       ? ((): Record<string, { label: string; mean: number; topics: string[] }> => {
           try {
-            const fs = require('fs') as typeof import('fs');
-            const path = require('path') as typeof import('path');
+            const fs = require('node:fs') as typeof import('fs');
+            const path = require('node:path') as typeof import('path');
             const predPath = path.join(process.cwd(), 'data', 'predictions');
             if (!fs.existsSync(predPath)) return {};
             const map: Record<string, { label: string; mean: number; topics: string[] }> = {};
@@ -199,7 +198,7 @@ export default async function CuratedArchivePage() {
           const confLabel = confData?.label ?? 'MEDIUM';
           const confMean = confData?.mean ?? 0.5;
           const detectedTopics = confData?.topics ?? [];
-          const primaryTopic = detectedTopics[0] ?? (article.tags?.[0]?.toLowerCase() ?? '');
+          const primaryTopic = detectedTopics[0] ?? article.tags?.[0]?.toLowerCase() ?? '';
           const accentColor = CARD_ACCENT[primaryTopic] ?? 'var(--color-border)';
 
           return (
@@ -341,8 +340,6 @@ export default async function CuratedArchivePage() {
           No articles in curated archive.
         </div>
       )}
-
-
     </main>
   );
 }

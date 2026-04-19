@@ -54,6 +54,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Lint (Biome)
+        run: pnpm lint
+
       - name: TypeScript check
         run: pnpm typecheck
 
@@ -258,12 +261,16 @@ jobs:
         run: pip install uv
 
       - name: Install dependencies
-        run: uv pip install --system ruff pyproject.toml
-        continue-on-error: true
+        run: uv pip install --system -e ".[dev]"
 
       - name: Ruff lint
         run: ruff check app/
-        continue-on-error: true
+
+      - name: Run pytest
+        run: pytest tests/ -v --tb=short
+        env:
+          SECRET_KEY: ci-test-secret-key-abcdef1234567890
+          APP_ENV: testing
 
       - name: Verify all Phase 3+4 routers
         run: |
