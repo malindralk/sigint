@@ -141,18 +141,15 @@ export default function MobileHeader() {
     setOpen(false);
   }, [pathname]);
 
-  // Lock body scroll and signal drawer state for global footer visibility
+  // Lock body scroll when drawer is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
-      document.documentElement.setAttribute('data-drawer-open', '');
     } else {
       document.body.style.overflow = '';
-      document.documentElement.removeAttribute('data-drawer-open');
     }
     return () => {
       document.body.style.overflow = '';
-      document.documentElement.removeAttribute('data-drawer-open');
     };
   }, [open]);
 
@@ -365,16 +362,6 @@ export default function MobileHeader() {
             ))}
           </div>
 
-          {/* Footer — shown in drawer on mobile */}
-          <div className="mobile-nav-footer">
-            <span className="mobile-nav-footer-brand">මලින්ද්‍ර</span>
-            <span className="mobile-nav-footer-dot" />
-            <Link href="/privacy" className="mobile-nav-footer-link">{nav.privacy}</Link>
-            <span className="mobile-nav-footer-dot" />
-            <Link href="/terms" className="mobile-nav-footer-link">{nav.terms}</Link>
-            <span className="mobile-nav-footer-dot" />
-            <Link href="/contact" className="mobile-nav-footer-link">{nav.contact}</Link>
-          </div>
         </div>
       </nav>
     </>

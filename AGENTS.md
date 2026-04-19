@@ -61,13 +61,13 @@ No lint or test commands are configured.
 - **i18n:** Custom Context — English + Sinhala (infrastructure for AR, TA, HI)
 
 ### Backend
-- **Framework:** FastAPI (Python 3.11+)
+- **Framework:** FastAPI (Python 3.12)
 - **Database:** PostgreSQL 16 with pgvector extension
 - **Cache:** Redis 7 (Alpine)
 - **ORM:** SQLAlchemy 2 (async with asyncpg)
 - **Auth:** JWT + HTTPOnly refresh token cookies, Google OAuth 2.0
 - **Embeddings:** HuggingFace sentence-transformers
-- **Security:** Bcrypt, rate limiting, API key auth middleware
+- **Security:** Argon2id, rate limiting, API key auth middleware
 
 ### Infrastructure
 - **Containers:** Docker + Docker Compose
@@ -111,6 +111,12 @@ This is a Next.js static site (`output: 'export'`). The build generates static H
 | `lib/graph-data.ts` | Knowledge graph node/edge extraction from markdown links |
 | `lib/i18n.ts` | Translation strings for EN/SI |
 | `lib/brand-colors.ts` | Brand color constants for JS/chart contexts |
+| `lib/markdown.ts` | Markdown processing utilities |
+| `lib/sigint.ts` | SIGINT domain utilities |
+| `lib/blog-data.ts` | Blog post data |
+| `lib/predictions.ts` | Prediction engine |
+| `lib/telemetry.ts` | Telemetry helpers |
+| `lib/analytics-proxy.ts` | Analytics proxy layer |
 | `app/hooks/useLocale.tsx` | i18n context provider and hook |
 | `app/components/Sidebar.tsx` | Desktop sidebar navigation (locale-aware) |
 | `app/components/MobileHeader.tsx` | Mobile hamburger drawer (locale-aware) |
@@ -186,6 +192,9 @@ Changes to `content/` must be pushed from within that directory.
 |-------|---------|
 | `/login` | Google OAuth login |
 | `/callback` | OAuth callback handler |
+| `/register` | Email registration (backend exists, not primary flow) |
+| `/forgot-password` | Password reset request |
+| `/reset-password` | Password reset handler |
 | `/account` | User profile |
 | `/subscribe` | Subscription plans |
 
@@ -248,7 +257,7 @@ Changes to `content/` must be pushed from within that directory.
 | `/api/admin/settings` | PATCH | Update site settings |
 
 #### Additional Route Modules
-`ai.py`, `analytics.py`, `compliance.py`, `connectors.py`, `consent.py`, `editorial.py`, `engagement.py`, `enrichment.py`, `enterprise.py`, `export.py`, `leads.py`, `monitoring.py`, `newsletter.py`, `partners.py`, `social.py`, `subscriptions.py`, `telemetry.py`
+`ai.py`, `ai_inference.py`, `analytics.py`, `compliance.py`, `connectors.py`, `consent.py`, `editorial.py`, `engagement.py`, `enrichment.py`, `enterprise.py`, `export.py`, `leads.py`, `monitoring.py`, `newsletter.py`, `partners.py`, `social.py`, `subscriptions.py`, `telemetry.py`
 
 ### Persistent Storage
 All Docker data is stored in `backend/data/` (bind mounts):
@@ -271,7 +280,6 @@ All Docker data is stored in `backend/data/` (bind mounts):
 - Monitors: SSH, nginx auth, bots, bad requests
 - Nginx auth_request protects `/dashboard` routes
 - GDPR consent tracking via `ConsentDialog` component
-- **Security audit:** See `TASKS.md` for full findings (18 issues, 2026-04-19)
 - **Critical action:** Rotate all exposed secrets before any further deployments
 
 ### Useful Scripts
@@ -281,19 +289,26 @@ All Docker data is stored in `backend/data/` (bind mounts):
 | `.bash/certbot-setup.sh` | SSL certificate management |
 | `.bash/setup-fail2ban.sh` | Install and configure fail2ban |
 | `.bash/init-submodules.sh` | Initialize git submodules |
+| `.bash/install-mal-cli.sh` | Install `mal` CLI command |
 | `scripts/generate-static-seo.mjs` | Pre-build SEO generation |
-| `scripts/generate-og-images.mjs` | Post-build OG image generation (Satori) |
+| `scripts/enrich-data.mjs` | Pre-build data enrichment |
 | `scripts/generate-charts.mjs` | Pre-build chart generation |
+| `scripts/generate-social-assets.mjs` | Pre-build social media assets |
+| `scripts/autonomous-signals.mjs` | Pre-build autonomous signal processing |
+| `scripts/generate-og-images.mjs` | Post-build OG image generation (Satori) |
 | `scripts/generate-sri-hashes.mjs` | Post-build SRI hash generation |
 | `scripts/performance-audit.mjs` | Post-build performance audit |
 | `scripts/ai-synthesis.py` | AI-driven content synthesis |
+| `scripts/trigger-rebuild.mjs` | Trigger site rebuild |
+| `scripts/export-dashboard-json.ts` | Export dashboard data as JSON |
+| `scripts/backup-restore.ts` | Backup and restore utilities |
 
 ## Project Structure
 
 ```
 sigint/
 ├── app/                          # Next.js frontend
-│   ├── (auth)/                   # Auth routes (login, callback, register)
+│   ├── (auth)/                   # Auth routes (login, callback, register, forgot/reset-password)
 │   ├── dashboard/                # Protected admin dashboard
 │   ├── [category]/               # Dynamic article routes
 │   ├── archive/                  # Content archive
@@ -339,18 +354,27 @@ sigint/
 │   ├── viz-data.ts               # Static data for visualizations
 │   ├── brand-colors.ts           # Brand color JS constants
 │   ├── blog-data.ts              # Blog post data
+│   ├── markdown.ts               # Markdown processing
+│   ├── sigint.ts                 # SIGINT domain utilities
 │   ├── predictions.ts            # Prediction engine
+│   ├── telemetry.ts              # Telemetry helpers
+│   ├── analytics-proxy.ts        # Analytics proxy
 │   └── utils.ts                  # General utilities
 ├── hooks/                        # Root-level hooks
 │   ├── use-mobile.ts             # Mobile breakpoint detector
 │   └── use-theme.ts              # Dark/light theme toggle
 ├── components/                   # Root-level shared components
 │   ├── ui/                       # shadcn/ui components
-│   └── LanguageToggle.tsx        # i18n language selector
+│   ├── LanguageToggle.tsx        # i18n language selector
+│   ├── ContentGate.tsx           # Content access gate
+│   ├── NewsletterForm.tsx        # Newsletter signup
+│   ├── FeedbackForm.tsx          # User feedback
+│   ├── StaticChart.tsx           # Static chart renderer
+│   └── ...                       # Additional engagement/enterprise components
 ├── backend/                      # FastAPI backend
 │   ├── app/
 │   │   ├── main.py               # FastAPI app initialization
-│   │   ├── api/routes/           # 23+ route modules
+│   │   ├── api/routes/           # 23 route modules
 │   │   ├── models/               # SQLAlchemy models
 │   │   ├── services/             # Embedding, search, auth, OAuth
 │   │   ├── core/                 # Config, database, security, rate limiting
@@ -383,11 +407,11 @@ sigint/
 | Component | Status | Notes |
 |-----------|--------|-------|
 | Frontend | Live | Next.js 16, static export to `./out/`, served by nginx |
-| Backend API | Running | FastAPI on port 8000 |
+| Backend API | Running | FastAPI on port 8000 (Python 3.12) |
 | PostgreSQL | Running | With pgvector extension |
-| Redis | ✅ Fixed | Authentication added (rotate placeholder password) |
+| Redis | Running | Authentication enabled (rotate placeholder password) |
 | Authentication | Google OAuth only | JWT + HTTPOnly cookie sessions |
-| Docker | ✅ Fixed | Runs as non-root `appuser` |
+| Docker | Running | Non-root `appuser` container |
 | i18n | English + Sinhala | Sidebar, mobile drawer, footer all locale-aware |
 | Brand System | Complete | Heritage palette, all colors tokenised in `.brand/` |
 | Mobile Navigation | Implemented | Hamburger drawer with auth state + locale toggle |
@@ -404,7 +428,7 @@ sigint/
 
 ## Security Posture (Audited 2026-04-19, Remediated 2026-04-19)
 
-Full security audit completed. 15 of 18 findings remediated in code. See `TASKS.md` for full details.
+Full security audit completed. 15 of 18 findings remediated in code.
 
 | Severity | Count | Fixed | Remaining |
 |----------|-------|-------|-----------|

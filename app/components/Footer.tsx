@@ -22,7 +22,7 @@ export default function Footer() {
           flexShrink: 0,
         }}
       >
-        <div
+        <div className="footer-inner"
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
@@ -35,7 +35,7 @@ export default function Footer() {
         >
           {/* Left: Brand */}
           <div
-            className="t-muted"
+            className="t-muted footer-brand"
             style={{
               fontSize: '13px',
             }}
@@ -44,7 +44,7 @@ export default function Footer() {
           </div>
 
           {/* Right: Links */}
-          <div style={{ display: 'flex', gap: 'var(--spacing-lg)', alignItems: 'center' }}>
+          <div className="footer-links" style={{ display: 'flex', gap: 'var(--spacing-lg)', alignItems: 'center' }}>
             <Link
               href="/privacy"
               className="t-muted"
@@ -93,7 +93,7 @@ export default function Footer() {
         flexShrink: 0,
       }}
     >
-      <div
+      <div className="footer-inner"
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
@@ -112,15 +112,15 @@ export default function Footer() {
           }}
         >
           <div>
-            <div className="t-label" style={{ marginBottom: 'var(--spacing-sm)' }}>
+            <div className="t-label footer-brand" style={{ marginBottom: 'var(--spacing-sm)' }}>
               මලින්ද්‍ර
             </div>
-            <div className="t-muted" style={{ maxWidth: '420px' }}>
+            <div className="t-muted footer-description" style={{ maxWidth: '420px' }}>
               Data-driven socio-economic and geopolitical analysis for Sri Lanka and the Laccadive Sea region. Static, secure, and heritage-grounded.
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 'var(--spacing-lg)' }}>
+          <div className="footer-links" style={{ display: 'flex', gap: 'var(--spacing-lg)' }}>
             <Link href="/privacy" className="t-muted" style={{ transition: 'opacity 150ms ease' }}>
               {nav.privacy}
             </Link>
@@ -133,7 +133,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="heritage-tag">
+        <div className="heritage-tag footer-heritage">
           මලින්ද්‍ර
         </div>
       </div>
