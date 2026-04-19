@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rf Fingerprinting Device Identification — Malindra Intelligence Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=DM+Sans:wght@300;400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #0A0A0D; color: #F2E8D0; padding: 48px 64px; max-width: 800px; margin: 0 auto; }
+  .header { border-bottom: 3px solid #922438; padding-bottom: 24px; margin-bottom: 32px; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #922438; margin-bottom: 16px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #F2E8D0; margin-bottom: 12px; }
+  .meta { font-size: 13px; color: #857B6C; }
+  .description { font-size: 16px; line-height: 1.7; color: #C0B298; margin: 24px 0; }
+  .body { font-size: 15px; line-height: 1.75; color: #C0B298; white-space: pre-wrap; }
+  .tags { margin: 24px 0; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #D49628; }
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid rgba(74,72,82,0.42); font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: #857B6C; text-align: center; }
+  @media print { body { background: white; color: #1A1A1E; } h1, .description, .body { color: #2A2A30; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="eyebrow">Malindra SIGINT Analysis · Intelligence Brief</div>
+  <h1>Rf Fingerprinting Device Identification</h1>
+  <div class="meta">2026-04-19</div>
+</div>
+<div class="description">RF Fingerprinting, also known as Specific Emitter Identification (SEI), is a signals intelligence (SIGINT) technique that identifies individual radio transmitters based on unique, unintentional hardwa</div>
+<div class="body">RF Fingerprinting, also known as Specific Emitter Identification (SEI), is a signals intelligence (SIGINT) technique that identifies individual radio transmitters based on unique, unintentional hardware-level impairments introduced during the manufacturing process. These impairments, often termed "radiometric signatures" or "RF fingerprints," are persistent and difficult to alter, providing a physical-layer biometric for wireless devices. As of 2025-2026, SEI has evolved from a laboratory curiosity to a critical capability for spectrum management, cybersecurity, and national security, driven by advances in deep learning and the proliferation of low-cost software-defined radio (SDR) platforms.
+
+The core premise is that no two transmitters are perfectly identical. Variations in analog components—such as oscillators, power amplifiers, mixers, and digital-to-analog converters (DACs)—create subtle, device-specific distortions in the emitted radio signal. These distortions are superimposed on the intended digital modulation and are detectable in the in-phase and quadrature (IQ) samples of the received signal.
+
+The discriminative features for SEI are extracted from the physical (PHY) layer of the transmitted signal. They are generally categorized into steady-state and transient features.
+
+These features are measured during the stable portion of a transmission.
+
+*   **IQ Imbalance:** Caused by gain and phase mismatches between the I and Q branches of the transmitter's modulator. Quantified by Amplitude Imbalance (α) and Quadrature Skew (θ). Typical values for consumer-grade IoT devices range from 0.1-0.5 dB and 0.5-3 degrees, respectively.
+
+*   **Carrier Frequency Offset (CFO):** The deviation of the actual carrier frequency from its nominal value, primarily due to oscillator drift and temperature effects. Even within the same model, CFO can vary by ±1-10 ppm (e.g., ±2.4 kHz at 2.4 GHz).
+
+*   **Phase Noise:** Random fluctuations in the phase of the oscillator, characterized by its power spectral density. It creates a unique "skirts" pattern around the carrier.
+
+*   **Spectral Regrowth & Non-Linearities:** Harmonics and intermodulation distortion introduced by the power amplifier operating near saturation. Measured via Adjacent Channel Power Ratio (ACPR) or by extracting features from the signal's constellation diagram.
+
+These features are captured during the power-on/power-off ramp of the transmitter, where component behaviors are most distinct and less masked by the data modulation.
+
+*   **Rise Time, Fall Time, and Overshoot:** The time-domain envelope characteristics of the signal's onset and decay. Rise times for Zigbee or WiFi devices typically fall between 5-50 microseconds.
+
+*   **Ramp Shape:** The precise curvature of the power ramp (e.g., linear, exponential, or S-curve), which is determined by the power amplifier's biasing circuit.
+
+*   **Transient Spectral Features:** The evolution of spectral components during the transient period, often analyzed using time-frequency representations like the Short-Time Fourier Transform (STFT).
+
+Traditional SEI relied on manually engineered feature extraction followed by classifiers like Support Vector Machines (SVM). Since the early 2020s, deep learning has become the dominant paradigm, capable of learning complex, high-dimensional features directly from raw or preprocessed IQ samples.
+
+CNNs treat the IQ stream as a 1D time-series signal or convert it into a 2D image-like representation for classification.
+
+*   **Architecture:** Common stacks use 1D convolutional layers for raw IQ (e.g., `[I1, Q1, I2, Q2,...]`) or 2D convolutions for time-frequency images (spectrograms).
+
+*   **Performance:** On the RadioML 2018.01A dataset (24 emitters, 26 SNR levels), a well-tuned 1D-ResNet architecture achieves >99% accuracy at 30 dB SNR, dropping to ~85% at 0 dB SNR (2024 benchmarks).
+
+*   **Advantage:** Excellent at capturing local, translation-invariant patterns like spectral shapes and transient artifacts.
+
+RNNs are designed to model temporal dependencies in sequential data.
+
+*   **Application:** Particularly effective for modeling long transient sequences or the temporal evolution of phase noise.
+
+*   **Hybrid Models:** Often used in conjunction with CNNs (e.g., CNN for spatial feature extraction, LSTM for temporal modeling).</div>
+<div class="footer">මලින්ද්‍ර · Kotte Kingdom 1412–1467 CE · malindra.lk</div>
+</body>
+</html>

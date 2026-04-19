@@ -1,0 +1,16 @@
+{
+  "source": "lki",
+  "label": "Lakshman Kadirgamar Institute",
+  "url": "https://www.lki.lk/publications/",
+  "tags": [
+    "Geopolitics",
+    "Laccadive Sea"
+  ],
+  "fetchedAt": "2026-04-19T00:45:02.933Z",
+  "status": 404,
+  "ok": false,
+  "data": {
+    "available": false,
+    "error": "HTTP 404"
+  }
+}

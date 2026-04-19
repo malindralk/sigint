@@ -2,14 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { GraphData, GraphNode } from "@/lib/graph-data";
+import { BRAND, CHART_COLORS } from '@/lib/brand-colors';
 
 const CATEGORIES = [
   { key: "all", label: "All", color: "var(--text-primary)" },
-  { key: "em-sca", label: "EM-SCA", color: "#7A1E2E" },
-  { key: "sigint", label: "SIGINT", color: "#2C5F8A" },
-  { key: "reference", label: "Reference", color: "#1E6B52" },
-  { key: "learning", label: "Learning", color: "#C4881E" },
-  { key: "infrastructure", label: "Infrastructure", color: "#C4881E" },
+  { key: "em-sca", label: "EM-SCA", color: BRAND.primary },
+  { key: "sigint", label: "SIGINT", color: BRAND.info },
+  { key: "reference", label: "Reference", color: BRAND.success },
+  { key: "learning", label: "Learning", color: BRAND.accent },
+  { key: "infrastructure", label: "Infrastructure", color: BRAND.accent },
 ];
 
 interface Props { data: GraphData; }
@@ -63,7 +64,7 @@ export default function KnowledgeGraph({ data }: Props) {
       svg.call(zoom);
 
       const link = g.append("g").selectAll("line").data(links).join("line")
-        .attr("stroke", "#4A4B54").attr("stroke-width", 1.2).attr("stroke-opacity", 0.4);
+        .attr("stroke", BRAND.borderSolid).attr("stroke-width", 1.2).attr("stroke-opacity", 0.4);
 
       const node = g.append("g").selectAll("g").data(nodes).join("g")
         .attr("cursor", "pointer")

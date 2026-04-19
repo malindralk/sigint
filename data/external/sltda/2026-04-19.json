@@ -1,0 +1,16 @@
+{
+  "source": "sltda",
+  "label": "Sri Lanka Tourism Development Authority",
+  "url": "https://www.sltda.lk/en/statistics",
+  "tags": [
+    "Tourism",
+    "Sri Lanka"
+  ],
+  "fetchedAt": "2026-04-19T00:45:00.509Z",
+  "status": 0,
+  "ok": false,
+  "data": {
+    "available": false,
+    "error": "TypeError: fetch failed"
+  }
+}

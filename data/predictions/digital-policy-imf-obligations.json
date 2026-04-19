@@ -1,0 +1,69 @@
+{
+  "slug": "digital-policy-imf-obligations",
+  "model_version": "v1.0",
+  "model_label": "[MODEL v1.0]",
+  "analysis_label": "[ANALYSIS]",
+  "generated_at": "2026-04-19T11:19:18.069098+00:00",
+  "topics_detected": [
+    "debt",
+    "digital"
+  ],
+  "aggregate_confidence": {
+    "mean": 0.543,
+    "p50": 0.548,
+    "label": "MEDIUM"
+  },
+  "scenarios": [
+    {
+      "topic": "debt",
+      "signal": "International sovereign bond yield spreads indicate persistent market skepticism about Sri Lanka's debt sustainability.",
+      "context": "ISB holders accepted haircuts under the restructuring; residual litigation risk from holdout creditors creates uncertainty in secondary markets.",
+      "implication": "Constrained market access limits the government's ability to refinance maturing obligations without IMF support.",
+      "action": "Track EMBI+ spread movements and rating agency outlook changes (Fitch, Moody's) as leading indicators of market confidence.",
+      "confidence": {
+        "mean": 0.712,
+        "p10": 0.477,
+        "p50": 0.717,
+        "p90": 0.943,
+        "std": 0.173,
+        "ci_width": 0.466
+      },
+      "forecast_quarters": [
+        0.67,
+        0.594,
+        0.556,
+        0.491
+      ],
+      "risk_direction": "decreasing"
+    },
+    {
+      "topic": "digital",
+      "signal": "Sri Lanka's Digital Economy Act and Data Protection Act are creating new regulatory frameworks for platform operators.",
+      "context": "Legislative alignment with GDPR-adjacent standards positions Sri Lanka for potential EU adequacy conversations; however, enforcement capacity remains nascent.",
+      "implication": "Firms operating data-intensive services face compliance ambiguity. First-mover advantage for organizations building compliant infrastructure now.",
+      "action": "Engage Data Protection Authority guidance as it emerges. Build data minimization and consent architecture ahead of enforcement readiness.",
+      "confidence": {
+        "mean": 0.374,
+        "p10": 0.216,
+        "p50": 0.38,
+        "p90": 0.524,
+        "std": 0.121,
+        "ci_width": 0.308
+      },
+      "forecast_quarters": [
+        0.455,
+        0.55,
+        0.628,
+        0.729
+      ],
+      "risk_direction": "increasing"
+    }
+  ],
+  "meta": {
+    "monte_carlo_iterations": 1000,
+    "seed": 42,
+    "forecast_horizon_quarters": 4,
+    "methodology": "Monte Carlo sampling + linear trend extrapolation",
+    "disclaimer": "Pre-computed at build time. Not financial or investment advice."
+  }
+}

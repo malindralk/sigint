@@ -77,22 +77,29 @@ export default function ResearchPage() {
             </div>
             <div className="space-y-2">
               {byYear[year].map((p, i) => (
-                <div key={i} className="card" style={{ padding: 'var(--space-sm) var(--space-md)', display: 'flex', alignItems: 'flex-start', gap: 'var(--space-sm)' }}>
-                  <span className="text-xs px-2 py-0.5 rounded border shrink-0 mt-0.5"
-                    style={{ borderColor: VENUE_COLORS[p.venue] ?? 'var(--border)', color: VENUE_COLORS[p.venue] ?? 'var(--text-muted)', fontFamily: 'var(--font-ui)' }}>
-                    {p.venue}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="t-body" style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{p.title}</div>
-                    <div className="t-muted" style={{ fontSize: '11px', marginTop: 'var(--space-xs)' }}>
-                      {p.attack} · <span style={{ color: 'var(--info)' }}>{p.target}</span>
-                    </div>
+                <div key={i} className="card" style={{ padding: 'var(--space-sm) var(--space-md)' }}>
+                  <div className="flex flex-wrap items-start gap-2" style={{ marginBottom: 'var(--space-xs)' }}>
+                    <span className="text-xs px-2 py-0.5 rounded border shrink-0"
+                      style={{ borderColor: VENUE_COLORS[p.venue] ?? 'var(--border)', color: VENUE_COLORS[p.venue] ?? 'var(--text-muted)', fontFamily: 'var(--font-ui)' }}>
+                      {p.venue}
+                    </span>
+                    <span className="text-right shrink-0 sm:hidden t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)', color: p.traces === 1 ? 'var(--danger)' : p.traces < 1000 ? 'var(--brand-accent)' : 'var(--text-muted)', marginLeft: 'auto' }}>
+                      {p.traces === 1 ? '1 trace' : `${p.traces.toLocaleString()} traces`}
+                    </span>
                   </div>
-                  <div className="text-right shrink-0">
-                    <div className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)', color: p.traces === 1 ? 'var(--danger)' : p.traces < 1000 ? 'var(--brand-accent)' : 'var(--text-muted)' }}>
-                      {p.traces === 1 ? '1 trace' : `${p.traces.toLocaleString()}`}
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="t-body" style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{p.title}</div>
+                      <div className="t-muted" style={{ fontSize: '11px', marginTop: 'var(--space-xs)' }}>
+                        {p.attack} · <span style={{ color: 'var(--info)' }}>{p.target}</span>
+                      </div>
                     </div>
-                    <div className="t-muted" style={{ fontSize: '10px' }}>traces</div>
+                    <div className="text-right shrink-0 hidden sm:block">
+                      <div className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)', color: p.traces === 1 ? 'var(--danger)' : p.traces < 1000 ? 'var(--brand-accent)' : 'var(--text-muted)' }}>
+                        {p.traces === 1 ? '1 trace' : `${p.traces.toLocaleString()}`}
+                      </div>
+                      <div className="t-muted" style={{ fontSize: '10px' }}>traces</div>
+                    </div>
                   </div>
                 </div>
               ))}

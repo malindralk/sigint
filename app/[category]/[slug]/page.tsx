@@ -46,7 +46,7 @@ export default async function ArticlePage({ params }: Props) {
       content={article.content}
       category={category}
       categoryLabel={meta?.label ?? category}
-      categoryAccent={meta?.accent ?? '#58a6ff'}
+      categoryAccent={meta?.accent ?? 'var(--color-zheng-he)'}
       prevArticle={prev ? { slug: prev.slug, title: prev.title } : null}
       nextArticle={next ? { slug: next.slug, title: next.title } : null}
     />

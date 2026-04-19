@@ -1,0 +1,238 @@
+{
+  "generated_at": "2026-04-19T11:19:18.075896+00:00",
+  "model_version": "v1.0",
+  "total": 23,
+  "entries": [
+    {
+      "slug": "contacts",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.609,
+      "generated_at": "2026-04-19T11:19:18.059290+00:00"
+    },
+    {
+      "slug": "coursera-sigint",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.604,
+      "generated_at": "2026-04-19T11:19:18.052939+00:00"
+    },
+    {
+      "slug": "digital-policy-imf-obligations",
+      "model_version": "v1.0",
+      "topics": [
+        "debt",
+        "digital"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.543,
+      "generated_at": "2026-04-19T11:19:18.069098+00:00"
+    },
+    {
+      "slug": "electromagnetic-side-channel-analysis",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.611,
+      "generated_at": "2026-04-19T11:19:18.050114+00:00"
+    },
+    {
+      "slug": "electromagnetic-side-channel-practical-guide",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.598,
+      "generated_at": "2026-04-19T11:19:18.051690+00:00"
+    },
+    {
+      "slug": "em-sca-2026-developments",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.608,
+      "generated_at": "2026-04-19T11:19:18.067337+00:00"
+    },
+    {
+      "slug": "em-sca-consumer-applications",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.611,
+      "generated_at": "2026-04-19T11:19:18.066388+00:00"
+    },
+    {
+      "slug": "em-sca-index",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.624,
+      "generated_at": "2026-04-19T11:19:18.072913+00:00"
+    },
+    {
+      "slug": "em-sca-key-players-companies",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.601,
+      "generated_at": "2026-04-19T11:19:18.058285+00:00"
+    },
+    {
+      "slug": "em-sca-market-analysis-overview",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.614,
+      "generated_at": "2026-04-19T11:19:18.070079+00:00"
+    },
+    {
+      "slug": "entry-level-em-sca-setup",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.598,
+      "generated_at": "2026-04-19T11:19:18.055135+00:00"
+    },
+    {
+      "slug": "organizations",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.599,
+      "generated_at": "2026-04-19T11:19:18.056181+00:00"
+    },
+    {
+      "slug": "pqc-em-sca",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.609,
+      "generated_at": "2026-04-19T11:19:18.064384+00:00"
+    },
+    {
+      "slug": "pqc-implementation-security-2026",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.609,
+      "generated_at": "2026-04-19T11:19:18.065366+00:00"
+    },
+    {
+      "slug": "professional-em-sca-facility",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.598,
+      "generated_at": "2026-04-19T11:19:18.046751+00:00"
+    },
+    {
+      "slug": "research-grade-em-sca-lab",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.608,
+      "generated_at": "2026-04-19T11:19:18.071572+00:00"
+    },
+    {
+      "slug": "rf-fingerprinting-device-identification",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.601,
+      "generated_at": "2026-04-19T11:19:18.048414+00:00"
+    },
+    {
+      "slug": "sdr-tools-landscape-2026",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.615,
+      "generated_at": "2026-04-19T11:19:18.062365+00:00"
+    },
+    {
+      "slug": "sigint-academic-research-overview",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.616,
+      "generated_at": "2026-04-19T11:19:18.073867+00:00"
+    },
+    {
+      "slug": "sigint-machine-learning-pipeline",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.6,
+      "generated_at": "2026-04-19T11:19:18.054039+00:00"
+    },
+    {
+      "slug": "sigint-private-companies-em-intelligence",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.61,
+      "generated_at": "2026-04-19T11:19:18.060954+00:00"
+    },
+    {
+      "slug": "sri-lanka-debt-architecture-imf",
+      "model_version": "v1.0",
+      "topics": [
+        "debt"
+      ],
+      "confidence_label": "HIGH",
+      "confidence_mean": 0.714,
+      "generated_at": "2026-04-19T11:19:18.057218+00:00"
+    },
+    {
+      "slug": "tempest-standards-reference",
+      "model_version": "v1.0",
+      "topics": [
+        "geopolitics"
+      ],
+      "confidence_label": "MEDIUM",
+      "confidence_mean": 0.596,
+      "generated_at": "2026-04-19T11:19:18.063409+00:00"
+    }
+  ]
+}

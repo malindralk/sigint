@@ -1,23 +1,27 @@
 'use client';
+// MALINDRA PHASE 1
+// MobileHeader.tsx
+// Mobile navigation with locale-aware translated strings
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/hooks/use-theme';
-import { useAuth } from '@/app/lib/auth/hooks';
+import { useAuth, usePermissions } from '@/app/lib/auth/hooks';
+import { useLocale } from '@/app/hooks/useLocale';
 
 const vizNav = [
-  { href: '/graph', label: 'Knowledge Graph' },
-  { href: '/market', label: 'Market Intel' },
-  { href: '/companies', label: 'Companies' },
-  { href: '/equipment', label: 'Equipment' },
-  { href: '/research', label: 'Research' },
+  { href: '/graph', key: 'knowledgeGraph' as const },
+  { href: '/market', key: 'marketIntel' as const },
+  { href: '/companies', key: 'companies' as const },
+  { href: '/equipment', key: 'equipment' as const },
+  { href: '/research', key: 'research' as const },
 ];
 
 const wikiGroups = [
   {
     id: 'em-sca',
-    label: 'EM Side-Channel',
+    labelKey: 'emSideChannel' as const,
     items: [
       { slug: 'electromagnetic-side-channel-analysis', label: 'Overview & Theory' },
       { slug: 'tempest-standards-reference', label: 'TEMPEST Standards' },
@@ -39,7 +43,7 @@ const wikiGroups = [
   },
   {
     id: 'sigint',
-    label: 'SIGINT',
+    labelKey: 'sigint' as const,
     items: [
       { slug: 'sigint-academic-research-overview', label: 'Academic Research' },
       { slug: 'sigint-private-companies-em-intelligence', label: 'Private Companies' },
@@ -52,24 +56,25 @@ const wikiGroups = [
 function HamburgerIcon({ open }: { open: boolean }) {
   return (
     <svg
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
+      className="transition-transform duration-200"
     >
       {open ? (
         <>
-          <line x1="4" y1="4" x2="18" y2="18" />
-          <line x1="18" y1="4" x2="4" y2="18" />
+          <line x1="4" y1="4" x2="16" y2="16" className="origin-center" />
+          <line x1="16" y1="4" x2="4" y2="16" className="origin-center" />
         </>
       ) : (
         <>
-          <line x1="3" y1="6" x2="19" y2="6" />
-          <line x1="3" y1="11" x2="19" y2="11" />
-          <line x1="3" y1="16" x2="19" y2="16" />
+          <line x1="2" y1="6" x2="18" y2="6" />
+          <line x1="2" y1="10" x2="18" y2="10" />
+          <line x1="2" y1="14" x2="18" y2="14" />
         </>
       )}
     </svg>
@@ -78,14 +83,14 @@ function HamburgerIcon({ open }: { open: boolean }) {
 
 function SunIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4" />
+      <line x1="12" y1="2" x2="12" y2="4" />
+      <line x1="12" y1="20" x2="12" y2="22" />
       <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
       <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="2" y1="12" x2="4" y2="12" />
+      <line x1="20" y1="12" x2="22" y2="12" />
       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
     </svg>
@@ -94,8 +99,26 @@ function SunIcon() {
 
 function MoonIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+function ChevronIcon({ open }: { open: boolean }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+    >
+      <polyline points="6 9 12 15 18 9" />
     </svg>
   );
 }
@@ -104,6 +127,8 @@ export default function MobileHeader() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { hasRole } = usePermissions();
+  const { locale, toggleLocale, nav, t } = useLocale();
   const [open, setOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     learning: pathname.startsWith('/learning'),
@@ -116,14 +141,19 @@ export default function MobileHeader() {
     setOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when drawer is open
+  // Lock body scroll and signal drawer state for global footer visibility
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.setAttribute('data-drawer-open', '');
     } else {
       document.body.style.overflow = '';
+      document.documentElement.removeAttribute('data-drawer-open');
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.removeAttribute('data-drawer-open');
+    };
   }, [open]);
 
   const toggle = (key: string) =>
@@ -134,22 +164,33 @@ export default function MobileHeader() {
       {/* Top bar — mobile only */}
       <header className="mobile-header lg:hidden">
         <Link href="/" className="mobile-header-wordmark">
-          <span className="mobile-header-sinhala">{'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}</span>
+          {locale === 'si' ? (
+            <span className="mobile-header-sinhala">{'මලින්ද්‍ර'}</span>
+          ) : (
+            <span className="mobile-header-english">MALINDRA</span>
+          )}
           <span className="mobile-header-wordmark-line" />
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div className="mobile-header-actions">
+          <button
+            className="mobile-icon-btn mobile-locale-btn"
+            onClick={toggleLocale}
+            aria-label={locale === 'en' ? 'Switch to Sinhala — සිංහල' : 'Switch to English'}
+          >
+            {locale === 'en' ? 'සි' : 'EN'}
+          </button>
           <button
             className="mobile-icon-btn"
             onClick={toggleTheme}
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={theme === 'dark' ? nav.lightMode : nav.darkMode}
           >
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
           <button
-            className="mobile-icon-btn"
+            className="mobile-icon-btn mobile-menu-btn"
             onClick={() => setOpen(o => !o)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={open ? t.closeMenu : t.openMenu}
             aria-expanded={open}
           >
             <HamburgerIcon open={open} />
@@ -158,13 +199,11 @@ export default function MobileHeader() {
       </header>
 
       {/* Backdrop */}
-      {open && (
-        <div
-          className="mobile-drawer-backdrop lg:hidden"
-          onClick={() => setOpen(false)}
-          aria-hidden
-        />
-      )}
+      <div
+        className={`mobile-drawer-backdrop lg:hidden ${open ? 'mobile-drawer-backdrop-visible' : ''}`}
+        onClick={() => setOpen(false)}
+        aria-hidden
+      />
 
       {/* Drawer */}
       <nav
@@ -172,101 +211,169 @@ export default function MobileHeader() {
         aria-label="Navigation"
       >
         <div className="mobile-drawer-scroll">
-          {/* Visualize section */}
-          <div className="mobile-nav-section">Visualize</div>
-          {vizNav.map(item => {
-            const active = pathname === item.href || pathname === `${item.href}/`;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`mobile-nav-item ${active ? 'active' : ''}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+          {/* Analysis section */}
+          <div className="mobile-nav-section">
+            <span className="mobile-nav-section-line" />
+            {nav.analysis}
+          </div>
+          <div className="mobile-nav-group">
+            <Link
+              href="/blog"
+              className={`mobile-nav-item ${pathname === '/blog' || pathname.startsWith('/blog/') ? 'active' : ''}`}
+            >
+              <span className="mobile-nav-item-text">{nav.analysis}</span>
+              {(pathname === '/blog' || pathname.startsWith('/blog/')) && <span className="mobile-nav-active-indicator" />}
+            </Link>
+            <Link
+              href="/archive"
+              className={`mobile-nav-item ${pathname === '/archive' || pathname.startsWith('/archive/') ? 'active' : ''}`}
+            >
+              <span className="mobile-nav-item-text">{nav.archive}</span>
+              {(pathname === '/archive' || pathname.startsWith('/archive/')) && <span className="mobile-nav-active-indicator" />}
+            </Link>
+          </div>
 
-          {/* Articles section */}
-          <div className="mobile-nav-section">Articles</div>
-
-          {/* Learning Path */}
-          <button
-            className="mobile-nav-item mobile-nav-toggle"
-            onClick={() => toggle('learning')}
-            aria-expanded={!!openGroups.learning}
-          >
-            Learning Path
-            <span className={`mobile-nav-chevron ${openGroups.learning ? 'rotated' : ''}`}>›</span>
-          </button>
-          {openGroups.learning && (
-            <div className="mobile-nav-subtree">
-              <Link
-                href="/learning/coursera-sigint"
-                className={`mobile-nav-subitem ${pathname === '/learning/coursera-sigint' ? 'active' : ''}`}
-              >
-                Coursera Path
-              </Link>
+          {/* Reference section */}
+          <div className="mobile-nav-section">
+            <span className="mobile-nav-section-line" />
+            {nav.reference}
+          </div>
+          <div className="mobile-nav-group">
+            {/* Learning Path */}
+            <button
+              className="mobile-nav-item mobile-nav-toggle"
+              onClick={() => toggle('learning')}
+              aria-expanded={!!openGroups.learning}
+            >
+              <span className="mobile-nav-item-text">{nav.learningPath}</span>
+              <ChevronIcon open={!!openGroups.learning} />
+            </button>
+            <div className={`mobile-nav-subtree-wrapper ${openGroups.learning ? 'mobile-nav-subtree-expanded' : ''}`}>
+              <div className="mobile-nav-subtree">
+                <Link
+                  href="/learning/coursera-sigint"
+                  className={`mobile-nav-subitem ${pathname === '/learning/coursera-sigint' ? 'active' : ''}`}
+                >
+                  {nav.courseraPath}
+                </Link>
+              </div>
             </div>
-          )}
 
-          {/* Wiki groups */}
-          {wikiGroups.map(group => (
-            <div key={group.id}>
-              <button
-                className="mobile-nav-item mobile-nav-toggle"
-                onClick={() => toggle(group.id)}
-                aria-expanded={!!openGroups[group.id]}
-              >
-                {group.label}
-                <span className={`mobile-nav-chevron ${openGroups[group.id] ? 'rotated' : ''}`}>›</span>
-              </button>
-              {openGroups[group.id] && (
-                <div className="mobile-nav-subtree">
-                  {group.items.map(item => {
-                    const href = `/${group.id}/${item.slug}`;
-                    const active = pathname === href || pathname === `${href}/`;
-                    return (
-                      <Link
-                        key={item.slug}
-                        href={href}
-                        className={`mobile-nav-subitem ${active ? 'active' : ''}`}
-                      >
-                        {item.label}
-                      </Link>
-                    );
-                  })}
+            {/* Wiki groups */}
+            {wikiGroups.map(group => (
+              <div key={group.id}>
+                <button
+                  className="mobile-nav-item mobile-nav-toggle"
+                  onClick={() => toggle(group.id)}
+                  aria-expanded={!!openGroups[group.id]}
+                >
+                  <span className="mobile-nav-item-text">{nav[group.labelKey]}</span>
+                  <ChevronIcon open={!!openGroups[group.id]} />
+                </button>
+                <div className={`mobile-nav-subtree-wrapper ${openGroups[group.id] ? 'mobile-nav-subtree-expanded' : ''}`}>
+                  <div className="mobile-nav-subtree">
+                    {group.items.map(item => {
+                      const href = `/${group.id}/${item.slug}`;
+                      const active = pathname === href || pathname === `${href}/`;
+                      return (
+                        <Link
+                          key={item.slug}
+                          href={href}
+                          className={`mobile-nav-subitem ${active ? 'active' : ''}`}
+                        >
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Data section */}
+          <div className="mobile-nav-section">
+            <span className="mobile-nav-section-line" />
+            {nav.data}
+          </div>
+          <div className="mobile-nav-group">
+            {vizNav.map((item, index) => {
+              const active = pathname === item.href || pathname === `${item.href}/`;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`mobile-nav-item ${active ? 'active' : ''}`}
+                  style={{ animationDelay: `${index * 30}ms` }}
+                >
+                  <span className="mobile-nav-item-text">{nav[item.key]}</span>
+                  {active && <span className="mobile-nav-active-indicator" />}
+                </Link>
+              );
+            })}
+          </div>
 
           {/* Auth section */}
-          <div className="mobile-nav-section">Account</div>
-          {!isLoading && (isAuthenticated && user ? (
-            <>
-              <Link href="/dashboard" className="mobile-nav-item">
-                Dashboard
-                <span className="mobile-nav-user-badge">{user.role}</span>
-              </Link>
-              <button
-                className="mobile-nav-item"
-                onClick={() => logout().then(() => { window.location.href = '/'; })}
-              >
-                Sign out
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="mobile-nav-item">Sign in</Link>
-              <Link href="/register" className="mobile-nav-item">Create account</Link>
-            </>
-          ))}
+          <div className="mobile-nav-section">
+            <span className="mobile-nav-section-line" />
+            {nav.account}
+          </div>
+          <div className="mobile-nav-group">
+            {!isLoading && (isAuthenticated && user ? (
+              <>
+                <Link href="/dashboard" className="mobile-nav-item mobile-nav-user">
+                  <span className="mobile-nav-item-text">{nav.dashboard}</span>
+                  <span className="mobile-nav-user-badge">{user.role}</span>
+                </Link>
+                {hasRole('editor') && (
+                  <Link
+                    href="/dashboard/articles"
+                    className={`mobile-nav-item ${pathname.startsWith('/dashboard/articles') ? 'active' : ''}`}
+                  >
+                    <span className="mobile-nav-item-text">{nav.articles}</span>
+                  </Link>
+                )}
+                {hasRole('admin') && (
+                  <>
+                    <Link
+                      href="/dashboard/users"
+                      className={`mobile-nav-item ${pathname.startsWith('/dashboard/users') ? 'active' : ''}`}
+                    >
+                      <span className="mobile-nav-item-text">{nav.users}</span>
+                    </Link>
+                    <Link
+                      href="/dashboard/settings"
+                      className={`mobile-nav-item ${pathname.startsWith('/dashboard/settings') ? 'active' : ''}`}
+                    >
+                      <span className="mobile-nav-item-text">{nav.settings}</span>
+                    </Link>
+                  </>
+                )}
+                <button
+                  className="mobile-nav-item mobile-nav-logout"
+                  onClick={() => logout().then(() => { window.location.href = '/'; })}
+                >
+                  <span className="mobile-nav-item-text">{nav.signOut}</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="mobile-nav-item">
+                  <span className="mobile-nav-item-text">{nav.signIn}</span>
+                </Link>
+              </>
+            ))}
+          </div>
 
-          {/* Legal footer */}
-          <div style={{ display: 'flex', gap: 'var(--space-md)', padding: 'var(--space-md) var(--space-sm)', marginTop: 'var(--space-sm)' }}>
-            <Link href="/privacy" style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy</Link>
-            <Link href="/terms" style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'none' }}>Terms</Link>
+          {/* Footer — shown in drawer on mobile */}
+          <div className="mobile-nav-footer">
+            <span className="mobile-nav-footer-brand">මලින්ද්‍ර</span>
+            <span className="mobile-nav-footer-dot" />
+            <Link href="/privacy" className="mobile-nav-footer-link">{nav.privacy}</Link>
+            <span className="mobile-nav-footer-dot" />
+            <Link href="/terms" className="mobile-nav-footer-link">{nav.terms}</Link>
+            <span className="mobile-nav-footer-dot" />
+            <Link href="/contact" className="mobile-nav-footer-link">{nav.contact}</Link>
           </div>
         </div>
       </nav>

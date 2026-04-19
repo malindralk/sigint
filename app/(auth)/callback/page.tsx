@@ -12,16 +12,27 @@ function CallbackHandler() {
   useEffect(() => {
     const success = searchParams.get("success");
     const error = searchParams.get("error");
+    const redirectTo = searchParams.get("redirect") || "/dashboard";
+
+    console.log("[OAuthCallback] success:", success, "error:", error, "redirectTo:", redirectTo);
 
     if (success) {
       // OAuth set a refresh token cookie — hydrate auth state then redirect
-      const redirectTo = searchParams.get("redirect") || "/dashboard";
+      console.log("[OAuthCallback] Calling refreshToken...");
       refreshToken()
-        .catch(() => {})
-        .finally(() => router.push(redirectTo));
+        .then(() => {
+          console.log("[OAuthCallback] refreshToken succeeded, redirecting to:", redirectTo);
+          router.push(redirectTo);
+        })
+        .catch((err) => {
+          console.error("[OAuthCallback] refreshToken failed:", err);
+          router.push("/login?error=session_failed");
+        });
     } else if (error) {
+      console.error("[OAuthCallback] OAuth error:", error);
       router.push(`/login?error=${encodeURIComponent(error)}`);
     } else {
+      console.log("[OAuthCallback] No success or error, redirecting to login");
       router.push("/login");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

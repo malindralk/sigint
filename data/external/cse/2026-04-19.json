@@ -1,0 +1,16 @@
+{
+  "source": "cse",
+  "label": "Colombo Stock Exchange",
+  "url": "https://www.cse.lk/pages/market-data/market-data.component.html",
+  "tags": [
+    "Finance",
+    "Sri Lanka"
+  ],
+  "fetchedAt": "2026-04-19T00:45:00.667Z",
+  "status": 404,
+  "ok": false,
+  "data": {
+    "available": false,
+    "error": "HTTP 404"
+  }
+}

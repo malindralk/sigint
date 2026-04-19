@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pqc Em Sca — Malindra Intelligence Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=DM+Sans:wght@300;400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #0A0A0D; color: #F2E8D0; padding: 48px 64px; max-width: 800px; margin: 0 auto; }
+  .header { border-bottom: 3px solid #922438; padding-bottom: 24px; margin-bottom: 32px; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #922438; margin-bottom: 16px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #F2E8D0; margin-bottom: 12px; }
+  .meta { font-size: 13px; color: #857B6C; }
+  .description { font-size: 16px; line-height: 1.7; color: #C0B298; margin: 24px 0; }
+  .body { font-size: 15px; line-height: 1.75; color: #C0B298; white-space: pre-wrap; }
+  .tags { margin: 24px 0; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #D49628; }
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid rgba(74,72,82,0.42); font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: #857B6C; text-align: center; }
+  @media print { body { background: white; color: #1A1A1E; } h1, .description, .body { color: #2A2A30; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="eyebrow">Malindra SIGINT Analysis · Intelligence Brief</div>
+  <h1>Pqc Em Sca</h1>
+  <div class="meta">2026-04-19</div>
+</div>
+<div class="description">*Last Updated: April 12, 2026* **Wiki navigation:** [Index](em-sca-index.md) · [EM-SCA Academic Overview](electromagnetic-side-channel-analysis.md) · [Practical Guide](electromagnetic-side-channel-pra</div>
+<div class="body">*Last Updated: April 12, 2026*
+
+**Wiki navigation:** [Index](em-sca-index.md) · [EM-SCA Academic Overview](electromagnetic-side-channel-analysis.md) · [Practical Guide](electromagnetic-side-channel-practical-guide.md) · [TEMPEST Standards](tempest-standards-reference.md) · [Market Analysis](em-sca-market-analysis-overview.md) · [Key Players](em-sca-key-players-companies.md) · [SIGINT Academic Research](sigint-academic-research-overview.md) · [Entry-Level Setup](entry-level-em-sca-setup.md) · [Research-Grade Lab](research-grade-em-sca-lab.md) · [Professional Facility](professional-em-sca-facility.md)
+
+The NIST post-quantum cryptography (PQC) standardization process concluded in 2024, selecting four algorithms for standardization. However, unlike traditional cryptographic algorithms designed with side-channel resistance as an afterthought, PQC algorithms introduce **new EM leakage characteristics** due to their mathematical operations (polynomial arithmetic, lattice operations, Gaussian sampling). This is an active and urgent research area because PQC is being deployed now — before its side-channel resistance is fully understood.
+
+---
+
+---
+
+Kyber is the sole NIST-standardized KEM (Key Encapsulation Mechanism) and is already being deployed in TLS 1.3, SSH, and hardware security modules. It has received the most side-channel research attention.
+
+- Kyber's core operation is polynomial multiplication via NTT (similar to FFT)
+
+- NTT operations produce **data-dependent switching activity** directly proportional to coefficient values
+
+- EM leakage from NTT correlates with intermediate polynomial coefficients, leaking the secret key
+
+- The decapsulation routine compares a recomputed ciphertext with the received one
+
+- This comparison leaks timing and EM information about the secret key bits
+
+- Power/EM traces show distinguishable patterns for 0-bit vs. 1-bit decoding decisions
+
+- Kyber uses centered binomial distribution (CBD) for noise generation
+
+- CBD sampling involves conditional operations that create EM-distinguishable patterns
+
+- This is the same vulnerability vector as FALCON's Gaussian sampler, but milder
+
+**Hardware Implementation Attacks:**
+
+- *Springer JCEN (2025)*: "A side-channel attack on a masked hardware implementation of CRYSTALS-Kyber" — demonstrated key recovery against first-order masked implementations using combined power/EM analysis. Required ~50,000 traces.
+
+- *ASIACCS 2023*: First EM attack on hardware Kyber, recovered full secret key with ~10,000 traces on unprotected implementation.
+
+**Software Implementation Attacks:**
+
+- *MDPI Cryptography (2024)*: Analyzed Kyber vulnerabilities, identified CBD sampling and polynomial multiplication as primary EM leakage sources.</div>
+<div class="footer">මලින්ද්‍ර · Kotte Kingdom 1412–1467 CE · malindra.lk</div>
+</body>
+</html>

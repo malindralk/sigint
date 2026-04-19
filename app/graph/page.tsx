@@ -18,7 +18,7 @@ export default function GraphPage() {
           Force-directed map of all wiki articles and their cross-references. Nodes are articles; edges are explicit links.
         </p>
       </div>
-      <div style={{ height: '70vh' }}>
+      <div style={{ height: 'clamp(50vh, 65vh, 70vh)', minHeight: '320px' }}>
         <KnowledgeGraph data={graphData} />
       </div>
     </div>

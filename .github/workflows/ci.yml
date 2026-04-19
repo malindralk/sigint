@@ -1,0 +1,331 @@
+# MALINDRA PHASE 4
+# .github/workflows/ci.yml
+# CI/CD pipeline: install → AI synthesis → charts → social → build → typecheck → Lighthouse CI
+# Triggers on push to main and pull requests.
+# Rebuild webhook dispatch supported via workflow_dispatch.
+
+name: Malindra CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      rebuild_slug:
+        description: 'Article slug to rebuild (leave blank for full rebuild)'
+        required: false
+        default: ''
+
+env:
+  NODE_VERSION: '20'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # ── Frontend build + typecheck ──────────────────────────────────────────────
+  frontend:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript check
+        run: pnpm typecheck
+
+      - name: Create Phase 4 data directories
+        run: |
+          mkdir -p public/charts public/social public/dashboard
+          mkdir -p data/votes data/leads data/engagement data/editorial
+          mkdir -p data/analytics data/build-logs data/fonts data/predictions
+          mkdir -p data/enterprise data/audit data/external/cbsl
+          mkdir -p data/external/trade data/external/lki
+          mkdir -p content/drafts content/review content/published
+          mkdir -p data/enriched backups
+
+      - name: Prebuild — AI synthesis
+        run: python3 scripts/ai-synthesis.py
+        continue-on-error: true
+
+      - name: Prebuild — data enrichment
+        run: pnpm run enrich
+        continue-on-error: true
+        env:
+          NEXT_PUBLIC_SITE_URL: https://malindra.lk
+
+      - name: Prebuild — generate SVG charts
+        run: pnpm run charts
+        continue-on-error: true
+
+      - name: Prebuild — generate social packages
+        run: pnpm run social
+        continue-on-error: true
+
+      - name: Build static export
+        run: |
+          node scripts/generate-static-seo.mjs
+          pnpm exec next build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://malindra.lk
+          FASTAPI_URL: ''
+
+      - name: Postbuild — generate OG images
+        run: node scripts/generate-og-images.mjs
+        continue-on-error: true
+
+      - name: Verify Phase 4 assets
+        run: |
+          echo "=== Static export size ==="
+          du -sh out/ 2>/dev/null || echo "out/ not found"
+          echo "=== Predictions ==="
+          ls data/predictions/ 2>/dev/null | head -5 || echo "No predictions"
+          echo "Total predictions:" $(ls data/predictions/*.json 2>/dev/null | grep -v index | wc -l)
+          echo "=== Charts ==="
+          ls public/charts/ 2>/dev/null || echo "No charts"
+          echo "=== Social packages ==="
+          echo "Total social packages:" $(ls public/social/ 2>/dev/null | wc -l)
+          echo "=== Data directories ==="
+          ls data/ 2>/dev/null
+
+      - name: Upload static export
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-export
+          path: out/
+          retention-days: 1
+
+      - name: Upload Phase 4 assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-assets
+          path: |
+            public/charts/
+            public/social/
+            public/dashboard/
+            data/predictions/
+          retention-days: 1
+
+  # ── Lighthouse CI ────────────────────────────────────────────────────────────
+  lighthouse:
+    name: Lighthouse CI (≥96)
+    runs-on: ubuntu-latest
+    needs: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Download static export
+        uses: actions/download-artifact@v4
+        with:
+          name: static-export
+          path: out/
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+
+      - name: Run Lighthouse CI
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  # ── Security headers audit ───────────────────────────────────────────────────
+  security-headers:
+    name: Security Headers Audit
+    runs-on: ubuntu-latest
+    needs: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Verify CSP definition in next.config.js
+        run: |
+          node -e "
+            const src = require('fs').readFileSync('./next.config.js', 'utf-8');
+            if (!src.includes('Content-Security-Policy')) { console.error('FAIL: Missing CSP definition'); process.exit(1); }
+            if (!src.includes('X-Frame-Options')) { console.error('FAIL: Missing X-Frame-Options definition'); process.exit(1); }
+            console.log('PASS: Security headers defined in next.config.js');
+          "
+
+  # ── Compliance audit ─────────────────────────────────────────────────────────
+  compliance-check:
+    name: Compliance Audit
+    runs-on: ubuntu-latest
+    needs: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Verify GDPR consent component exists
+        run: |
+          python3 -c "
+          import os
+          files = [
+            'components/GDPRConsent.tsx',
+            'app/compliance/page.tsx',
+            'backend/app/api/routes/compliance.py',
+            'backend/app/middleware/compliance.py',
+          ]
+          missing = [f for f in files if not os.path.exists(f)]
+          if missing:
+              print('FAIL: Missing compliance files:', missing)
+              import sys; sys.exit(1)
+          print('PASS: All compliance files present')
+          "
+
+      - name: Verify Phase 4 routers registered
+        run: |
+          python3 -c "
+          src = open('backend/app/api/routes/__init__.py').read()
+          required = ['ai', 'connectors', 'enterprise', 'compliance', 'monitoring']
+          missing = [r for r in required if r not in src]
+          if missing:
+              print('FAIL: Missing Phase 4 routers:', missing)
+              import sys; sys.exit(1)
+          print('PASS: All Phase 4 routers registered:', required)
+          "
+
+      - name: Verify AI synthesis outputs labeled MODEL
+        run: |
+          python3 -c "
+          from pathlib import Path
+          src = Path('scripts/ai-synthesis.py').read_text()
+          assert 'MODEL_VERSION' in src, 'Missing MODEL_VERSION'
+          assert '[MODEL' in src, 'Missing [MODEL] label'
+          assert '[ANALYSIS]' in src, 'Missing [ANALYSIS] label'
+          print('PASS: AI synthesis labels verified')
+          "
+
+  # ── Backend lint + route verification ────────────────────────────────────────
+  backend:
+    name: Backend Lint & Route Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        run: uv pip install --system ruff pyproject.toml
+        continue-on-error: true
+
+      - name: Ruff lint
+        run: ruff check app/
+        continue-on-error: true
+
+      - name: Verify all Phase 3+4 routers
+        run: |
+          python3 -c "
+          path = 'app/api/routes/__init__.py'
+          src = open(path).read()
+          required = ['social', 'engagement', 'leads', 'editorial', 'analytics', 'consent',
+                      'ai', 'connectors', 'enterprise', 'compliance', 'monitoring']
+          missing = [r for r in required if r not in src]
+          if missing:
+              print('FAIL: Missing routers:', missing)
+              import sys; sys.exit(1)
+          print('PASS: All Phase 3+4 routers registered:', len(required), 'routers')
+          "
+
+      - name: Verify Phase 4 config keys
+        run: |
+          python3 -c "
+          path = 'app/core/config.py'
+          src = open(path).read()
+          required = ['resend_api_key', 'hubspot_api_key', 'export_token', 'rebuild_webhook_url',
+                      'monitor_token', 'enterprise_default_quota', 'ai_model_version']
+          missing = [r for r in required if r not in src]
+          if missing:
+              print('FAIL: Missing config keys:', missing)
+              import sys; sys.exit(1)
+          print('PASS: All Phase 3+4 config keys present')
+          "
+
+  # ── Rebuild webhook dispatch ──────────────────────────────────────────────────
+  rebuild-dispatch:
+    name: Rebuild Webhook (manual)
+    runs-on: ubuntu-latest
+    needs: frontend
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Trigger rebuild webhook
+        run: |
+          SLUG="${{ github.event.inputs.rebuild_slug }}"
+          if [ -n "$SLUG" ]; then
+            node scripts/trigger-rebuild.mjs --slug="$SLUG" --event=rebuild
+          else
+            node scripts/trigger-rebuild.mjs --event=full-rebuild
+          fi
+        env:
+          REBUILD_WEBHOOK_URL: ${{ secrets.REBUILD_WEBHOOK_URL }}
+        continue-on-error: true

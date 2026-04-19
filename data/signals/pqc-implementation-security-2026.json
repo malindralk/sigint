@@ -1,0 +1,61 @@
+{
+  "slug": "pqc-implementation-security-2026",
+  "model_version": "v2.0",
+  "model_label": "[MODEL v2.0]",
+  "analysis_label": "[ANALYSIS]",
+  "generated_at": "2026-04-19T11:19:19.487Z",
+  "dominant_signal": "geopolitical_risk",
+  "signal_strength": 0,
+  "all_signal_scores": {
+    "geopolitical_risk": 0,
+    "economic_stress": 0,
+    "digital_transformation": 0,
+    "climate_resilience": 0,
+    "social_cohesion": 0
+  },
+  "trend_direction": "de-escalating",
+  "trend_slope": -0.0227,
+  "projected_trajectory": [
+    0.539,
+    0.516,
+    0.494,
+    0.471
+  ],
+  "confidence_interval": {
+    "mean": 0.505,
+    "std": 0.025,
+    "lower": 0.48,
+    "upper": 0.53
+  },
+  "related_articles": [
+    {
+      "slug": "pqc-em-sca",
+      "similarity": 0.68
+    },
+    {
+      "slug": "em-sca-2026-developments",
+      "similarity": 0.645
+    },
+    {
+      "slug": "em-sca-index",
+      "similarity": 0.544
+    },
+    {
+      "slug": "em-sca-consumer-applications",
+      "similarity": 0.516
+    },
+    {
+      "slug": "professional-em-sca-facility",
+      "similarity": 0.516
+    }
+  ],
+  "prediction_ref": {
+    "slug": "pqc-implementation-security-2026",
+    "confidence_label": "MEDIUM"
+  },
+  "meta": {
+    "methodology": "TF cosine similarity + OLS linear regression trend projection",
+    "disclaimer": "Pre-computed at build time. Not financial or investment advice.",
+    "articles_in_corpus": 23
+  }
+}

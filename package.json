@@ -1,11 +1,27 @@
 {
   "name": "sigint-wiki",
-  "version": "0.2.0",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "prebuild": "python3 scripts/ai-synthesis.py || true && node scripts/enrich-data.mjs && node scripts/generate-charts.mjs && node scripts/generate-social-assets.mjs && node scripts/autonomous-signals.mjs || true",
+    "build": "node scripts/generate-static-seo.mjs && next build",
+    "postbuild": "node scripts/generate-og-images.mjs && node scripts/generate-sri-hashes.mjs || true && node scripts/performance-audit.mjs || true",
+    "export": "node scripts/generate-static-seo.mjs && next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "seo": "node scripts/generate-static-seo.mjs",
+    "enrich": "node scripts/enrich-data.mjs",
+    "og": "node scripts/generate-og-images.mjs",
+    "charts": "node scripts/generate-charts.mjs",
+    "social": "node scripts/generate-social-assets.mjs",
+    "ai-synthesis": "python3 scripts/ai-synthesis.py",
+    "signals": "node scripts/autonomous-signals.mjs",
+    "sri": "node scripts/generate-sri-hashes.mjs",
+    "perf": "node scripts/performance-audit.mjs",
+    "rebuild": "node scripts/trigger-rebuild.mjs",
+    "rebuild:slug": "node scripts/trigger-rebuild.mjs",
+    "backup": "node --input-type=commonjs scripts/backup-restore.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -23,14 +39,20 @@
     "react-markdown": "^9.0.1",
     "recharts": "^2.15.0",
     "rehype-highlight": "^7.0.0",
+    "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
     "rehype-slug": "^6.0.0",
+    "rehype-stringify": "^10.0.1",
     "remark-gfm": "^4.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
     "shadcn": "^4.2.0",
     "tailwind-merge": "^3.5.0",
-    "tw-animate-css": "^1.4.0"
+    "tw-animate-css": "^1.4.0",
+    "unified": "^11.0.5"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/d3": "^7.4.3",
     "@types/node": "^20",
@@ -38,6 +60,7 @@
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.27",
     "postcss": "^8.5.9",
+    "satori": "^0.12.0",
     "tailwindcss": "^4.2.2",
     "typescript": "^5"
   }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sdr Tools Landscape 2026 — Malindra Intelligence Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=DM+Sans:wght@300;400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #0A0A0D; color: #F2E8D0; padding: 48px 64px; max-width: 800px; margin: 0 auto; }
+  .header { border-bottom: 3px solid #922438; padding-bottom: 24px; margin-bottom: 32px; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #922438; margin-bottom: 16px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #F2E8D0; margin-bottom: 12px; }
+  .meta { font-size: 13px; color: #857B6C; }
+  .description { font-size: 16px; line-height: 1.7; color: #C0B298; margin: 24px 0; }
+  .body { font-size: 15px; line-height: 1.75; color: #C0B298; white-space: pre-wrap; }
+  .tags { margin: 24px 0; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #D49628; }
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid rgba(74,72,82,0.42); font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: #857B6C; text-align: center; }
+  @media print { body { background: white; color: #1A1A1E; } h1, .description, .body { color: #2A2A30; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="eyebrow">Malindra SIGINT Analysis · Intelligence Brief</div>
+  <h1>Sdr Tools Landscape 2026</h1>
+  <div class="meta">2026-04-19</div>
+</div>
+<div class="description">The software-defined radio (SDR) ecosystem for signals intelligence (SIGINT) and electromagnetic (EM) research has matured significantly by 2025-2026. Driven by advancements in RF semiconductor techno</div>
+<div class="body">The software-defined radio (SDR) ecosystem for signals intelligence (SIGINT) and electromagnetic (EM) research has matured significantly by 2025-2026. Driven by advancements in RF semiconductor technology, open-source software, and the integration of artificial intelligence, modern SDR platforms offer unprecedented accessibility, performance, and analytical capability. This article provides a comprehensive, technical survey of the hardware, software, and methodologies defining the field, focusing on tools relevant to security research, side-channel analysis, and spectrum monitoring.
+
+The hardware landscape is stratified by performance, frequency range, and cost, catering to applications from educational experimentation to professional SIGINT collection.
+
+**RTL-SDR Blog V4**
+
+The ubiquitous entry point, the V4, represents a significant evolution from earlier RTL2832U-based dongles.
+
+*   **RF Frontend:** Rafael Micro R860 tuner (≈0.5 – 1766 MHz, gaps at certain ranges).
+
+*   **ADC:** 12-bit, 20.48 MS/s (maximum usable sample rate typically 10 MS/s for stable operation).
+
+*   **Features:** Built-in HF upconverter via Q-branch mixer (covers 500 kHz – 30 MHz), TCXO, bias-tee, SMA connector, and improved EMI shielding. Notably includes a direct sampling mode for VHF.
+
+*   **Price:** ~$40 USD.
+
+*   **Primary Use:** Wideband spectrum monitoring, ADS-B, AIS, DVB-T, FM/AM broadcast, and introductory TEMPEST research.
+
+**Analog Devices ADALM-Pluto SDR (PlutoSDR)**
+
+A portable, full-duplex transceiver built around the AD9363 RFIC.
+
+*   **RF Frontend:** AD9363 (325 – 3800 MHz, tunable). TX output power adjustable up to +7 dBm.
+
+*   **ADC/DAC:** 12-bit, 61.44 MS/s (max complex sample rate).
+
+*   **Features:** ARM Cortex-A9 processor runs Linux, allowing standalone operation. MIMO expansion port. Open-source hardware and firmware.
+
+*   **Price:** ~$250 USD.
+
+*   **Primary Use:** Communications prototyping, radar simulation, two-way link experiments, and educational labs.
+
+**Great Scott Gadgets HackRF 2.0**
+
+The long-awaited successor to the HackRF One, released in late 2024, addresses key limitations.
+
+*   **RF Frontend:** Covers 1 MHz – 8 GHz continuously. Improved LNA and filter stages.
+
+*   **ADC/DAC:** 16-bit, 160 MS/s (maximum sample rate). 80 MHz of instantaneous bandwidth.</div>
+<div class="footer">මලින්ද්‍ර · Kotte Kingdom 1412–1467 CE · malindra.lk</div>
+</body>
+</html>

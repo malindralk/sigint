@@ -3,7 +3,7 @@
 import hashlib
 import secrets
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from argon2 import PasswordHasher
@@ -57,13 +57,13 @@ def create_access_token(user_id: uuid.UUID, role: str) -> tuple[str, datetime]:
         Tuple of (token, expiration_datetime)
     """
     settings = get_settings()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode: dict[str, Any] = {
         "sub": str(user_id),
         "role": role,
         "exp": expire,
-        "iat": datetime.utcnow(),
+        "iat": datetime.now(timezone.utc),
         "jti": secrets.token_hex(16),
         "type": "access",
     }
@@ -83,12 +83,12 @@ def create_refresh_token(user_id: uuid.UUID) -> tuple[str, datetime]:
         Tuple of (token, expiration_datetime)
     """
     settings = get_settings()
-    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    expire = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
 
     to_encode: dict[str, Any] = {
         "sub": str(user_id),
         "exp": expire,
-        "iat": datetime.utcnow(),
+        "iat": datetime.now(timezone.utc),
         "jti": secrets.token_hex(16),
         "type": "refresh",
     }

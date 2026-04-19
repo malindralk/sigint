@@ -1,0 +1,145 @@
+{
+  "model_version": "v2.0",
+  "generated_at": "2026-04-19T11:19:19.490Z",
+  "total": 23,
+  "entries": [
+    {
+      "slug": "contacts",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "coursera-sigint",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "digital-policy-imf-obligations",
+      "dominant_signal": "digital_transformation",
+      "trend_direction": "escalating",
+      "signal_strength": 0.143
+    },
+    {
+      "slug": "electromagnetic-side-channel-analysis",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "electromagnetic-side-channel-practical-guide",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "em-sca-2026-developments",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "em-sca-consumer-applications",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "em-sca-index",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "em-sca-key-players-companies",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "em-sca-market-analysis-overview",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "entry-level-em-sca-setup",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "organizations",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "pqc-em-sca",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "pqc-implementation-security-2026",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "professional-em-sca-facility",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "research-grade-em-sca-lab",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "rf-fingerprinting-device-identification",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "sdr-tools-landscape-2026",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "sigint-academic-research-overview",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "sigint-machine-learning-pipeline",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "sigint-private-companies-em-intelligence",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    },
+    {
+      "slug": "sri-lanka-debt-architecture-imf",
+      "dominant_signal": "economic_stress",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0.25
+    },
+    {
+      "slug": "tempest-standards-reference",
+      "dominant_signal": "geopolitical_risk",
+      "trend_direction": "de-escalating",
+      "signal_strength": 0
+    }
+  ]
+}

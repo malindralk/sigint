@@ -5,10 +5,15 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import { MARKET_GROWTH, EMSCA_SEGMENTS, EMSCA_GEOGRAPHY } from '@/lib/viz-data';
+import { BRAND, CHART_COLORS } from '@/lib/brand-colors';
 
-const TT = {
-  backgroundColor: '#131217', border: '1px solid #4A4B5459',
-  borderRadius: '6px', color: '#EDE0C4', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace',
+const TT: React.CSSProperties = {
+  backgroundColor: 'var(--theme-bg-surface)',
+  border: '1px solid var(--theme-border)',
+  borderRadius: '6px',
+  color: 'var(--theme-text-primary)',
+  fontSize: '12px',
+  fontFamily: 'JetBrains Mono, monospace',
 };
 
 export function MarketGrowthChart() {
@@ -17,23 +22,23 @@ export function MarketGrowthChart() {
       <AreaChart data={MARKET_GROWTH} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="emScaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#7A1E2E" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#7A1E2E" stopOpacity={0} />
+            <stop offset="5%" stopColor={BRAND.primary} stopOpacity={0.3} />
+            <stop offset="95%" stopColor={BRAND.primary} stopOpacity={0} />
           </linearGradient>
           <linearGradient id="sigintGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#2C5F8A" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#2C5F8A" stopOpacity={0} />
+            <stop offset="5%" stopColor={BRAND.info} stopOpacity={0.3} />
+            <stop offset="95%" stopColor={BRAND.info} stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#4A4B5459" />
-        <XAxis dataKey="year" tick={{ fill: '#6B6254', fontSize: 11 }} axisLine={{ stroke: '#4A4B54' }} />
-        <YAxis yAxisId="left" tick={{ fill: '#6B6254', fontSize: 11 }} axisLine={{ stroke: '#4A4B54' }} tickFormatter={v => `$${v}M`} />
-        <YAxis yAxisId="right" orientation="right" tick={{ fill: '#6B6254', fontSize: 11 }} axisLine={{ stroke: '#4A4B54' }} tickFormatter={v => `$${(v / 1000).toFixed(0)}B`} />
+        <CartesianGrid strokeDasharray="3 3" stroke={BRAND.border} />
+        <XAxis dataKey="year" tick={{ fill: BRAND.textMuted, fontSize: 11 }} axisLine={{ stroke: BRAND.borderSolid }} />
+        <YAxis yAxisId="left" tick={{ fill: BRAND.textMuted, fontSize: 11 }} axisLine={{ stroke: BRAND.borderSolid }} tickFormatter={v => `$${v}M`} />
+        <YAxis yAxisId="right" orientation="right" tick={{ fill: BRAND.textMuted, fontSize: 11 }} axisLine={{ stroke: BRAND.borderSolid }} tickFormatter={v => `$${(v / 1000).toFixed(0)}B`} />
         <Tooltip contentStyle={TT} formatter={(v: number, name: string) =>
           name === 'emSca' ? [`$${v}M`, 'EM-SCA'] : [`$${(v / 1000).toFixed(1)}B`, 'SIGINT']} />
-        <Legend formatter={(v) => v === 'emSca' ? 'EM-SCA Market' : 'Private SIGINT Market'} wrapperStyle={{ color: '#6B6254', fontSize: 12 }} />
-        <Area yAxisId="left" type="monotone" dataKey="emSca" stroke="#7A1E2E" strokeWidth={2} fill="url(#emScaGrad)" dot={{ fill: '#7A1E2E', r: 3 }} />
-        <Area yAxisId="right" type="monotone" dataKey="sigint" stroke="#2C5F8A" strokeWidth={2} fill="url(#sigintGrad)" dot={{ fill: '#2C5F8A', r: 3 }} />
+        <Legend formatter={(v) => v === 'emSca' ? 'EM-SCA Market' : 'Private SIGINT Market'} wrapperStyle={{ color: BRAND.textMuted, fontSize: 12 }} />
+        <Area yAxisId="left" type="monotone" dataKey="emSca" stroke={BRAND.primary} strokeWidth={2} fill="url(#emScaGrad)" dot={{ fill: BRAND.primary, r: 3 }} />
+        <Area yAxisId="right" type="monotone" dataKey="sigint" stroke={BRAND.info} strokeWidth={2} fill="url(#sigintGrad)" dot={{ fill: BRAND.info, r: 3 }} />
       </AreaChart>
     </ResponsiveContainer>
   );
@@ -67,18 +72,18 @@ export function SegmentPieChart({ data, title }: { data: typeof EMSCA_SEGMENTS; 
 
 export function CompanyRevenueChart({ companies }: { companies: { name: string; revenue: number; sector: string }[] }) {
   const sorted = [...companies].sort((a, b) => b.revenue - a.revenue).slice(0, 10);
-  const colors: Record<string, string> = { sigint: '#2C5F8A', 'em-sca': '#7A1E2E', 'space-sigint': '#C4881E' };
+  const colors: Record<string, string> = { sigint: BRAND.info, 'em-sca': BRAND.primary, 'space-sigint': BRAND.accent };
 
   return (
     <ResponsiveContainer width="100%" height={320}>
       <BarChart data={sorted} layout="vertical" margin={{ left: 20, right: 40, top: 10, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#4A4B5459" horizontal={false} />
-        <XAxis type="number" tick={{ fill: '#6B6254', fontSize: 10 }} axisLine={{ stroke: '#4A4B54' }} tickFormatter={v => v >= 1000 ? `$${(v / 1000).toFixed(0)}B` : `$${v}M`} />
-        <YAxis type="category" dataKey="name" width={80} tick={{ fill: '#B8A98E', fontSize: 10 }} axisLine={{ stroke: '#4A4B54' }} />
+        <CartesianGrid strokeDasharray="3 3" stroke={BRAND.border} horizontal={false} />
+        <XAxis type="number" tick={{ fill: BRAND.textMuted, fontSize: 10 }} axisLine={{ stroke: BRAND.borderSolid }} tickFormatter={v => v >= 1000 ? `$${(v / 1000).toFixed(0)}B` : `$${v}M`} />
+        <YAxis type="category" dataKey="name" width={80} tick={{ fill: BRAND.textSecondary, fontSize: 10 }} axisLine={{ stroke: BRAND.borderSolid }} />
         <Tooltip contentStyle={TT} formatter={(v: number) => [v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v}M`, 'Revenue']} />
         <Bar dataKey="revenue" radius={[0, 4, 4, 0]}>
           {sorted.map((entry, i) => (
-            <Cell key={i} fill={colors[entry.sector] ?? '#2C5F8A'} fillOpacity={0.85} />
+            <Cell key={i} fill={colors[entry.sector] ?? BRAND.info} fillOpacity={0.85} />
           ))}
         </Bar>
       </BarChart>

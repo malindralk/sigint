@@ -1,0 +1,17 @@
+{
+  "source": "cbsl",
+  "label": "Central Bank of Sri Lanka",
+  "url": "https://www.cbsl.gov.lk/en/statistics/external-sector-statistics",
+  "tags": [
+    "Debt Restructuring",
+    "Finance",
+    "Sri Lanka"
+  ],
+  "fetchedAt": "2026-04-19T00:45:01.212Z",
+  "status": 404,
+  "ok": false,
+  "data": {
+    "available": false,
+    "error": "HTTP 404"
+  }
+}

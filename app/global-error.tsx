@@ -17,18 +17,18 @@ export default function GlobalError({
   return (
     <html>
       <body>
-        <div className="min-h-screen flex items-center justify-center" style={{ background: '#16151B' }}>
+        <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--theme-bg-base)' }}>
           <div className="text-center p-8">
-            <h2 className="text-2xl font-bold mb-4" style={{ color: '#F2E8D0', fontFamily: 'system-ui, sans-serif' }}>
+            <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--theme-text-primary)', fontFamily: 'system-ui, sans-serif' }}>
               Something went wrong!
             </h2>
-            <p className="mb-6" style={{ color: '#857B6C' }}>
+            <p className="mb-6" style={{ color: 'var(--color-warm-stone)' }}>
               An unexpected error occurred. Please try again.
             </p>
             <button
               onClick={reset}
               className="px-4 py-2 rounded-lg transition-opacity hover:opacity-90"
-              style={{ background: '#D49628', color: '#16151B' }}
+              style={{ background: 'var(--color-temple-gold)', color: 'var(--theme-bg-base)' }}
             >
               Try again
             </button>

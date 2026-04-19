@@ -95,6 +95,32 @@ async def get_current_user(
     return user
 
 
+async def get_current_user_optional(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+    db: AsyncSession = Depends(get_db),
+) -> User | None:
+    """Get the current authenticated user if available, else None.
+
+    Args:
+        request: FastAPI request
+        credentials: HTTP Authorization credentials
+        db: Database session
+
+    Returns:
+        The authenticated user or None if not authenticated
+    """
+    if not credentials:
+        return None
+
+    token = credentials.credentials
+    redis_client = getattr(request.app.state, "redis", None)
+    session_service = SessionService(db, redis_client)
+
+    user = await session_service.validate_session(token)
+    return user
+
+
 async def get_current_active_user(
     current_user: User = Depends(get_current_user),
 ) -> User:
@@ -157,3 +183,4 @@ SessionSvc = Annotated[SessionService, Depends(get_session_service)]
 OAuthSvc = Annotated[OAuthService, Depends(get_oauth_service)]
 EmailSvc = Annotated[EmailService, Depends(get_email_service)]
 CurrentUser = Annotated[User, Depends(get_current_active_user)]
+CurrentUserOptional = Annotated[User | None, Depends(get_current_user_optional)]

@@ -63,10 +63,10 @@ function LoginContent() {
               color: "var(--theme-text-primary)",
             }}
           >
-            Sign in
+            Sign in to Malindra
           </h1>
           <p style={{ fontSize: "0.9rem", color: "var(--theme-text-muted)" }}>
-            Use your Google account to access Malindra
+            Sign in with your Google account to continue
           </p>
         </div>
 
@@ -75,8 +75,8 @@ function LoginContent() {
             style={{
               width: "100%",
               padding: "0.75rem 1rem",
-              backgroundColor: "rgba(239, 68, 68, 0.1)",
-              border: "1px solid rgba(239, 68, 68, 0.3)",
+              backgroundColor: "rgba(190, 51, 72, 0.1)",
+              border: "1px solid rgba(190, 51, 72, 0.3)",
               borderRadius: "4px",
               color: "var(--theme-text-primary)",
               fontSize: "0.875rem",

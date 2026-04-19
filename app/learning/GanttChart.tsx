@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { LEARNING_PHASES } from '@/lib/viz-data';
 import GanttChart from '@/app/components/GanttChart';
 import type { GanttItem } from '@/app/components/GanttChart';
+import { BRAND, CHART_COLORS } from '@/lib/brand-colors';
 
-const BRAND_COLORS = ['#7A1E2E', '#2C5F8A', '#C4881E', '#1E6B52', '#A8293C'];
+const BRAND_COLORS = [BRAND.primary, BRAND.info, BRAND.accent, BRAND.success, BRAND.danger];
 
 export default function LearningGanttChart() {
   const [open, setOpen] = useState(false);

@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { BRAND, CHART_COLORS } from '@/lib/brand-colors';
 
 interface Company { name: string; tier: number; sector: string; revenue: number; hq: string; focus: string; }
 
-const SECTOR_COLORS: Record<string, string> = { 'sigint': '#2C5F8A', 'em-sca': '#7A1E2E', 'space-sigint': '#C4881E' };
+const SECTOR_COLORS: Record<string, string> = { 'sigint': BRAND.info, 'em-sca': BRAND.primary, 'space-sigint': BRAND.accent };
 const SECTOR_LABELS: Record<string, string> = { 'sigint': 'SIGINT Defense', 'em-sca': 'EM-SCA', 'space-sigint': 'Space SIGINT' };
 
 function formatRevenue(r: number) {
@@ -24,47 +25,47 @@ export default function CompanyGrid({ companies }: { companies: Company[] }) {
 
   return (
     <div className="space-y-3">
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3 items-center">
-        <div className="flex items-center gap-2">
+      {/* Filters — stacks vertically on mobile, wraps on tablet+ */}
+      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:items-center">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>Sector:</span>
           {['all', 'sigint', 'em-sca', 'space-sigint'].map(s => (
             <button key={s} onClick={() => setSector(s)}
               className="text-xs px-2.5 py-1 rounded border font-mono transition-colors"
               style={{
-                borderColor: sector === s ? (SECTOR_COLORS[s] ?? '#EDE0C4') : '#4A4B54',
-                color: sector === s ? (SECTOR_COLORS[s] ?? '#EDE0C4') : '#6B6254',
-                background: sector === s ? `${SECTOR_COLORS[s] ?? '#EDE0C4'}11` : 'transparent',
+                borderColor: sector === s ? (SECTOR_COLORS[s] ?? 'var(--theme-text-primary)') : 'var(--theme-border-strong)',
+                color: sector === s ? (SECTOR_COLORS[s] ?? 'var(--theme-text-primary)') : 'var(--theme-text-muted)',
+                background: sector === s ? `${SECTOR_COLORS[s] ?? 'var(--theme-text-primary)'}11` : 'transparent',
                 fontFamily: 'var(--font-ui)',
               }}>
               {s === 'all' ? 'All' : SECTOR_LABELS[s]}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>Tier:</span>
           {['all', '1', '2', '3'].map(t => (
             <button key={t} onClick={() => setTier(t)}
               className="text-xs px-2.5 py-1 rounded border font-mono transition-colors"
               style={{
-                borderColor: tier === t ? '#EDE0C4' : '#4A4B54',
-                color: tier === t ? '#EDE0C4' : '#6B6254',
-                background: tier === t ? '#EDE0C411' : 'transparent',
+                borderColor: tier === t ? 'var(--theme-text-primary)' : 'var(--theme-border-strong)',
+                color: tier === t ? 'var(--theme-text-primary)' : 'var(--theme-text-muted)',
+                background: tier === t ? 'var(--theme-hover-bg)' : 'transparent',
                 fontFamily: 'var(--font-ui)',
               }}>
               {t === 'all' ? 'All' : `Tier ${t}`}
             </button>
           ))}
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:ml-auto">
           <span className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>Sort:</span>
           {(['revenue', 'name'] as const).map(s => (
             <button key={s} onClick={() => setSort(s)}
               className="text-xs px-2.5 py-1 rounded border font-mono transition-colors"
               style={{
-                borderColor: sort === s ? '#EDE0C4' : '#4A4B54',
-                color: sort === s ? '#EDE0C4' : '#6B6254',
-                background: sort === s ? '#EDE0C411' : 'transparent',
+                borderColor: sort === s ? 'var(--theme-text-primary)' : 'var(--theme-border-strong)',
+                color: sort === s ? 'var(--theme-text-primary)' : 'var(--theme-text-muted)',
+                background: sort === s ? 'var(--theme-hover-bg)' : 'transparent',
                 fontFamily: 'var(--font-ui)',
               }}>
               {s}

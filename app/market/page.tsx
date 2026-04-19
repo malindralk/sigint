@@ -33,7 +33,7 @@ export default function MarketPage() {
         <div className="t-label">Market Growth 2022–2035</div>
         <div className="t-muted" style={{ fontSize: '12px', marginBottom: 'var(--space-md)' }}>EM-SCA (left axis, $M) vs. Private SIGINT (right axis, $B)</div>
         <MarketGrowthChart />
-        <div className="grid grid-cols-2 gap-3" style={{ marginTop: 'var(--space-md)' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ marginTop: 'var(--space-md)' }}>
           <div className="card" style={{ padding: 'var(--space-sm)' }}>
             <div className="t-stat" style={{ fontSize: '20px', color: 'var(--success)' }}>12–18% CAGR</div>
             <div className="card-sub">EM-SCA market</div>
@@ -58,9 +58,9 @@ export default function MarketPage() {
       {/* Company revenue */}
       <section className="card" style={{ padding: 'var(--space-lg)' }}>
         <div className="t-label">Company Revenue Comparison</div>
-        <div className="t-muted" style={{ fontSize: '12px', marginBottom: 'var(--space-md)' }}>
-          <span className="inline-flex items-center gap-1.5 mr-4"><span className="w-2 h-2 rounded-full" style={{ background: 'var(--info)' }} />SIGINT Defense</span>
-          <span className="inline-flex items-center gap-1.5 mr-4"><span className="w-2 h-2 rounded-full" style={{ background: 'var(--brand-primary)' }} />EM-SCA Vendors</span>
+        <div className="t-muted flex flex-wrap gap-x-4 gap-y-1" style={{ fontSize: '12px', marginBottom: 'var(--space-md)' }}>
+          <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: 'var(--info)' }} />SIGINT Defense</span>
+          <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: 'var(--brand-primary)' }} />EM-SCA Vendors</span>
           <span className="inline-flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: 'var(--brand-accent)' }} />Space SIGINT</span>
         </div>
         <CompanyRevenueChart companies={COMPANIES} />

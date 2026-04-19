@@ -4,7 +4,10 @@ import { Cormorant_Garamond, DM_Sans, Noto_Serif_Sinhala } from "next/font/googl
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
 import MobileHeader from "./components/MobileHeader";
+import Footer from "./components/Footer";
+import { ConsentDialog } from "./components/consent";
 import { AuthProvider } from "./lib/auth/context";
+import { LocaleProvider } from "./hooks/useLocale";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -30,6 +33,7 @@ const notoSinhala = Noto_Serif_Sinhala({
 export const metadata: Metadata = {
   title: { default: "SIGINT Wiki", template: "%s — SIGINT Wiki" },
   description: "Electromagnetic side-channel analysis, signals intelligence, and RF security research knowledge base.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://malindra.lk'),
 };
 
 export default function RootLayout({
@@ -46,25 +50,24 @@ export default function RootLayout({
       </head>
       <body style={{ background: "var(--theme-bg-base)", color: "var(--theme-text-primary)", fontFamily: "var(--font-ui)", height: "100vh", margin: 0, overflow: "hidden" }}>
         <AuthProvider>
-          <div className="scanline" />
-          {/* Mobile top bar — visible below lg breakpoint */}
-          <MobileHeader />
-          <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-            <Sidebar />
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, height: "100vh", overflow: "hidden" }}>
-              <main style={{ flex: 1, overflow: "auto", padding: "var(--spacing-xl) var(--spacing-2xl)" }} className="mobile-main">
-                <div style={{ maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
-                  {children}
-                </div>
-              </main>
-              <footer style={{ borderTop: "1px solid var(--theme-border)", padding: "10px var(--spacing-xl)", textAlign: "center", flexShrink: 0, background: "var(--theme-bg-base)" }}>
-                <span className="t-sinhala-logo" style={{ fontSize: "14px", color: "var(--theme-text-primary)" }}>{'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}</span>
-                <p className="t-muted" style={{ fontSize: "10px", fontFamily: "var(--font-ui)", marginTop: "2px", color: "var(--theme-text-muted)" }}>
-                  &copy; {new Date().getFullYear()}
-                </p>
-              </footer>
+          <LocaleProvider>
+            <div className="scanline" />
+            {/* Mobile top bar — visible below lg breakpoint */}
+            <MobileHeader />
+            <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+              <Sidebar />
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, height: "100vh", overflow: "hidden" }}>
+                <main style={{ flex: 1, overflow: "auto", padding: "var(--spacing-xl) var(--spacing-2xl)" }} className="mobile-main">
+                  <div style={{ maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
+                    {children}
+                  </div>
+                </main>
+                <Footer />
+              </div>
             </div>
-          </div>
+            {/* Privacy consent dialog - shows on first visit */}
+            <ConsentDialog />
+          </LocaleProvider>
         </AuthProvider>
       </body>
     </html>

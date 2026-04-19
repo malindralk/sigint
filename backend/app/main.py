@@ -1,6 +1,8 @@
 """Main FastAPI application."""
 
 import logging
+import logging.handlers
+import os
 from contextlib import asynccontextmanager
 
 import redis.asyncio as redis
@@ -11,12 +13,36 @@ from fastapi.responses import JSONResponse
 from app.api import api_router
 from app.core.config import get_settings
 from app.core.database import init_db
+from app.middleware.auth import APIKeyAuthMiddleware
+from app.middleware.compliance import ComplianceMiddleware
 
 settings = get_settings()
-logging.basicConfig(
-    level=logging.DEBUG if settings.debug else logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+
+# --- Logging with file rotation (10 x 50MB = 500MB max) ---
+_log_fmt = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+_log_level = logging.DEBUG if settings.debug else logging.INFO
+
+root_logger = logging.getLogger()
+root_logger.setLevel(_log_level)
+
+# Console handler (keep existing behaviour)
+_console = logging.StreamHandler()
+_console.setLevel(_log_level)
+_console.setFormatter(logging.Formatter(_log_fmt))
+root_logger.addHandler(_console)
+
+# File handler with rotation — writes to /app/logs inside Docker
+_log_dir = os.environ.get("LOG_DIR", "/app/logs")
+os.makedirs(_log_dir, exist_ok=True)
+_file_handler = logging.handlers.RotatingFileHandler(
+    filename=os.path.join(_log_dir, "backend.log"),
+    maxBytes=50 * 1024 * 1024,   # 50 MB per file
+    backupCount=9,                # 9 backups + 1 active = 10 files = 500 MB max
+    encoding="utf-8",
 )
+_file_handler.setLevel(_log_level)
+_file_handler.setFormatter(logging.Formatter(_log_fmt))
+root_logger.addHandler(_file_handler)
 logger = logging.getLogger(__name__)
 
 
@@ -93,14 +119,33 @@ async def add_security_headers(request: Request, call_next):
     return response
 
 
-# Error handling middleware
+# Request logging + error handling middleware
 @app.middleware("http")
-async def error_handling(request: Request, call_next):
-    """Handle exceptions and return JSON responses."""
+async def request_logging_and_error_handling(request: Request, call_next):
+    """Log every HTTP request and handle exceptions."""
+    import time
+
+    start = time.perf_counter()
     try:
-        return await call_next(request)
+        response = await call_next(request)
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        logger.info(
+            "%s %s %s %.1fms",
+            request.method,
+            request.url.path,
+            response.status_code,
+            elapsed_ms,
+        )
+        return response
     except Exception as e:
-        logger.exception("Unhandled exception")
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        logger.exception(
+            "%s %s 500 %.1fms - Unhandled exception: %s",
+            request.method,
+            request.url.path,
+            elapsed_ms,
+            e,
+        )
         return JSONResponse(
             status_code=500,
             content={"detail": "Internal server error"},
@@ -109,6 +154,10 @@ async def error_handling(request: Request, call_next):
 
 # Include API routes
 app.include_router(api_router, prefix="/api")
+
+# Phase 4: Enterprise auth + compliance middleware (added AFTER route registration)
+app.add_middleware(APIKeyAuthMiddleware)
+app.add_middleware(ComplianceMiddleware)
 
 
 @app.get("/health")

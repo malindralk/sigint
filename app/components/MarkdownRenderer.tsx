@@ -7,6 +7,7 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
 import rehypeSanitize from 'rehype-sanitize';
 import GanttChart from '@/app/components/GanttChart';
+import { BRAND, CHART_COLORS } from '@/lib/brand-colors';
 import 'highlight.js/styles/github-dark.css';
 
 interface Props { content: string; category: string; }
@@ -54,7 +55,7 @@ function parseMermaidGantt(code: string) {
   return { items, totalWeeks, projectStart };
 }
 
-const BRAND_COLORS = ['#7A1E2E', '#2C5F8A', '#C4881E', '#1E6B52', '#A8293C'];
+const GANTT_COLORS = [BRAND.primary, BRAND.info, BRAND.accent, BRAND.success, BRAND.danger];
 
 function MermaidGanttBlock({ code }: { code: string }) {
   const [open, setOpen] = useState(false);
@@ -65,7 +66,7 @@ function MermaidGanttBlock({ code }: { code: string }) {
 
   const ganttItems = parsed.items.map((item, i) => ({
     ...item,
-    color: BRAND_COLORS[i % BRAND_COLORS.length],
+    color: GANTT_COLORS[i % GANTT_COLORS.length],
   }));
 
   const chart = <GanttChart items={ganttItems} totalWeeks={parsed.totalWeeks} projectStart={parsed.projectStart} />;

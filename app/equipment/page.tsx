@@ -72,24 +72,19 @@ export default function EquipmentPage() {
       {/* Upgrade path */}
       <section>
         <div className="t-eyebrow">/ Upgrade Path for EM-SCA</div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2" style={{ marginTop: 'var(--space-sm)' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" style={{ marginTop: 'var(--space-sm)' }}>
           {[
-            { label: 'RTL-SDR v4', price: '$40', note: 'SEMA, TEMPEST basics', color: 'var(--brand-primary)' },
-            { label: '→' },
-            { label: 'HackRF 2.0', price: '$600', note: 'Active EM-SCA, MIMO', color: 'var(--brand-accent)' },
-            { label: '→' },
-            { label: 'USRP X410', price: '$18k', note: '400 MHz BW, FIPS testing', color: 'var(--info)' },
-          ].map((item, i) =>
-            'note' in item ? (
-              <div key={i} className="card" style={{ padding: 'var(--space-sm)', flex: 1 }}>
-                <div className="t-card-heading" style={{ fontSize: '13px', color: item.color }}>{item.label}</div>
-                <div className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>{item.price}</div>
-                <div className="t-muted" style={{ fontSize: '11px', marginTop: 'var(--space-xs)' }}>{item.note}</div>
-              </div>
-            ) : (
-              <span key={i} className="t-muted text-xl font-bold hidden sm:block" style={{ color: 'var(--text-muted)' }}>→</span>
-            )
-          )}
+            { label: 'RTL-SDR v4', price: '$40', note: 'SEMA, TEMPEST basics', color: 'var(--brand-primary)', step: '01' },
+            { label: 'HackRF 2.0', price: '$600', note: 'Active EM-SCA, MIMO', color: 'var(--brand-accent)', step: '02' },
+            { label: 'USRP X410', price: '$18k', note: '400 MHz BW, FIPS testing', color: 'var(--info)', step: '03' },
+          ].map((item, i) => (
+            <div key={i} className="card" style={{ padding: 'var(--space-sm)' }}>
+              <div className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)', marginBottom: 'var(--space-xs)' }}>Step {item.step}</div>
+              <div className="t-card-heading" style={{ fontSize: '13px', color: item.color }}>{item.label}</div>
+              <div className="t-muted" style={{ fontSize: '11px', fontFamily: 'var(--font-ui)' }}>{item.price}</div>
+              <div className="t-muted" style={{ fontSize: '11px', marginTop: 'var(--space-xs)' }}>{item.note}</div>
+            </div>
+          ))}
         </div>
       </section>
     </div>

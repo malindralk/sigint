@@ -21,7 +21,7 @@ export default function LearningPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
           { label: 'Total Duration', value: '26 weeks' },
           { label: 'Total Hours', value: `${totalHours}h` },
@@ -81,8 +81,8 @@ export default function LearningPage() {
             { phase: 'Phase 3: RF Eng.', articles: ['sdr-tools-landscape-2026', 'research-grade-em-sca-lab', 'tempest-standards-reference'] },
             { phase: 'Phase 4: ML', articles: ['sigint-machine-learning-pipeline', 'rf-fingerprinting-device-identification', 'em-sca-2026-developments'] },
           ].map(row => (
-            <div key={row.phase} className="flex items-start gap-4" style={{ marginBottom: 'var(--space-sm)' }}>
-              <span className="t-muted" style={{ width: '144px', flexShrink: 0, fontSize: '12px', fontFamily: 'var(--font-ui)' }}>{row.phase}</span>
+            <div key={row.phase} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4" style={{ marginBottom: 'var(--space-sm)' }}>
+              <span className="t-muted shrink-0" style={{ fontSize: '12px', fontFamily: 'var(--font-ui)' }}>{row.phase}</span>
               <div className="flex flex-wrap gap-2">
                 {row.articles.map(slug => (
                   <span key={slug} className="badge badge-blue" style={{ cursor: 'pointer', fontSize: '10px' }}>

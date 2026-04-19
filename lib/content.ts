@@ -40,7 +40,7 @@ export const categories: CategoryMeta[] = [
     label: 'EM Side-Channel',
     description: 'Electromagnetic side-channel analysis — theory, equipment tiers, market analysis, and TEMPEST standards.',
     color: 'text-sinha-maroon',
-    accent: '#39d353',
+    accent: 'var(--color-water-fortress)',
     icon: '⚡',
   },
   {
@@ -48,7 +48,7 @@ export const categories: CategoryMeta[] = [
     label: 'SIGINT',
     description: 'Signals intelligence — academic research, RF fingerprinting, geolocation, and private industry landscape.',
     color: 'text-zheng-he',
-    accent: '#58a6ff',
+    accent: 'var(--color-zheng-he)',
     icon: '📡',
   },
   {
@@ -56,7 +56,7 @@ export const categories: CategoryMeta[] = [
     label: 'Learning Paths',
     description: 'Structured learning resources — Coursera curricula, prerequisites, and progression roadmaps.',
     color: 'text-temple-gold',
-    accent: '#f0883e',
+    accent: 'var(--color-temple-gold)',
     icon: '📚',
   },
 ];

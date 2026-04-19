@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     embedding_batch_size: int = 32
     embedding_dimension: int = 384  # all-MiniLM-L6-v2 dimension
 
+    # Admin email — controls who gets admin role on OAuth login
+    admin_email: str = "mail@malindra.lk"
+
     # OAuth providers
     google_client_id: str = ""
     google_client_secret: str = ""
@@ -44,7 +47,7 @@ class Settings(BaseSettings):
     smtp_port: int = 587
     smtp_user: str = ""
     smtp_password: str = ""
-    smtp_from: str = "noreply@example.com"
+    smtp_from: str = "noreply@malindra.lk"
 
     # Security
     secret_key: str = "change-me-in-production"
@@ -54,6 +57,32 @@ class Settings(BaseSettings):
     # Token expiration (in minutes for access, days for refresh)
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 7
+
+    # Phase 3: External integrations
+    resend_api_key: str = ""
+    hubspot_api_key: str = ""
+    export_token: str = ""         # CSV export auth token
+    rebuild_webhook_url: str = ""  # Vercel/GitHub/CF rebuild hook
+
+    # Phase 4: Enterprise & compliance
+    monitor_token: str = ""        # GET /api/monitoring/metrics auth token
+    enterprise_default_quota: int = 10_000  # Default monthly API quota
+    data_retention_analytics_days: int = 90
+    data_retention_leads_days: int = 365
+    ai_model_version: str = "v1.0"
+    connector_sync_enabled: bool = True
+
+    # Phase 5: Subscriptions, Telemetry, Partners
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_price_signal_monthly: str = "price_signal_monthly"
+    stripe_price_sovereign_monthly: str = "price_sovereign_monthly"
+    stripe_price_enterprise_annual: str = "price_enterprise_annual"
+    audit_chain_secret: str = ""       # HMAC secret for immutable audit chain
+    telemetry_enabled: bool = True
+    ab_testing_enabled: bool = True
+    partner_webhook_secret: str = ""
+    lemonsqueezy_api_key: str = ""     # Alternative to Stripe for LemonSqueezy
 
     @property
     def is_development(self) -> bool:

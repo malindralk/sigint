@@ -353,19 +353,17 @@ export default function ArticleView({ title, content, category, categoryLabel, c
 
         {/* Prev/Next article links */}
         {(prevArticle || nextArticle) && (
-          <div className="grid grid-cols-2 gap-3" style={{ borderTop: '1px solid var(--theme-border, var(--color-border-default))', paddingTop: '24px', marginTop: '24px' }}>
+          <div className="article-nav">
             {prevArticle ? (
-              <Link href={`/${category}/${prevArticle.slug}`}
-                className="card" style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '16px', textDecoration: 'none' }}>
-                <span className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)' }}>&larr; Previous</span>
-                <span className="t-body" style={{ fontSize: '13px', color: 'var(--theme-text-primary, var(--color-ola-leaf))' }}>{prevArticle.title}</span>
+              <Link href={`/${category}/${prevArticle.slug}`} className="article-nav-link">
+                <span className="article-nav-label">&larr; Previous</span>
+                <span className="article-nav-title">{prevArticle.title}</span>
               </Link>
             ) : <div />}
             {nextArticle ? (
-              <Link href={`/${category}/${nextArticle.slug}`}
-                className="card" style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '16px', textDecoration: 'none', textAlign: 'right', alignItems: 'flex-end' }}>
-                <span className="t-muted" style={{ fontSize: '10px', fontFamily: 'var(--font-ui)' }}>Next &rarr;</span>
-                <span className="t-body" style={{ fontSize: '13px', color: 'var(--theme-text-primary, var(--color-ola-leaf))' }}>{nextArticle.title}</span>
+              <Link href={`/${category}/${nextArticle.slug}`} className="article-nav-link article-nav-link--next">
+                <span className="article-nav-label">Next &rarr;</span>
+                <span className="article-nav-title">{nextArticle.title}</span>
               </Link>
             ) : <div />}
           </div>
@@ -419,7 +417,7 @@ export default function ArticleView({ title, content, category, categoryLabel, c
 
           {/* Section picker in focus mode */}
           {showSectionPicker && (
-            <div style={{ position: 'fixed', bottom: '56px', left: '50%', transform: 'translateX(-50%)', zIndex: 10001, maxWidth: '600px', width: '90vw', maxHeight: '50vh', overflowY: 'auto', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--theme-border, var(--color-border-default))', background: focusTheme === 'dark' ? 'var(--color-manuscript)' : '#F0F0F2' }}>
+            <div style={{ position: 'fixed', bottom: '56px', left: '50%', transform: 'translateX(-50%)', zIndex: 10001, maxWidth: '600px', width: '90vw', maxHeight: '50vh', overflowY: 'auto', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--theme-border, var(--color-border-default))', background: focusTheme === 'dark' ? 'var(--color-manuscript)' : 'var(--theme-bg-elevated)' }}>
               <div className="section-picker">
                 {sections.map((s, i) => (
                   <button key={i} className="section-picker-chip" data-active={i === currentSection} onClick={() => goTo(i)}>

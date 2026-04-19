@@ -40,6 +40,14 @@ class OAuthService:
         self.redis = redis_client
         self.settings = get_settings()
 
+    @property
+    def admin_emails(self) -> set[str]:
+        """Admin emails from ADMIN_EMAIL env var (comma-separated)."""
+        raw = self.settings.admin_email.strip()
+        if not raw:
+            return set()
+        return {e.strip().lower() for e in raw.split(",") if e.strip()}
+
     def _get_client_credentials(self, provider: str) -> tuple[str, str]:
         """Get client credentials for a provider."""
         if provider == "google":
@@ -194,6 +202,9 @@ class OAuthService:
             if user:
                 # Update last login
                 user.last_login = datetime.utcnow()
+                # Auto-promote admin emails on every login
+                if email and email.lower() in self.admin_emails and user.role != "admin":
+                    user.role = "admin"
                 await self.db.commit()
                 return user
 
@@ -216,6 +227,9 @@ class OAuthService:
                 )
                 self.db.add(connection)
                 existing_user.last_login = datetime.utcnow()
+                # Auto-promote admin emails
+                if email and email.lower() in self.admin_emails and existing_user.role != "admin":
+                    existing_user.role = "admin"
                 await self.db.commit()
                 return existing_user
 
@@ -231,11 +245,14 @@ class OAuthService:
             if result.scalar_one_or_none():
                 username = f"{username}_{secrets.token_hex(4)}"
 
+        # Determine role: admin for designated emails, user for everyone else
+        role = "admin" if (email and email.lower() in self.admin_emails) else "user"
+
         user = User(
             email=email,
             username=username,
             avatar_url=avatar_url,
-            role="user",
+            role=role,
             is_active=True,
             is_verified=True,  # OAuth users are pre-verified
             created_at=datetime.utcnow(),

@@ -1,23 +1,25 @@
 'use client';
+// MALINDRA PHASE 1
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/hooks/use-theme';
-import { useAuth } from '@/app/lib/auth/hooks';
+import { useAuth, usePermissions } from '@/app/lib/auth/hooks';
+import { useLocale } from '@/app/hooks/useLocale';
 
 const vizNav = [
-  { href: '/graph', label: 'Knowledge Graph', shield: 'blue' as const },
-  { href: '/market', label: 'Market Intel', shield: 'fortress' as const },
-  { href: '/companies', label: 'Companies', shield: 'fortress' as const },
-  { href: '/equipment', label: 'Equipment', shield: 'gold' as const },
-  { href: '/research', label: 'Research', shield: 'blue' as const },
+  { href: '/graph', key: 'knowledgeGraph' as const, shield: 'blue' as const },
+  { href: '/market', key: 'marketIntel' as const, shield: 'fortress' as const },
+  { href: '/companies', key: 'companies' as const, shield: 'fortress' as const },
+  { href: '/equipment', key: 'equipment' as const, shield: 'gold' as const },
+  { href: '/research', key: 'research' as const, shield: 'blue' as const },
 ];
 
 const wikiGroups = [
   {
     id: 'em-sca',
-    label: 'EM Side-Channel',
+    labelKey: 'emSideChannel' as const,
     shield: 'gold' as const,
     items: [
       { slug: 'electromagnetic-side-channel-analysis', label: 'Overview & Theory' },
@@ -40,7 +42,7 @@ const wikiGroups = [
   },
   {
     id: 'sigint',
-    label: 'SIGINT',
+    labelKey: 'sigint' as const,
     shield: 'blue' as const,
     items: [
       { slug: 'sigint-academic-research-overview', label: 'Academic Research' },
@@ -113,6 +115,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { hasRole } = usePermissions();
+  const { locale, toggleLocale, nav } = useLocale();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     learning: pathname.startsWith('/learning'),
     'em-sca': pathname.startsWith('/em-sca'),
@@ -123,68 +127,141 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar hidden lg:flex">
-      {/* Header -- rotating wordmark (Sinhala / English) */}
+      {/* Header — locale-reactive wordmark */}
       <Link href="/" className="sidebar-wordmark">
-        <div className="wordmark-coin">
-          <div className="wordmark-face wordmark-front">
-            <span className="sidebar-wordmark-sinhala">{'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}</span>
-            <span className="sidebar-wordmark-line" />
-          </div>
-          <div className="wordmark-face wordmark-back">
-            <span className="sidebar-wordmark-english">MALINDRA</span>
-            <span className="sidebar-wordmark-line" />
-          </div>
+        <div className="wordmark-static">
+          {locale === 'si' ? (
+            <>
+              <span className="sidebar-wordmark-sinhala">{'\u0DB8\u0DBD\u0DD2\u0DB1\u0DCA\u0DAF\u0DCA\u200D\u0DBB'}</span>
+              <span className="sidebar-wordmark-line" />
+            </>
+          ) : (
+            <>
+              <span className="sidebar-wordmark-english">MALINDRA</span>
+              <span className="sidebar-wordmark-line" />
+            </>
+          )}
         </div>
       </Link>
 
       {/* Nav items */}
       <nav className="flex-1 overflow-y-auto">
-        {/* Visualize */}
-        <div className="sidebar-section">Visualize</div>
-        {vizNav.map((item) => {
-          const active = pathname === item.href || pathname === `${item.href}/`;
-          return (
-            <Link key={item.href} href={item.href} className={`sidebar-item ${active ? 'active' : ''}`}>
-              {item.label}
-            </Link>
-          );
-        })}
+        {/* Analysis */}
+        <div className="sidebar-section">{nav.analysis}</div>
+        <Link href="/blog" className={`sidebar-item ${pathname === '/blog' || pathname.startsWith('/blog/') ? 'active' : ''}`}>
+          {nav.analysis}
+        </Link>
+        <Link href="/archive" className={`sidebar-item ${pathname === '/archive' || pathname.startsWith('/archive/') ? 'active' : ''}`}>
+          {nav.archive}
+        </Link>
 
-        {/* Articles */}
-        <div className="sidebar-section">Articles</div>
-
-        {/* Learning Path */}
-        <GroupToggle label="Learning Path" expanded={!!openGroups.learning} onToggle={() => toggle('learning')} />
+        {/* Reference */}
+        <div className="sidebar-section">{nav.reference}</div>
+        <GroupToggle label={nav.learningPath} expanded={!!openGroups.learning} onToggle={() => toggle('learning')} />
         {openGroups.learning && (
-          <SubItems items={[{ slug: 'coursera-sigint', label: 'Coursera Path' }]} basePath="/learning" />
+          <SubItems items={[{ slug: 'coursera-sigint', label: nav.courseraPath }]} basePath="/learning" />
         )}
-
-        {/* Wiki groups -- lookup by id, not array index */}
         {wikiGroups.map((group) => (
           <div key={group.id}>
-            <GroupToggle label={group.label} expanded={!!openGroups[group.id]} onToggle={() => toggle(group.id)} />
+            <GroupToggle label={nav[group.labelKey]} expanded={!!openGroups[group.id]} onToggle={() => toggle(group.id)} />
             {openGroups[group.id] && (
               <SubItems items={group.items} basePath={`/${group.id}`} />
             )}
           </div>
         ))}
+
+        {/* Data */}
+        <div className="sidebar-section">{nav.data}</div>
+        {vizNav.map((item) => {
+          const active = pathname === item.href || pathname === `${item.href}/`;
+          return (
+            <Link key={item.href} href={item.href} className={`sidebar-item ${active ? 'active' : ''}`}>
+              {nav[item.key]}
+            </Link>
+          );
+        })}
+
+        {/* Dashboard — authenticated users only */}
+        {!isLoading && isAuthenticated && (
+          <>
+            <div className="sidebar-section">{nav.dashboard}</div>
+            <Link
+              href="/dashboard"
+              className={`sidebar-item ${pathname === '/dashboard' || pathname === '/dashboard/' ? 'active' : ''}`}
+            >
+              {nav.overview}
+            </Link>
+            {hasRole('editor') && (
+              <Link
+                href="/dashboard/articles"
+                className={`sidebar-item ${pathname.startsWith('/dashboard/articles') ? 'active' : ''}`}
+              >
+                {nav.articles}
+              </Link>
+            )}
+            {hasRole('admin') && (
+              <>
+                <Link
+                  href="/dashboard/users"
+                  className={`sidebar-item ${pathname.startsWith('/dashboard/users') ? 'active' : ''}`}
+                >
+                  {nav.users}
+                </Link>
+                <Link
+                  href="/dashboard/settings"
+                  className={`sidebar-item ${pathname.startsWith('/dashboard/settings') ? 'active' : ''}`}
+                >
+                  {nav.settings}
+                </Link>
+              </>
+            )}
+          </>
+        )}
       </nav>
+
+      {/* Language toggle */}
+      <button
+        className="theme-toggle"
+        onClick={toggleLocale}
+        aria-label={locale === 'en' ? 'Switch to Sinhala — සිංහල' : 'Switch to English'}
+        style={{ borderTop: 'none', paddingTop: '8px', paddingBottom: '8px' }}
+      >
+        {locale === 'en' ? (
+          <span style={{ fontFamily: 'var(--font-sinhala)', fontSize: '13px' }}>සිංහල</span>
+        ) : (
+          <span>English</span>
+        )}
+        <span style={{ marginLeft: 'auto', fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          {locale === 'en' ? 'SI' : 'EN'}
+        </span>
+      </button>
 
       {/* Auth section */}
       {!isLoading && (isAuthenticated && user ? (
         <div className="sidebar-auth-user">
-          <Link href="/dashboard" className="sidebar-auth-avatar" title="Go to dashboard">
+          <Link href="/dashboard" className="sidebar-auth-avatar" title={nav.dashboard}>
             {(user.username?.[0] ?? user.email[0]).toUpperCase()}
           </Link>
           <div className="sidebar-auth-info">
             <span className="sidebar-auth-name">{user.username ?? user.email}</span>
             <span className="sidebar-auth-role">{user.role}</span>
           </div>
+          <Link
+            href={user.role === 'admin' ? '/dashboard/settings' : '/settings'}
+            className="sidebar-auth-settings"
+            title={nav.settings}
+            aria-label={nav.settings}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </Link>
           <button
             className="sidebar-auth-logout"
             onClick={() => logout().then(() => { window.location.href = '/'; })}
-            title="Sign out"
-            aria-label="Sign out"
+            title={nav.signOut}
+            aria-label={nav.signOut}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -195,25 +272,15 @@ export default function Sidebar() {
         </div>
       ) : (
         <Link href="/login" className="sidebar-auth-login">
-          Sign in
+          {nav.signIn}
         </Link>
       ))}
 
       {/* Theme toggle */}
-      <button className="theme-toggle" onClick={toggleTheme} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+      <button className="theme-toggle" onClick={toggleTheme} aria-label={theme === 'dark' ? nav.lightMode : nav.darkMode}>
         {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-        <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+        <span>{theme === 'dark' ? nav.lightMode : nav.darkMode}</span>
       </button>
-
-      {/* Footer */}
-      <div className="sidebar-bottom">
-        <p className="sidebar-version">Apr 2026</p>
-        <p className="sidebar-edition">Kotte Heritage Edition</p>
-        <div style={{ display: 'flex', gap: 'var(--space-sm)', marginTop: 'var(--space-xs)' }}>
-          <Link href="/privacy" style={{ fontSize: '10px', color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy</Link>
-          <Link href="/terms" style={{ fontSize: '10px', color: 'var(--text-muted)', textDecoration: 'none' }}>Terms</Link>
-        </div>
-      </div>
     </aside>
   );
 }

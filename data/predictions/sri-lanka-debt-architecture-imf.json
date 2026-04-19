@@ -1,0 +1,46 @@
+{
+  "slug": "sri-lanka-debt-architecture-imf",
+  "model_version": "v1.0",
+  "model_label": "[MODEL v1.0]",
+  "analysis_label": "[ANALYSIS]",
+  "generated_at": "2026-04-19T11:19:18.057218+00:00",
+  "topics_detected": [
+    "debt"
+  ],
+  "aggregate_confidence": {
+    "mean": 0.714,
+    "p50": 0.71,
+    "label": "HIGH"
+  },
+  "scenarios": [
+    {
+      "topic": "debt",
+      "signal": "International sovereign bond yield spreads indicate persistent market skepticism about Sri Lanka's debt sustainability.",
+      "context": "ISB holders accepted haircuts under the restructuring; residual litigation risk from holdout creditors creates uncertainty in secondary markets.",
+      "implication": "Constrained market access limits the government's ability to refinance maturing obligations without IMF support.",
+      "action": "Track EMBI+ spread movements and rating agency outlook changes (Fitch, Moody's) as leading indicators of market confidence.",
+      "confidence": {
+        "mean": 0.714,
+        "p10": 0.487,
+        "p50": 0.71,
+        "p90": 0.956,
+        "std": 0.172,
+        "ci_width": 0.469
+      },
+      "forecast_quarters": [
+        0.644,
+        0.604,
+        0.59,
+        0.581
+      ],
+      "risk_direction": "decreasing"
+    }
+  ],
+  "meta": {
+    "monte_carlo_iterations": 1000,
+    "seed": 42,
+    "forecast_horizon_quarters": 4,
+    "methodology": "Monte Carlo sampling + linear trend extrapolation",
+    "disclaimer": "Pre-computed at build time. Not financial or investment advice."
+  }
+}

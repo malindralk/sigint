@@ -1,0 +1,61 @@
+{
+  "slug": "organizations",
+  "model_version": "v2.0",
+  "model_label": "[MODEL v2.0]",
+  "analysis_label": "[ANALYSIS]",
+  "generated_at": "2026-04-19T11:19:19.487Z",
+  "dominant_signal": "geopolitical_risk",
+  "signal_strength": 0,
+  "all_signal_scores": {
+    "geopolitical_risk": 0,
+    "economic_stress": 0,
+    "digital_transformation": 0,
+    "climate_resilience": 0,
+    "social_cohesion": 0
+  },
+  "trend_direction": "de-escalating",
+  "trend_slope": -0.0169,
+  "projected_trajectory": [
+    0.514,
+    0.497,
+    0.48,
+    0.463
+  ],
+  "confidence_interval": {
+    "mean": 0.489,
+    "std": 0.019,
+    "lower": 0.469,
+    "upper": 0.508
+  },
+  "related_articles": [
+    {
+      "slug": "em-sca-index",
+      "similarity": 0.77
+    },
+    {
+      "slug": "pqc-em-sca",
+      "similarity": 0.77
+    },
+    {
+      "slug": "em-sca-2026-developments",
+      "similarity": 0.73
+    },
+    {
+      "slug": "em-sca-consumer-applications",
+      "similarity": 0.73
+    },
+    {
+      "slug": "professional-em-sca-facility",
+      "similarity": 0.73
+    }
+  ],
+  "prediction_ref": {
+    "slug": "organizations",
+    "confidence_label": "MEDIUM"
+  },
+  "meta": {
+    "methodology": "TF cosine similarity + OLS linear regression trend projection",
+    "disclaimer": "Pre-computed at build time. Not financial or investment advice.",
+    "articles_in_corpus": 23
+  }
+}

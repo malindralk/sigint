@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pqc Implementation Security 2026 — Malindra Intelligence Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=DM+Sans:wght@300;400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #0A0A0D; color: #F2E8D0; padding: 48px 64px; max-width: 800px; margin: 0 auto; }
+  .header { border-bottom: 3px solid #922438; padding-bottom: 24px; margin-bottom: 32px; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #922438; margin-bottom: 16px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #F2E8D0; margin-bottom: 12px; }
+  .meta { font-size: 13px; color: #857B6C; }
+  .description { font-size: 16px; line-height: 1.7; color: #C0B298; margin: 24px 0; }
+  .body { font-size: 15px; line-height: 1.75; color: #C0B298; white-space: pre-wrap; }
+  .tags { margin: 24px 0; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #D49628; }
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid rgba(74,72,82,0.42); font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: #857B6C; text-align: center; }
+  @media print { body { background: white; color: #1A1A1E; } h1, .description, .body { color: #2A2A30; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="eyebrow">Malindra SIGINT Analysis · Intelligence Brief</div>
+  <h1>Pqc Implementation Security 2026</h1>
+  <div class="meta">2026-04-19</div>
+</div>
+<div class="description">The standardization of post-quantum cryptography (PQC) by the National Institute of Standards and Technology (NIST) represents a fundamental shift in cryptographic primitives deployed across global di</div>
+<div class="body">The standardization of post-quantum cryptography (PQC) by the National Institute of Standards and Technology (NIST) represents a fundamental shift in cryptographic primitives deployed across global digital infrastructure. As of 2025-2026, four algorithms have reached final standardization status: **FIPS 203 (CRYSTALS-Kyber/ML-KEM)** for key encapsulation, **FIPS 204 (CRYSTALS-Dilithium/ML-DSA)** for digital signatures, **FIPS 205 (SPHINCS+/SLH-DSA)** for stateless hash-based signatures, and **FALCON (FN-DSA)** as an additional signature standard. While these algorithms provide mathematical security against quantum attacks, their implementation on physical hardware introduces new side-channel vulnerabilities distinct from classical cryptography. This article examines the implementation security landscape, documented attacks, countermeasures, and deployment timelines.
+
+Kyber is a lattice-based key encapsulation mechanism (KEM) relying on the Module Learning-with-Errors (MLWE) problem. Its structure involves polynomial arithmetic in the ring R_q = ℤ_q[X]/(X^n+1), where n=256 and q=3329 for Kyber-768.
+
+**Power Analysis Attacks:**
+
+- **Template Attacks on Decapsulation:** Ravi et al. (2022) demonstrated a template attack on the Number Theoretic Transform (NTT) implementation in decapsulation, recovering the secret key with ~10,000 power traces from a 32-bit ARM Cortex-M4. The attack targeted the modular reduction step `barrett_reduce`.
+
+- **Simple Power Analysis (SPA) on Secret-dependent Branches:** Primas et al. (2017) showed early SPA vulnerabilities in the rejection sampling of noise polynomials, though later implementations use constant-time sampling.
+
+- **Correlation Power Analysis (CPA) on Decode:** Beckwith et al. (2023) mounted a CPA attack on the `Decode` function during decapsulation, requiring 50,000 traces on an STM32F415 to recover the secret polynomial `s`.
+
+**Electromagnetic (EM) Analysis:**
+
+- EM probes provide higher spatial resolution than power measurements. Pessl & Prokop (2021) extracted the secret key from a masked Kyber implementation on an FPGA using 200,000 EM traces by exploiting glitches in the masking scheme.
+
+**Cache-Timing Attacks:**
+
+- Multiple studies (e.g., Ravi et al., 2020) have shown cache-timing vulnerabilities in non-constant-time NTT implementations, allowing full key recovery with as few as 1,000 decapsulation calls in a cross-VM setting.
+
+Dilithium is a lattice-based digital signature scheme also built upon MLWE and Module Short Integer Solution (MSIS) problems.
+
+**Power & EM Analysis:**
+
+- **SPA on Signing:** The signing algorithm's rejection sampling loop (`while(γ1 - t ≥ 2^{γ1-1})`) is secret-dependent. D'Anvers et al. (2022) used SPA to distinguish loop iterations, leaking the norm of the signature polynomial `z`. This required ~5,000 traces on an ARM Cortex-M3.
+
+- **CPA on NTT in Key Generation:** Zhang et al. (2023) performed CPA on the NTT of the secret matrix `S` during key generation, recovering the full secret key with 30,000 power traces from an Arduino Uno.
+
+- **EM Analysis on Masked Multiplications:** EM side-channels have been effective against first-order masked implementations. Hamburg et al. (2024) demonstrated a horizontal attack combining EM measurements from multiple masked multiplications, breaking a first-order masked Dilithium with 500,000 traces.
+
+SPHINCS+ is a stateless hash-based signature scheme relying on the security of hash functions (SHA-256, SHAKE256). Its side-channel profile differs significantly from lattice-based schemes.
+
+**Power Analysis Attacks:**
+
+- **SPA on WOTS+ Key Generation:** The Winternitz One-Time Signature (WOTS+) key generation involves a chain of hash iterations. The length of this chain can be inferred via SPA, as shown by Bernstein et al. (2020). However, this does not directly reveal the secret key due to the one-time nature.
+
+- **DPA on FORS Tree Traversal:** The Forest of Random Subsets (FORS) tree traversal in SPHINCS+-SHAKE256 has secret-dependent memory accesses. DPA attacks by Park & Lee (2023) recovered the FORS secret key with 100,000 traces on an FPGA, compromising the entire signature.
+
+**Timing Attacks:**</div>
+<div class="footer">මලින්ද්‍ර · Kotte Kingdom 1412–1467 CE · malindra.lk</div>
+</body>
+</html>

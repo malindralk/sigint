@@ -49,33 +49,33 @@ export const articlesApi = {
     limit?: number;
     offset?: number;
     include_unpublished?: boolean;
-  }) => api.get<ArticleListItem[]>("/articles", { skipAuth: !params?.include_unpublished }),
+  }) => api.get<ArticleListItem[]>("/api/articles", { skipAuth: !params?.include_unpublished }),
 
   // Get single article
-  get: (slug: string) => api.get<Article>(`/articles/${slug}`),
+  get: (slug: string) => api.get<Article>(`/api/articles/${slug}`),
 
   // Create article (requires editor/admin)
   create: (data: CreateArticleRequest) =>
-    api.post<Article>("/admin/articles", data),
+    api.post<Article>("/api/admin/articles", data),
 
   // Update article (requires editor/admin)
   update: (id: string, data: UpdateArticleRequest) =>
-    api.patch<Article>(`/admin/articles/${id}`, data),
+    api.patch<Article>(`/api/admin/articles/${id}`, data),
 
   // Delete article (requires editor/admin)
-  delete: (id: string) => api.delete<{ message: string }>(`/admin/articles/${id}`),
+  delete: (id: string) => api.delete<{ message: string }>(`/api/admin/articles/${id}`),
 
   // Sync content from git submodule
   sync: (generateEmbeddings = true) =>
     api.post<{ status: string; stats: Record<string, number> }>(
-      `/articles/sync?generate_embeddings=${generateEmbeddings}`,
+      `/api/articles/sync?generate_embeddings=${generateEmbeddings}`,
       {}
     ),
 
   // Generate embeddings
   generateEmbeddings: (slug?: string) =>
     api.post<{ status: string; stats: Record<string, number> }>(
-      `/articles/embeddings/generate${slug ? `?slug=${slug}` : ""}`,
+      `/api/articles/embeddings/generate${slug ? `?slug=${slug}` : ""}`,
       {}
     ),
 };

@@ -1,0 +1,45 @@
+{
+  "slug": "sri-lanka-debt-architecture-imf",
+  "model_version": "v2.0",
+  "model_label": "[MODEL v2.0]",
+  "analysis_label": "[ANALYSIS]",
+  "generated_at": "2026-04-19T11:19:19.489Z",
+  "dominant_signal": "economic_stress",
+  "signal_strength": 0.25,
+  "all_signal_scores": {
+    "geopolitical_risk": 0,
+    "economic_stress": 0.25,
+    "digital_transformation": 0,
+    "climate_resilience": 0,
+    "social_cohesion": 0
+  },
+  "trend_direction": "de-escalating",
+  "trend_slope": -0.0203,
+  "projected_trajectory": [
+    0.554,
+    0.534,
+    0.513,
+    0.493
+  ],
+  "confidence_interval": {
+    "mean": 0.524,
+    "std": 0.023,
+    "lower": 0.501,
+    "upper": 0.546
+  },
+  "related_articles": [
+    {
+      "slug": "digital-policy-imf-obligations",
+      "similarity": 0.365
+    }
+  ],
+  "prediction_ref": {
+    "slug": "sri-lanka-debt-architecture-imf",
+    "confidence_label": "HIGH"
+  },
+  "meta": {
+    "methodology": "TF cosine similarity + OLS linear regression trend projection",
+    "disclaimer": "Pre-computed at build time. Not financial or investment advice.",
+    "articles_in_corpus": 23
+  }
+}

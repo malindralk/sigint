@@ -1,0 +1,57 @@
+{
+  "slug": "sigint-machine-learning-pipeline",
+  "model_version": "v2.0",
+  "model_label": "[MODEL v2.0]",
+  "analysis_label": "[ANALYSIS]",
+  "generated_at": "2026-04-19T11:19:19.489Z",
+  "dominant_signal": "geopolitical_risk",
+  "signal_strength": 0,
+  "all_signal_scores": {
+    "geopolitical_risk": 0,
+    "economic_stress": 0,
+    "digital_transformation": 0,
+    "climate_resilience": 0,
+    "social_cohesion": 0
+  },
+  "trend_direction": "de-escalating",
+  "trend_slope": -0.0292,
+  "projected_trajectory": [
+    0.476,
+    0.447,
+    0.418,
+    0.388
+  ],
+  "confidence_interval": {
+    "mean": 0.432,
+    "std": 0.033,
+    "lower": 0.399,
+    "upper": 0.465
+  },
+  "related_articles": [
+    {
+      "slug": "coursera-sigint",
+      "similarity": 0.655
+    },
+    {
+      "slug": "sigint-academic-research-overview",
+      "similarity": 0.571
+    },
+    {
+      "slug": "sigint-private-companies-em-intelligence",
+      "similarity": 0.535
+    },
+    {
+      "slug": "rf-fingerprinting-device-identification",
+      "similarity": 0.338
+    }
+  ],
+  "prediction_ref": {
+    "slug": "sigint-machine-learning-pipeline",
+    "confidence_label": "MEDIUM"
+  },
+  "meta": {
+    "methodology": "TF cosine similarity + OLS linear regression trend projection",
+    "disclaimer": "Pre-computed at build time. Not financial or investment advice.",
+    "articles_in_corpus": 23
+  }
+}

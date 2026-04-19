@@ -44,17 +44,17 @@ export const usersApi = {
     search?: string;
   }) =>
     api.get<UsersListResponse>(
-      `/admin/users?${new URLSearchParams(params as Record<string, string>).toString()}`
+      `/api/admin/users?${new URLSearchParams(params as Record<string, string>).toString()}`
     ),
 
   // Get user details (admin only)
-  get: (id: string) => api.get<UserDetail>(`/admin/users/${id}`),
+  get: (id: string) => api.get<UserDetail>(`/api/admin/users/${id}`),
 
   // Update user (admin only)
   update: (id: string, data: UpdateUserRequest) =>
-    api.patch<User>(`/admin/users/${id}`, data),
+    api.patch<User>(`/api/admin/users/${id}`, data),
 
   // Deactivate user (admin only)
   deactivate: (id: string) =>
-    api.delete<{ message: string }>(`/admin/users/${id}`),
+    api.delete<{ message: string }>(`/api/admin/users/${id}`),
 };

@@ -1,0 +1,143 @@
+{
+  "packages": [
+    {
+      "slug": "contacts",
+      "title": "Contacts",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "electromagnetic-side-channel-analysis",
+      "title": "Electromagnetic Side Channel Analysis",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "electromagnetic-side-channel-practical-guide",
+      "title": "Electromagnetic Side Channel Practical Guide",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "em-sca-2026-developments",
+      "title": "Em Sca 2026 Developments",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "em-sca-consumer-applications",
+      "title": "Em Sca Consumer Applications",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "em-sca-index",
+      "title": "Em Sca Index",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "em-sca-key-players-companies",
+      "title": "Em Sca Key Players Companies",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "em-sca-market-analysis-overview",
+      "title": "Em Sca Market Analysis Overview",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "entry-level-em-sca-setup",
+      "title": "Entry Level Em Sca Setup",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "organizations",
+      "title": "Organizations",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "pqc-em-sca",
+      "title": "Pqc Em Sca",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "pqc-implementation-security-2026",
+      "title": "Pqc Implementation Security 2026",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "professional-em-sca-facility",
+      "title": "Professional Em Sca Facility",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "research-grade-em-sca-lab",
+      "title": "Research Grade Em Sca Lab",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "sdr-tools-landscape-2026",
+      "title": "Sdr Tools Landscape 2026",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "tempest-standards-reference",
+      "title": "Tempest Standards Reference",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "coursera-sigint",
+      "title": "Coursera Sigint",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "digital-policy-imf-obligations",
+      "title": "Digital Policy and the IMF: Sri Lanka's Technology Sector Reform Obligations",
+      "date": "\"2026-03-28\"",
+      "hasCarousel": false
+    },
+    {
+      "slug": "sri-lanka-debt-architecture-imf",
+      "title": "Sri Lanka's Debt Architecture After the IMF Agreement: Structural Signals",
+      "date": "\"2026-04-10\"",
+      "hasCarousel": false
+    },
+    {
+      "slug": "rf-fingerprinting-device-identification",
+      "title": "Rf Fingerprinting Device Identification",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "sigint-academic-research-overview",
+      "title": "Sigint Academic Research Overview",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "sigint-machine-learning-pipeline",
+      "title": "Sigint Machine Learning Pipeline",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    },
+    {
+      "slug": "sigint-private-companies-em-intelligence",
+      "title": "Sigint Private Companies Em Intelligence",
+      "date": "2026-04-19",
+      "hasCarousel": false
+    }
+  ],
+  "generatedAt": "2026-04-19T11:19:19.369Z"
+}

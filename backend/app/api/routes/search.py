@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.api.deps import EmbeddingSvc
+from app.api.deps import CurrentUser, EmbeddingSvc
 
 router = APIRouter(prefix="/search", tags=["search"])
 
@@ -35,10 +35,12 @@ class SearchResponse(BaseModel):
 async def semantic_search(
     request: SearchRequest,
     embedding_svc: EmbeddingSvc,
+    current_user: CurrentUser,
 ) -> SearchResponse:
     """Perform semantic search across all articles.
 
     Uses vector similarity to find relevant content chunks.
+    Requires authentication.
     """
     results = await embedding_svc.search_similar(
         query=request.query,
@@ -57,9 +59,13 @@ async def semantic_search(
 async def quick_search(
     q: str,
     embedding_svc: EmbeddingSvc,
+    current_user: CurrentUser,
     limit: int = 5,
 ) -> SearchResponse:
-    """Quick search endpoint via GET request."""
+    """Quick search endpoint via GET request.
+
+    Requires authentication.
+    """
     results = await embedding_svc.search_similar(
         query=q,
         limit=limit,

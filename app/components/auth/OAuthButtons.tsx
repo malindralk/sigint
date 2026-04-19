@@ -28,21 +28,6 @@ export default function OAuthButtons({ redirect }: OAuthButtonsProps) {
         width: "100%",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          margin: "1rem 0",
-        }}
-      >
-        <div style={{ flex: 1, height: "1px", backgroundColor: "var(--theme-border)" }} />
-        <span style={{ fontSize: "0.875rem", color: "var(--theme-text-muted)" }}>
-          or continue with
-        </span>
-        <div style={{ flex: 1, height: "1px", backgroundColor: "var(--theme-border)" }} />
-      </div>
-
       <button
         type="button"
         onClick={handleGoogleLogin}

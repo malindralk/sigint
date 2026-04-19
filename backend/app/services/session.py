@@ -2,7 +2,7 @@
 
 import json
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from sqlalchemy import select
@@ -55,8 +55,8 @@ class SessionService:
             ip_address=ip_address,
             user_agent=user_agent,
             expires_at=refresh_expire,
-            created_at=datetime.utcnow(),
-            last_activity=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            last_activity=datetime.now(timezone.utc),
         )
 
         self.db.add(session)
@@ -85,7 +85,7 @@ class SessionService:
         if not self.redis:
             return
 
-        ttl = int((expires - datetime.utcnow()).total_seconds())
+        ttl = int((expires - datetime.now(timezone.utc)).total_seconds())
         if ttl > 0:
             session_data = {
                 "user_id": str(user.id),
@@ -130,7 +130,7 @@ class SessionService:
         result = await self.db.execute(
             select(Session).where(
                 Session.token_hash == token_hash,
-                Session.expires_at > datetime.utcnow(),
+                Session.expires_at > datetime.now(timezone.utc),
             )
         )
         session = result.scalar_one_or_none()
@@ -144,7 +144,7 @@ class SessionService:
 
             if user:
                 # Update last activity
-                session.last_activity = datetime.utcnow()
+                session.last_activity = datetime.now(timezone.utc)
                 await self.db.commit()
 
                 # Cache session
@@ -159,6 +159,36 @@ class SessionService:
 
         return None
 
+    async def validate_refresh_token_session(self, refresh_token: str) -> User | None:
+        """Validate a refresh token and return the user.
+
+        Unlike validate_session (which checks token_hash for access tokens),
+        this checks refresh_token_hash — used by the nginx auth_request verify endpoint.
+
+        Args:
+            refresh_token: The refresh token from the HTTP-only cookie
+
+        Returns:
+            User if valid, None otherwise
+        """
+        token_hash = hash_token(refresh_token)
+
+        result = await self.db.execute(
+            select(Session).where(
+                Session.refresh_token_hash == token_hash,
+                Session.expires_at > datetime.now(timezone.utc),
+            )
+        )
+        session = result.scalar_one_or_none()
+
+        if session:
+            result = await self.db.execute(
+                select(User).where(User.id == session.user_id, User.is_active == True)
+            )
+            return result.scalar_one_or_none()
+
+        return None
+
     async def _update_last_activity(self, token_hash: str) -> None:
         """Update last activity timestamp (throttled)."""
         # Only update every 5 minutes to reduce DB writes
@@ -170,7 +200,7 @@ class SessionService:
                 )
                 session = result.scalar_one_or_none()
                 if session:
-                    session.last_activity = datetime.utcnow()
+                    session.last_activity = datetime.now(timezone.utc)
                     await self.db.commit()
                 await self.redis.setex(last_update_key, 300, "1")
 
@@ -202,7 +232,7 @@ class SessionService:
         result = await self.db.execute(
             select(Session).where(
                 Session.refresh_token_hash == refresh_token_hash,
-                Session.expires_at > datetime.utcnow(),
+                Session.expires_at > datetime.now(timezone.utc),
             )
         )
         session = result.scalar_one_or_none()
@@ -228,7 +258,7 @@ class SessionService:
 
         # Blacklist old refresh token
         if self.redis:
-            ttl = int((session.expires_at - datetime.utcnow()).total_seconds())
+            ttl = int((session.expires_at - datetime.now(timezone.utc)).total_seconds())
             if ttl > 0:
                 await self.redis.setex(
                     f"blacklist:{refresh_token_hash}",
@@ -241,7 +271,7 @@ class SessionService:
         session.token_hash = access_token_hash
         session.refresh_token_hash = new_refresh_token_hash
         session.expires_at = new_refresh_expire
-        session.last_activity = datetime.utcnow()
+        session.last_activity = datetime.now(timezone.utc)
         await self.db.commit()
 
         # Update cache
@@ -276,7 +306,7 @@ class SessionService:
         # Remove from cache
         if self.redis:
             await self.redis.delete(f"session:{session.token_hash}")
-            ttl = int((session.expires_at - datetime.utcnow()).total_seconds())
+            ttl = int((session.expires_at - datetime.now(timezone.utc)).total_seconds())
             if ttl > 0:
                 await self.redis.setex(
                     f"blacklist:{session.refresh_token_hash}",
@@ -313,7 +343,7 @@ class SessionService:
             # Remove from cache
             if self.redis:
                 await self.redis.delete(f"session:{session.token_hash}")
-                ttl = int((session.expires_at - datetime.utcnow()).total_seconds())
+                ttl = int((session.expires_at - datetime.now(timezone.utc)).total_seconds())
                 if ttl > 0:
                     await self.redis.setex(
                         f"blacklist:{session.refresh_token_hash}",
@@ -339,7 +369,7 @@ class SessionService:
         result = await self.db.execute(
             select(Session).where(
                 Session.user_id == user_id,
-                Session.expires_at > datetime.utcnow(),
+                Session.expires_at > datetime.now(timezone.utc),
             )
         )
         return list(result.scalars().all())

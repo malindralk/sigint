@@ -6,7 +6,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from sqlalchemy import select
 
-from app.api.deps import ContentSync, CurrentUser, DBSession, EmbeddingSvc, require_roles
+from app.api.deps import (
+    ContentSync,
+    CurrentUser,
+    CurrentUserOptional,
+    DBSession,
+    EmbeddingSvc,
+    require_roles,
+)
 from app.models.article import Article
 from app.models.user import User
 
@@ -53,7 +60,7 @@ async def list_articles(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
     include_unpublished: bool = False,
-    current_user: User | None = Depends(require_roles("editor", "admin")),
+    current_user: CurrentUserOptional = None,
 ) -> list[ArticleListResponse]:
     """List all articles, optionally filtered by category.
 
@@ -91,7 +98,7 @@ async def list_articles(
 async def get_article(
     slug: str,
     db: DBSession,
-    current_user: User | None = Depends(require_roles("editor", "admin")),
+    current_user: CurrentUserOptional = None,
 ) -> ArticleResponse:
     """Get a single article by slug.
 

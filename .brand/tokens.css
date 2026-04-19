@@ -53,6 +53,84 @@
   --danger:         #BE3348;   /* War Banner      · alerts, errors, urgent */
   --info:           #3D74A8;   /* Zheng He Blue   · AI, data, links, info  */
 
+  /* ── ALPHA TINTS ────────────────────────────────────────────
+     color-mix(in srgb, <color> <pct>, transparent)
+     Used for backgrounds, borders, hover states             */
+  --sinha-maroon-10:    color-mix(in srgb, #922438 10%, transparent);
+  --sinha-maroon-20:    color-mix(in srgb, #922438 20%, transparent);
+  --sinha-maroon-30:    color-mix(in srgb, #922438 30%, transparent);
+  --temple-gold-10:     color-mix(in srgb, #D49628 10%, transparent);
+  --temple-gold-20:     color-mix(in srgb, #D49628 20%, transparent);
+  --temple-gold-30:     color-mix(in srgb, #D49628 30%, transparent);
+  --temple-gold-35:     color-mix(in srgb, #D49628 35%, transparent);
+  --water-fortress-10:  color-mix(in srgb, #28805E 10%, transparent);
+  --water-fortress-20:  color-mix(in srgb, #28805E 20%, transparent);
+  --water-fortress-30:  color-mix(in srgb, #28805E 30%, transparent);
+  --water-fortress-35:  color-mix(in srgb, #28805E 35%, transparent);
+  --war-banner-10:      color-mix(in srgb, #BE3348 10%, transparent);
+  --war-banner-20:      color-mix(in srgb, #BE3348 20%, transparent);
+  --war-banner-30:      color-mix(in srgb, #BE3348 30%, transparent);
+  --zheng-he-05:        color-mix(in srgb, #3D74A8 5%, transparent);
+  --zheng-he-08:        color-mix(in srgb, #3D74A8 8%, transparent);
+  --zheng-he-10:        color-mix(in srgb, #3D74A8 10%, transparent);
+  --zheng-he-15:        color-mix(in srgb, #3D74A8 15%, transparent);
+  --zheng-he-20:        color-mix(in srgb, #3D74A8 20%, transparent);
+  --zheng-he-30:        color-mix(in srgb, #3D74A8 30%, transparent);
+  --zheng-he-35:        color-mix(in srgb, #3D74A8 35%, transparent);
+  --zheng-he-40:        color-mix(in srgb, #3D74A8 40%, transparent);
+
+  /* ── GRADIENT DARKER VARIANTS ───────────────────────────────
+     For radial/linear gradient endpoints (logo circles, shields) */
+  --water-fortress-deep:   #1a5c45;
+  --water-fortress-darker: #1a5040;
+  --zheng-he-deep:         #2a5478;
+  --zheng-he-darker:       #284e6e;
+  --temple-gold-deep:      #a07020;
+
+  /* ── SHADOW BASE COLORS ─────────────────────────────────────
+     Reusable opacity levels for box-shadow / drop-shadow    */
+  --shadow-soft:   rgba(0, 0, 0, 0.08);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-heavy:  rgba(0, 0, 0, 0.4);
+  --shadow-deep:   rgba(0, 0, 0, 0.5);
+
+  /* ── SKELETON SHIMMER ───────────────────────────────────────
+     Midpoint color for loading skeleton gradients           */
+  --skeleton-mid: rgba(74, 75, 84, 0.4);
+
+  /* ── FOCUS OVERLAY (light mode) ─────────────────────────────
+     Independent of global theme; used for focus/reader mode  */
+  --focus-light-bg:           #FAFAFA;
+  --focus-light-text:         #2A2A30;
+  --focus-light-text-body:    #4A4A52;
+  --focus-light-text-heading: #1A1A1E;
+  --focus-light-text-muted:   #8A8A94;
+  --focus-light-surface:      #F0F0F2;
+  --focus-light-border:       rgba(0, 0, 0, 0.08);
+  --focus-light-border-table: rgba(0, 0, 0, 0.10);
+  --focus-light-border-cell:  rgba(0, 0, 0, 0.06);
+  --focus-light-hover:        rgba(0, 0, 0, 0.03);
+  --focus-light-code-bg:      rgba(0, 0, 0, 0.04);
+
+  /* ── THEME VARIABLES (Dark / Light switching) ───────────────
+     These map to heritage tokens by default (dark mode).
+     Override via [data-theme="light"] on <html>.            */
+  --theme-bg-base:         var(--bg-base);
+  --theme-bg-surface:      var(--bg-surface);
+  --theme-bg-elevated:     var(--bg-elevated);
+  --theme-text-primary:    var(--text-primary);
+  --theme-text-secondary:  var(--text-secondary);
+  --theme-text-muted:      var(--text-muted);
+  --theme-border:          var(--border);
+  --theme-border-strong:   var(--border-strong);
+  --theme-hover-bg:        rgba(255, 255, 255, 0.03);
+  --theme-active-bg:       var(--zheng-he-08);
+  --theme-scrollbar-track: var(--bg-base);
+  --theme-scrollbar-thumb: var(--bg-elevated);
+  --theme-selection-bg:    var(--sinha-maroon-30);
+  --theme-nav-btn-bg:      rgba(255, 255, 255, 0.07);
+  --theme-nav-btn-hover:   rgba(255, 255, 255, 0.12);
+
   /* ── SPACING ──────────────────────────────────────────────  */
   --space-xs:  4px;
   --space-sm:  8px;

@@ -1,0 +1,46 @@
+{
+  "slug": "em-sca-index",
+  "model_version": "v1.0",
+  "model_label": "[MODEL v1.0]",
+  "analysis_label": "[ANALYSIS]",
+  "generated_at": "2026-04-19T11:19:18.072913+00:00",
+  "topics_detected": [
+    "geopolitics"
+  ],
+  "aggregate_confidence": {
+    "mean": 0.624,
+    "p50": 0.634,
+    "label": "MEDIUM"
+  },
+  "scenarios": [
+    {
+      "topic": "geopolitics",
+      "signal": "Competing infrastructure financing offers from China, India, and Japan are creating parallel dependency tracks.",
+      "context": "Hambantota Port's 99-year lease to CMPORT remains the defining case study for debt-for-equity risk calculus in South Asia.",
+      "implication": "Each new bilateral project creates sovereign commitment that constrains future strategic optionality. Multi-vector balancing requires active management.",
+      "action": "Map bilateral project commitments by sector and counterparty. Model contingent liability exposure under stress scenarios.",
+      "confidence": {
+        "mean": 0.624,
+        "p10": 0.3,
+        "p50": 0.634,
+        "p90": 0.939,
+        "std": 0.227,
+        "ci_width": 0.639
+      },
+      "forecast_quarters": [
+        0.592,
+        0.562,
+        0.533,
+        0.545
+      ],
+      "risk_direction": "decreasing"
+    }
+  ],
+  "meta": {
+    "monte_carlo_iterations": 1000,
+    "seed": 42,
+    "forecast_horizon_quarters": 4,
+    "methodology": "Monte Carlo sampling + linear trend extrapolation",
+    "disclaimer": "Pre-computed at build time. Not financial or investment advice."
+  }
+}

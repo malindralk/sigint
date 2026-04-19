@@ -1,15 +1,20 @@
 'use client';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BRAND, CHART_COLORS } from '@/lib/brand-colors';
 
 const VENUE_COLORS: Record<string, string> = {
-  'IEEE S&P': '#7A1E2E', 'CCS': '#2C5F8A', 'USENIX': '#C4881E',
-  'CHES': '#A8293C', 'TCHES': '#1E6B52', 'IEEE': '#6B6254',
+  'IEEE S&P': BRAND.primary, 'CCS': BRAND.info, 'USENIX': BRAND.accent,
+  'CHES': BRAND.danger, 'TCHES': BRAND.success, 'IEEE': BRAND.textMuted,
 };
 
-const TT = {
-  backgroundColor: '#131217', border: '1px solid #4A4B5459',
-  borderRadius: '6px', color: '#EDE0C4', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace',
+const TT: React.CSSProperties = {
+  backgroundColor: 'var(--theme-bg-surface)',
+  border: '1px solid var(--theme-border)',
+  borderRadius: '6px',
+  color: 'var(--theme-text-primary)',
+  fontSize: '12px',
+  fontFamily: 'JetBrains Mono, monospace',
 };
 
 export default function ResearchCharts({ papers }: { papers: { year: number; venue: string; traces: number }[] }) {
@@ -35,11 +40,11 @@ export default function ResearchCharts({ papers }: { papers: { year: number; ven
         <div className="t-label" style={{ marginBottom: 'var(--space-sm)' }}>Papers per Year</div>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={byYear}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#4A4B5459" />
-            <XAxis dataKey="year" tick={{ fill: '#6B6254', fontSize: 10 }} axisLine={{ stroke: '#4A4B54' }} />
-            <YAxis tick={{ fill: '#6B6254', fontSize: 10 }} axisLine={{ stroke: '#4A4B54' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke={BRAND.border} />
+            <XAxis dataKey="year" tick={{ fill: BRAND.textMuted, fontSize: 10 }} axisLine={{ stroke: BRAND.borderSolid }} />
+            <YAxis tick={{ fill: BRAND.textMuted, fontSize: 10 }} axisLine={{ stroke: BRAND.borderSolid }} />
             <Tooltip contentStyle={TT} />
-            <Bar dataKey="count" fill="#7A1E2E" fillOpacity={0.8} radius={[3, 3, 0, 0]} />
+            <Bar dataKey="count" fill={BRAND.primary} fillOpacity={0.8} radius={[3, 3, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -48,13 +53,13 @@ export default function ResearchCharts({ papers }: { papers: { year: number; ven
         <div className="t-label" style={{ marginBottom: 'var(--space-sm)' }}>Papers by Venue</div>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={byVenue} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" stroke="#4A4B5459" horizontal={false} />
-            <XAxis type="number" tick={{ fill: '#6B6254', fontSize: 10 }} axisLine={{ stroke: '#4A4B54' }} />
-            <YAxis type="category" dataKey="venue" width={70} tick={{ fill: '#B8A98E', fontSize: 10 }} axisLine={{ stroke: '#4A4B54' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke={BRAND.border} horizontal={false} />
+            <XAxis type="number" tick={{ fill: BRAND.textMuted, fontSize: 10 }} axisLine={{ stroke: BRAND.borderSolid }} />
+            <YAxis type="category" dataKey="venue" width={70} tick={{ fill: BRAND.textSecondary, fontSize: 10 }} axisLine={{ stroke: BRAND.borderSolid }} />
             <Tooltip contentStyle={TT} />
             <Bar dataKey="count" radius={[0, 3, 3, 0]}>
               {byVenue.map((entry, i) => (
-                <Cell key={i} fill={VENUE_COLORS[entry.venue] ?? '#2C5F8A'} fillOpacity={0.85} />
+                <Cell key={i} fill={VENUE_COLORS[entry.venue] ?? BRAND.info} fillOpacity={0.85} />
               ))}
             </Bar>
           </BarChart>
@@ -66,21 +71,21 @@ export default function ResearchCharts({ papers }: { papers: { year: number; ven
         <div className="t-muted" style={{ fontSize: '11px', marginBottom: 'var(--space-sm)' }}>Min traces required per year</div>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={minTraceByYear}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#4A4B5459" />
-            <XAxis dataKey="year" tick={{ fill: '#6B6254', fontSize: 10 }} axisLine={{ stroke: '#4A4B54' }} />
-            <YAxis tick={{ fill: '#6B6254', fontSize: 10 }} axisLine={{ stroke: '#4A4B54' }} scale="log" domain={[1, 'auto']} tickFormatter={v => v >= 1000 ? `${v / 1000}k` : String(v)} />
+            <CartesianGrid strokeDasharray="3 3" stroke={BRAND.border} />
+            <XAxis dataKey="year" tick={{ fill: BRAND.textMuted, fontSize: 10 }} axisLine={{ stroke: BRAND.borderSolid }} />
+            <YAxis tick={{ fill: BRAND.textMuted, fontSize: 10 }} axisLine={{ stroke: BRAND.borderSolid }} scale="log" domain={[1, 'auto']} tickFormatter={v => v >= 1000 ? `${v / 1000}k` : String(v)} />
             <Tooltip contentStyle={TT} formatter={(v: number) => [`${v.toLocaleString()} traces`, 'Best']} />
             <Bar dataKey="traces" radius={[3, 3, 0, 0]}>
               {minTraceByYear.map((entry, i) => (
-                <Cell key={i} fill={entry.traces <= 10 ? '#A8293C' : entry.traces <= 1000 ? '#C4881E' : '#2C5F8A'} fillOpacity={0.85} />
+                <Cell key={i} fill={entry.traces <= 10 ? BRAND.danger : entry.traces <= 1000 ? BRAND.accent : BRAND.info} fillOpacity={0.85} />
               ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
         <div className="mt-2 flex gap-2 flex-wrap">
-          <span className="text-xs font-mono" style={{ color: '#A8293C' }}>■ ≤10 traces</span>
-          <span className="text-xs font-mono" style={{ color: '#C4881E' }}>■ ≤1k</span>
-          <span className="text-xs font-mono" style={{ color: '#2C5F8A' }}>■ &gt;1k</span>
+          <span className="text-xs font-mono" style={{ color: BRAND.danger }}>■ ≤10 traces</span>
+          <span className="text-xs font-mono" style={{ color: BRAND.accent }}>■ ≤1k</span>
+          <span className="text-xs font-mono" style={{ color: BRAND.info }}>■ &gt;1k</span>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 """Authentication API routes."""
 
+import logging
 import uuid
 from typing import Any
 
@@ -25,6 +26,7 @@ from app.models.user import User
 from app.services.auth import AuthError
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+logger = logging.getLogger(__name__)
 
 
 # Request/Response schemas
@@ -83,6 +85,7 @@ def get_refresh_cookie_settings():
         "httponly": True,
         "secure": settings.is_production,
         "samesite": "lax",
+        "path": "/",  # Critical: without this, cookie path defaults to the request path
         "max_age": 7 * 24 * 60 * 60,  # 7 days
     }
 
@@ -98,7 +101,7 @@ async def verify_session(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="No session",
         )
-    user = await session_service.validate_session(refresh_token)
+    user = await session_service.validate_refresh_token_session(refresh_token)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -219,8 +222,8 @@ async def logout(
     refresh_token: str | None = Cookie(None),
 ):
     """Logout and invalidate session."""
-    # Clear refresh token cookie
-    response.delete_cookie(key="refresh_token")
+    # Clear refresh token cookie (must match path used when setting)
+    response.delete_cookie(key="refresh_token", path="/")
 
     # If we have a refresh token, invalidate the session
     if refresh_token:
@@ -473,7 +476,7 @@ async def oauth_callback(
         stored_redirect = await oauth_service.redis.get(f"oauth_state:{state}")
         if not stored_redirect:
             return RedirectResponse(
-                f"{settings.frontend_url}/auth/callback?error=invalid_state"
+                f"{settings.frontend_url}/callback?error=invalid_state"
             )
         redirect_path = stored_redirect if isinstance(stored_redirect, str) else stored_redirect.decode()
         await oauth_service.redis.delete(f"oauth_state:{state}")
@@ -488,7 +491,7 @@ async def oauth_callback(
 
         if not access_token:
             return RedirectResponse(
-                f"{settings.frontend_url}/auth/callback?error=token_exchange_failed"
+                f"{settings.frontend_url}/callback?error=token_exchange_failed"
             )
 
         # Get user info
@@ -520,7 +523,7 @@ async def oauth_callback(
         if redirect_path and redirect_path != "/":
             callback_params["redirect"] = redirect_path
         response = RedirectResponse(
-            f"{settings.frontend_url}/auth/callback?{urlencode(callback_params)}"
+            f"{settings.frontend_url}/callback?{urlencode(callback_params)}"
         )
         response.set_cookie(
             value=session_data["refresh_token"],
@@ -530,8 +533,9 @@ async def oauth_callback(
         return response
 
     except Exception as e:
+        logger.exception("OAuth callback failed for provider=%s: %s", provider, e)
         return RedirectResponse(
-            f"{settings.frontend_url}/auth/callback?error={str(e)}"
+            f"{settings.frontend_url}/callback?error={str(e)}"
         )
 
 
