@@ -4,6 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -50,9 +51,8 @@ class Settings(BaseSettings):
     smtp_from: str = "noreply@malindra.lk"
 
     # Security
-    secret_key: str = "change-me-in-production"
+    secret_key: str = Field(..., description="JWT secret key - must be set via SECRET_KEY env var")
     jwt_algorithm: str = "HS256"
-    jwt_expire_minutes: int = 60 * 24 * 7  # 7 days
 
     # Token expiration (in minutes for access, days for refresh)
     access_token_expire_minutes: int = 15

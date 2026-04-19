@@ -9,8 +9,11 @@ import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
+
+from app.api.deps import require_roles
+from app.models.user import User
 
 router = APIRouter(prefix="/connectors", tags=["connectors"])
 logger = logging.getLogger(__name__)
@@ -136,8 +139,12 @@ async def get_connector_status():
 
 
 @router.post("/sync")
-async def trigger_sync(request: SyncRequest, background_tasks: BackgroundTasks):
-    """Trigger manual sync for selected connectors."""
+async def trigger_sync(
+    request: SyncRequest,
+    background_tasks: BackgroundTasks,
+    current_user: User = Depends(require_roles("admin")),
+):
+    """Trigger manual sync for selected connectors. Requires admin role."""
     for name in request.connectors:
         if name not in ["regional_finance", "trade_logistics", "policy_feeds"]:
             raise HTTPException(status_code=400, detail=f"Unknown connector: {name}")

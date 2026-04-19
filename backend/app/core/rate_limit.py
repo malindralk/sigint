@@ -31,11 +31,12 @@ async def rate_limit(request: Request, endpoint_type: str = "api") -> None:
         # Redis not available, skip rate limiting
         return
 
-    # Get client IP
-    ip = request.client.host if request.client else "unknown"
-    forwarded = request.headers.get("X-Forwarded-For")
-    if forwarded:
-        ip = forwarded.split(",")[0].strip()
+    # Get client IP - trust X-Real-IP set by Nginx, never trust X-Forwarded-For
+    real_ip = request.headers.get("X-Real-IP")
+    if real_ip:
+        ip = real_ip.strip()
+    else:
+        ip = request.client.host if request.client else "unknown"
 
     key = f"ratelimit:{ip}:{endpoint_type}"
 

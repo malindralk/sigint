@@ -17,8 +17,12 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 # Copy application
 COPY . .
 
-# Create cache directory for models
-RUN mkdir -p /root/.cache/huggingface
+# Create non-root user and set ownership
+RUN useradd -m -r appuser && \
+    mkdir -p /home/appuser/.cache/huggingface && \
+    chown -R appuser:appuser /app /home/appuser/.cache/huggingface
+
+USER appuser
 
 EXPOSE 8000
 

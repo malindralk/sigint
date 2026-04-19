@@ -271,6 +271,8 @@ All Docker data is stored in `backend/data/` (bind mounts):
 - Monitors: SSH, nginx auth, bots, bad requests
 - Nginx auth_request protects `/dashboard` routes
 - GDPR consent tracking via `ConsentDialog` component
+- **Security audit:** See `TASKS.md` for full findings (18 issues, 2026-04-19)
+- **Critical action:** Rotate all exposed secrets before any further deployments
 
 ### Useful Scripts
 | Script | Purpose |
@@ -383,8 +385,9 @@ sigint/
 | Frontend | Live | Next.js 16, static export to `./out/`, served by nginx |
 | Backend API | Running | FastAPI on port 8000 |
 | PostgreSQL | Running | With pgvector extension |
-| Redis | Running | Cache/session store/rate limiting |
+| Redis | ✅ Fixed | Authentication added (rotate placeholder password) |
 | Authentication | Google OAuth only | JWT + HTTPOnly cookie sessions |
+| Docker | ✅ Fixed | Runs as non-root `appuser` |
 | i18n | English + Sinhala | Sidebar, mobile drawer, footer all locale-aware |
 | Brand System | Complete | Heritage palette, all colors tokenised in `.brand/` |
 | Mobile Navigation | Implemented | Hamburger drawer with auth state + locale toggle |
@@ -398,6 +401,33 @@ sigint/
 | Nginx | Configured | SSL, auth_request for /dashboard |
 | Fail2ban | Active | 7 jails monitoring |
 | Google OAuth verification | Pending | Submitted for Google review |
+
+## Security Posture (Audited 2026-04-19, Remediated 2026-04-19)
+
+Full security audit completed. 15 of 18 findings remediated in code. See `TASKS.md` for full details.
+
+| Severity | Count | Fixed | Remaining |
+|----------|-------|-------|-----------|
+| Critical | 3 | 0 | 3 (manual credential rotation required) |
+| High | 5 | 5 | 0 |
+| Medium | 6 | 6 | 0 |
+| Low | 4 | 3 | 1 (L2: python-jose migration) |
+
+**Remaining manual actions:**
+- Rotate all exposed credentials (C1-C3) — Google OAuth secret, JWT SECRET_KEY, DB password, Brave API key, AI provider keys
+- Rotate Redis placeholder password to a strong random value
+- Clear Qoder session caches: `rm -rf /home/www/.qoder/projects/`
+- Rebuild backend: `docker compose build backend && docker compose up -d backend`
+- Reload Nginx: `sudo nginx -t && sudo nginx -s reload`
+- Rebuild frontend: `mal build-frontend`
+
+**Still open (requires code migration):**
+- L2: Replace `python-jose` with `PyJWT` or `joserfc`
+- H2 partial: Replace CSP `unsafe-inline` with nonce-based policy
+**Positive controls in place:**
+Argon2id hashing, short-lived JWTs (15 min), HttpOnly/Secure/SameSite cookies, HSTS, Fail2ban (7 jails), DB ports bound to localhost, `.env` gitignored, request fingerprinting/audit logging, rehype-sanitize on markdown pipeline, non-root Docker container, Redis authentication, rate limiter using trusted X-Real-IP only.
+
+**Priority:** Rotate all credentials, then rebuild/reload services to deploy fixes.
 
 ## Styling Rules
 

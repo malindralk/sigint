@@ -533,10 +533,8 @@ async def oauth_callback(
         return response
 
     except Exception as e:
-        logger.exception("OAuth callback failed for provider=%s: %s", provider, e)
-        return RedirectResponse(
-            f"{settings.frontend_url}/callback?error={str(e)}"
-        )
+        logger.error(f"OAuth callback error: {e}")
+        return RedirectResponse(f"{settings.frontend_url}/callback?error=auth_failed")
 
 
 @router.delete("/oauth/{provider}")

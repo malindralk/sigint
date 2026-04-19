@@ -11,8 +11,28 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import rehypeStringify from 'rehype-stringify';
 import matter from 'gray-matter';
+
+// Permissive sanitize schema: allows classes, data attributes, and common HTML
+// but strips script tags and event handlers (onclick, onerror, etc.)
+const sanitizeSchema = {
+  ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    '*': [...(defaultSchema.attributes?.['*'] || []), 'className', 'class', 'style', /^data-/],
+    div: [...(defaultSchema.attributes?.['div'] || []), 'className', 'class', 'style'],
+    span: [...(defaultSchema.attributes?.['span'] || []), 'className', 'class', 'style'],
+    code: [...(defaultSchema.attributes?.['code'] || []), 'className', 'class'],
+    pre: [...(defaultSchema.attributes?.['pre'] || []), 'className', 'class'],
+  },
+  tagNames: [
+    ...(defaultSchema.tagNames || []),
+    'div', 'span', 'section', 'article', 'aside', 'details', 'summary',
+    'figure', 'figcaption', 'mark', 'time', 'abbr', 'cite',
+  ],
+};
 
 // ── SIGINT block transformer ─────────────────────────────────────────────────
 // Converts fenced block syntax:
@@ -107,6 +127,7 @@ export async function markdownToHtml(rawMarkdown: string): Promise<string> {
     .use(remarkParse)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
+    .use(rehypeSanitize, sanitizeSchema)
     .use(rehypeStringify)
     .process(preprocessed);
 

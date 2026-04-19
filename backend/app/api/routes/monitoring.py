@@ -7,8 +7,6 @@
 
 import json
 import os
-import platform
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -87,11 +85,6 @@ async def health_check(x_monitor_token: str = Header(default="")):
     return {
         "status": "healthy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "platform": {
-            "python": sys.version.split()[0],
-            "platform": platform.system(),
-            "pid": os.getpid(),
-        },
         "build": {
             "last_action": build_info.get("action"),
             "last_slug": build_info.get("slug"),
