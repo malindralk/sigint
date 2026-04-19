@@ -1,8 +1,15 @@
 'use client';
 
+import type { SimulationNodeDatum } from 'd3';
 import { useEffect, useRef, useState } from 'react';
 import { BRAND } from '@/lib/brand-colors';
 import type { GraphData, GraphNode } from '@/lib/graph-data';
+
+type SimNode = SimulationNodeDatum & GraphNode;
+interface SimLink {
+  source: SimNode;
+  target: SimNode;
+}
 
 const CATEGORIES = [
   { key: 'all', label: 'All', color: 'var(--text-primary)' },
@@ -40,13 +47,16 @@ export default function KnowledgeGraph({ data }: Props) {
 
     async function init() {
       d3 = await import('d3');
-      const svg = d3.select(svgRef.current!);
+      const svgEl = svgRef.current;
+      if (!svgEl) return;
+      const svg = d3.select(svgEl);
       svg.selectAll('*').remove();
-      const container = svgRef.current!.parentElement!;
+      const container = svgEl.parentElement;
+      if (!container) return;
       const W = container.clientWidth || 800;
       const H = container.clientHeight || 600;
-      svgRef.current?.setAttribute('width', String(W));
-      svgRef.current?.setAttribute('height', String(H));
+      svgEl.setAttribute('width', String(W));
+      svgEl.setAttribute('height', String(H));
 
       const colorMap: Record<string, string> = {};
       CATEGORIES.forEach((c) => {
@@ -62,12 +72,12 @@ export default function KnowledgeGraph({ data }: Props) {
       const links = filteredEdges.map((e) => ({ ...e }));
 
       const simulation = d3
-        .forceSimulation(nodes as d3.SimulationNodeDatum[])
+        .forceSimulation<SimNode>(nodes as SimNode[])
         .force(
           'link',
           d3
             .forceLink(links)
-            .id((d: any) => d.id)
+            .id((d: SimNode) => d.id)
             .distance(100)
             .strength(0.4),
         )
@@ -99,7 +109,7 @@ export default function KnowledgeGraph({ data }: Props) {
         .attr('cursor', 'pointer')
         .call(
           d3
-            .drag<SVGGElement, any>()
+            .drag<SVGGElement, SimNode>()
             .on('start', (event, d) => {
               if (!event.active) simulation.alphaTarget(0.3).restart();
               d.fx = d.x;
@@ -113,6 +123,7 @@ export default function KnowledgeGraph({ data }: Props) {
               if (!event.active) simulation.alphaTarget(0);
               d.fx = null;
               d.fy = null;
+              // biome-ignore lint/suspicious/noExplicitAny: D3 drag type incompatible with selection.call()
             }) as any,
         )
         .on('click', (_event, d) => setSelected(d as unknown as GraphNode));
@@ -120,8 +131,8 @@ export default function KnowledgeGraph({ data }: Props) {
       node
         .append('circle')
         .attr('r', 14)
-        .attr('fill', (d: any) => `${colorMap[d.category]}22`)
-        .attr('stroke', (d: any) => colorMap[d.category])
+        .attr('fill', (d: SimNode) => `${colorMap[d.category]}22`)
+        .attr('stroke', (d: SimNode) => colorMap[d.category])
         .attr('stroke-width', 1.5);
 
       node
@@ -130,9 +141,9 @@ export default function KnowledgeGraph({ data }: Props) {
         .attr('text-anchor', 'middle')
         .attr('font-size', '9px')
         .attr('font-family', 'JetBrains Mono, monospace')
-        .attr('fill', (d: any) => colorMap[d.category])
+        .attr('fill', (d: SimNode) => colorMap[d.category])
         .attr('pointer-events', 'none')
-        .each(function (d: any) {
+        .each(function (this: SVGTextElement, d: SimNode) {
           const words = d.label.split(/[\s-]/);
           const abbr = words
             .map((w: string) => w[0])
@@ -142,15 +153,15 @@ export default function KnowledgeGraph({ data }: Props) {
           d3.select(this).text(abbr);
         });
 
-      node.append('title').text((d: any) => d.label);
+      node.append('title').text((d: SimNode) => d.label);
 
       simulation.on('tick', () => {
         link
-          .attr('x1', (d: any) => d.source.x)
-          .attr('y1', (d: any) => d.source.y)
-          .attr('x2', (d: any) => d.target.x)
-          .attr('y2', (d: any) => d.target.y);
-        node.attr('transform', (d: any) => `translate(${d.x},${d.y})`);
+          .attr('x1', (d: SimLink) => d.source.x ?? 0)
+          .attr('y1', (d: SimLink) => d.source.y ?? 0)
+          .attr('x2', (d: SimLink) => d.target.x ?? 0)
+          .attr('y2', (d: SimLink) => d.target.y ?? 0);
+        node.attr('transform', (d: SimNode) => `translate(${d.x},${d.y})`);
       });
 
       setReady(true);

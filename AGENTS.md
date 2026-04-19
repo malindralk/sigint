@@ -45,8 +45,6 @@ curl -X POST "http://localhost:8000/api/articles/sync?generate_embeddings=true"
 curl "http://localhost:8000/api/search?q=SDR+hardware&limit=5"
 ```
 
-No lint or test commands are configured.
-
 ### Backend Testing (pytest)
 ```bash
 cd backend
@@ -64,7 +62,7 @@ pnpm format           # Check formatting only
 pnpm format:fix       # Auto-fix formatting only
 ```
 
-Biome is used for linting and formatting (replaces ESLint + Prettier). Configuration is in `biome.json`. Scoped to frontend directories: `app/`, `lib/`, `components/`, `hooks/`, `scripts/`.
+Biome is used for linting and formatting (replaces ESLint + Prettier). Configuration is in `biome.json`. Scoped to frontend directories: `app/`, `lib/`, `components/`, `hooks/`, `scripts/`. Currently **0 errors, 0 warnings** across 113 files.
 
 ## Technology Stack
 
@@ -86,7 +84,7 @@ Biome is used for linting and formatting (replaces ESLint + Prettier). Configura
 - **ORM:** SQLAlchemy 2 (async with asyncpg)
 - **Auth:** JWT + HTTPOnly refresh token cookies, Google OAuth 2.0
 - **Embeddings:** HuggingFace sentence-transformers
-- **Security:** Argon2id, rate limiting, API key auth middleware
+- **Security:** Argon2id, rate limiting, API key auth middleware, pydantic-settings v2 for env management
 
 ### Infrastructure
 - **Containers:** Docker + Docker Compose
@@ -272,6 +270,7 @@ Changes to `content/` must be pushed from within that directory.
 | `/api/admin/articles` | POST | Create new article |
 | `/api/admin/articles/{id}` | PATCH | Update article |
 | `/api/admin/articles/{id}` | DELETE | Delete article |
+| `/api/admin/stats` | GET | Dashboard stats (article/user/session counts) |
 | `/api/admin/settings` | GET | Get site settings |
 | `/api/admin/settings` | PATCH | Update site settings |
 
@@ -420,6 +419,8 @@ sigint/
 ├── .bash/                        # Setup scripts
 ├── .github/                      # CI/CD workflows
 ├── mal.py                        # CLI tool (installed as `mal` command)
+├── biome.json                    # Biome linter/formatter config
+├── SECURITY.md                   # Credential rotation procedures
 └── AGENTS.md                     # This file
 ```
 
@@ -438,13 +439,14 @@ sigint/
 | Mobile Navigation | Implemented | Hamburger drawer with auth state + locale toggle |
 | Contact Page | Live | `/contact` with info@malindra.lk |
 | Privacy & Terms | Live | `/privacy` and `/terms` |
-| Admin Dashboard | Implemented | User/article/settings management |
+| Admin Dashboard | Implemented | User/article/settings management, live stats via `/api/admin/stats` |
 | Visualizations | Live | Knowledge graph, market charts, equipment, research, Gantt |
 | Performance | Optimised | recharts/mermaid/highlight lazy-loaded via next/dynamic |
 | Content Sync | Ready | Tested and working (requires auth) |
-| RAG Search | Ready | Semantic search via pgvector embeddings |
+| RAG Search | Ready | Semantic search via pgvector cosine similarity |
 | Nginx | Configured | SSL, auth_request for /dashboard |
 | Fail2ban | Active | 7 jails monitoring |
+| Linting | Clean | Biome: 0 errors, 0 warnings across 113 files |
 | Google OAuth verification | Pending | Submitted for Google review |
 
 ## Security Posture (Audited 2026-04-19, Remediated 2026-04-19)
@@ -466,9 +468,9 @@ Full security audit completed. 15 of 18 findings remediated in code.
 - Reload Nginx: `sudo nginx -t && sudo nginx -s reload`
 - Rebuild frontend: `mal build-frontend`
 
-**Still open (requires code migration):**
-- ~~L2: Replace `python-jose` with `PyJWT` or `joserfc`~~ **DONE** -- Migrated to PyJWT 2.x (2026-04-19)
+**Still open:**
 - H2 partial: Replace CSP `unsafe-inline` with nonce-based policy
+
 **Positive controls in place:**
 Argon2id hashing, short-lived JWTs (15 min), HttpOnly/Secure/SameSite cookies, HSTS, Fail2ban (7 jails), DB ports bound to localhost, `.env` gitignored, request fingerprinting/audit logging, rehype-sanitize on markdown pipeline, non-root Docker container, Redis authentication, rate limiter using trusted X-Real-IP only.
 

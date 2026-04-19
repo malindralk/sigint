@@ -24,8 +24,15 @@ interface HW {
   tier: string;
 }
 
-function CustomDot(props: any) {
+interface CustomDotProps {
+  cx?: number;
+  cy?: number;
+  payload?: HW;
+}
+
+function CustomDot(props: CustomDotProps) {
   const { cx, cy, payload } = props;
+  if (cx == null || cy == null || !payload) return null;
   const color = TIER_COLORS[payload.tier] ?? BRAND.textMuted;
   return (
     <g>
