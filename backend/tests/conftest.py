@@ -92,6 +92,21 @@ async def client():
         yield c
 
 
+# -- dev login fixture ------------------------------------------------------
+
+
+@pytest.fixture
+def enable_dev_login(monkeypatch):
+    """Enable dev login by setting required env vars and clearing settings cache."""
+    monkeypatch.setenv("APP_ENV", "development")
+    monkeypatch.setenv("DEV_LOGIN_ENABLED", "true")
+    monkeypatch.setenv("DEV_LOGIN_EMAIL", "dev@test.com")
+    monkeypatch.setenv("DEV_LOGIN_PASSWORD", "DevPassword123!")
+    get_settings.cache_clear()
+    yield
+    get_settings.cache_clear()
+
+
 # -- users ------------------------------------------------------------------
 
 

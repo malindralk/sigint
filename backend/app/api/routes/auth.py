@@ -110,6 +110,13 @@ async def verify_session(
     return Response(status_code=200)
 
 
+@router.get("/dev-status")
+async def dev_login_status():
+    """Check whether dev login is available."""
+    settings = get_settings()
+    return {"dev_login_enabled": settings.is_dev_login_allowed}
+
+
 @router.post(
     "/register",
     response_model=dict[str, Any],
@@ -123,6 +130,13 @@ async def register(
     rate_limit: None = Depends(get_rate_limit_dependency("auth")),
 ):
     """Register a new user."""
+    settings = get_settings()
+    if not settings.is_dev_login_allowed:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Registration is disabled. Please use Google OAuth.",
+        )
+
     try:
         user = await auth_service.register(
             email=request.email,
@@ -165,6 +179,13 @@ async def login(
     rate_limit: None = Depends(get_rate_limit_dependency("auth")),
 ):
     """Login with email and password."""
+    settings = get_settings()
+    if not settings.is_dev_login_allowed:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Manual login is disabled. Please use Google OAuth.",
+        )
+
     try:
         user = await auth_service.login(
             email=request.email,
@@ -310,6 +331,13 @@ async def request_password_reset(
     rate_limit: None = Depends(get_rate_limit_dependency("auth")),
 ):
     """Request a password reset email."""
+    settings = get_settings()
+    if not settings.is_dev_login_allowed:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Password reset is disabled.",
+        )
+
     token = await auth_service.request_password_reset(request.email)
 
     if token:
@@ -329,6 +357,13 @@ async def reset_password(
     session_service: SessionSvc,
 ):
     """Reset password using reset token."""
+    settings = get_settings()
+    if not settings.is_dev_login_allowed:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Password reset is disabled.",
+        )
+
     try:
         success = await auth_service.reset_password(
             token=request.token,

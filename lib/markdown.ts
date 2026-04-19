@@ -136,7 +136,7 @@ export async function markdownToHtml(rawMarkdown: string): Promise<string> {
     .use(remarkParse)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
-    .use(rehypeSanitize, sanitizeSchema as any)
+    .use(rehypeSanitize, sanitizeSchema as typeof defaultSchema)
     .use(rehypeStringify)
     .process(preprocessed);
 

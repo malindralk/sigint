@@ -84,6 +84,11 @@ class Settings(BaseSettings):
     partner_webhook_secret: str = ""
     lemonsqueezy_api_key: str = ""     # Alternative to Stripe for LemonSqueezy
 
+    # Dev-only manual login (disabled in production)
+    dev_login_enabled: bool = False
+    dev_login_email: str = ""
+    dev_login_password: str = ""
+
     @property
     def is_development(self) -> bool:
         return self.app_env == "development"
@@ -91,6 +96,16 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.app_env == "production"
+
+    @property
+    def is_dev_login_allowed(self) -> bool:
+        """Check if dev login is allowed (enabled, in development mode, and credentials set)."""
+        return (
+            self.dev_login_enabled
+            and self.is_development
+            and bool(self.dev_login_email)
+            and bool(self.dev_login_password)
+        )
 
 
 @lru_cache

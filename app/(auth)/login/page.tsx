@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
+import DevLoginForm from '@/app/components/auth/DevLoginForm';
 import OAuthButtons from '@/app/components/auth/OAuthButtons';
 import { useAuth } from '@/app/lib/auth/context';
 
@@ -87,6 +88,9 @@ function LoginContent() {
         )}
 
         <OAuthButtons redirect={redirect} />
+
+        {/* Dev-only login form (only renders in development) */}
+        <DevLoginForm redirect={redirect} />
       </div>
     </div>
   );
