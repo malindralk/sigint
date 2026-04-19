@@ -76,8 +76,8 @@ export default function KnowledgeGraph({ data }: Props) {
         .force(
           'link',
           d3
-            .forceLink(links)
-            .id((d: SimNode) => d.id)
+            .forceLink<SimNode, SimLink>(links as unknown as SimLink[])
+            .id((d) => d.id)
             .distance(100)
             .strength(0.4),
         )
@@ -157,10 +157,10 @@ export default function KnowledgeGraph({ data }: Props) {
 
       simulation.on('tick', () => {
         link
-          .attr('x1', (d: SimLink) => d.source.x ?? 0)
-          .attr('y1', (d: SimLink) => d.source.y ?? 0)
-          .attr('x2', (d: SimLink) => d.target.x ?? 0)
-          .attr('y2', (d: SimLink) => d.target.y ?? 0);
+          .attr('x1', (d: any) => d.source.x ?? 0)
+          .attr('y1', (d: any) => d.source.y ?? 0)
+          .attr('x2', (d: any) => d.target.x ?? 0)
+          .attr('y2', (d: any) => d.target.y ?? 0);
         node.attr('transform', (d: SimNode) => `translate(${d.x},${d.y})`);
       });
 

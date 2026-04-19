@@ -2461,10 +2461,7 @@
 /* ── MOBILE FOOTER RESPONSIVE ─────────────────────────────── */
 @media (max-width: 1023px) {
   .global-footer {
-    padding: 10px 16px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-    font-size: 12px;
-    text-align: center;
+    display: none;
   }
 
   .global-footer .footer-inner {

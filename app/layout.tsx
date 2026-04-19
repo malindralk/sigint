@@ -81,8 +81,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   className="mobile-main"
                 >
                   <div style={{ maxWidth: '1200px', width: '100%', margin: '0 auto' }}>{children}</div>
+                  <Footer />
                 </main>
-                <Footer />
               </div>
             </div>
             {/* Privacy consent dialog - shows on first visit */}
