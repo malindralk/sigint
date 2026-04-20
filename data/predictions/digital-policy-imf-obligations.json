@@ -3,7 +3,7 @@
   "model_version": "v1.0",
   "model_label": "[MODEL v1.0]",
   "analysis_label": "[ANALYSIS]",
-  "generated_at": "2026-04-19T11:19:18.069098+00:00",
+  "generated_at": "2026-04-19T18:31:43.834195+00:00",
   "topics_detected": [
     "debt",
     "digital"
@@ -16,10 +16,10 @@
   "scenarios": [
     {
       "topic": "debt",
-      "signal": "International sovereign bond yield spreads indicate persistent market skepticism about Sri Lanka's debt sustainability.",
-      "context": "ISB holders accepted haircuts under the restructuring; residual litigation risk from holdout creditors creates uncertainty in secondary markets.",
-      "implication": "Constrained market access limits the government's ability to refinance maturing obligations without IMF support.",
-      "action": "Track EMBI+ spread movements and rating agency outlook changes (Fitch, Moody's) as leading indicators of market confidence.",
+      "signal": "Sri Lanka's external debt service ratio remains elevated relative to foreign exchange reserves.",
+      "context": "Post-2022 default recovery continues; IMF Extended Fund Facility tranches are contingent on structural benchmarks including SOE reform and revenue measures.",
+      "implication": "Delayed tranche disbursement heightens rollover risk in 2025–2026 window. Bilateral creditor negotiations with China and India remain the critical path.",
+      "action": "Monitor monthly CBSL reserve publications and IMF Article IV consultations. Flag any deviation from fiscal primary balance targets as early warning signal.",
       "confidence": {
         "mean": 0.712,
         "p10": 0.477,

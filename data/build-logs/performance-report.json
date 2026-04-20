@@ -1,33 +1,38 @@
 {
-  "generated_at": "2026-04-19T11:19:45.696Z",
+  "generated_at": "2026-04-19T18:32:07.606Z",
   "summary": {
     "pass": false,
     "warnings": 1,
     "estimated_lighthouse_performance": 95,
-    "page_count": 135,
-    "total_output": "15.32MB"
+    "page_count": 136,
+    "total_output": "15.70MB"
   },
   "bundles": {
     "js": {
       "files": [
         {
-          "path": "_next/static/chunks/0bov4c1~viego.js",
-          "size": 333604,
+          "path": "_next/static/chunks/00rto~z28n0vc.js",
+          "size": 334035,
+          "sizeHuman": "326.2KB"
+        },
+        {
+          "path": "_next/static/chunks/0fyfvc-yslb7y.js",
+          "size": 334035,
+          "sizeHuman": "326.2KB"
+        },
+        {
+          "path": "_next/static/chunks/0xf89kfn-p0bt.js",
+          "size": 334035,
+          "sizeHuman": "326.2KB"
+        },
+        {
+          "path": "_next/static/chunks/0y9uf.nh9zr~x.js",
+          "size": 333637,
           "sizeHuman": "325.8KB"
         },
         {
-          "path": "_next/static/chunks/0cw.e.pn0b.pq.js",
-          "size": 331545,
-          "sizeHuman": "323.8KB"
-        },
-        {
-          "path": "_next/static/chunks/0nj1anh2av4kr.js",
-          "size": 331545,
-          "sizeHuman": "323.8KB"
-        },
-        {
-          "path": "_next/static/chunks/00ol7w.hah0ju.js",
-          "size": 233555,
+          "path": "_next/static/chunks/01hqfuou0gj7j.js",
+          "size": 233554,
           "sizeHuman": "228.1KB"
         },
         {
@@ -46,18 +51,18 @@
           "sizeHuman": "110.0KB"
         },
         {
-          "path": "_next/static/chunks/0k7fqys2cw787.js",
-          "size": 75839,
+          "path": "_next/static/chunks/04_lja~8d962l.js",
+          "size": 75870,
           "sizeHuman": "74.1KB"
         },
         {
-          "path": "_next/static/chunks/0pcm6w1fz6r4~.js",
-          "size": 75839,
+          "path": "_next/static/chunks/0ctutirq-mux1.js",
+          "size": 75870,
           "sizeHuman": "74.1KB"
         },
         {
-          "path": "_next/static/chunks/0rqb8dz4528e9.js",
-          "size": 75839,
+          "path": "_next/static/chunks/0i5cnnk0sp2c9.js",
+          "size": 75870,
           "sizeHuman": "74.1KB"
         },
         {
@@ -71,14 +76,14 @@
           "sizeHuman": "42.9KB"
         },
         {
-          "path": "_next/static/chunks/0bvf~2rsig2ms.js",
-          "size": 34044,
-          "sizeHuman": "33.2KB"
+          "path": "_next/static/chunks/0f2vo6tty5nal.js",
+          "size": 35283,
+          "sizeHuman": "34.5KB"
         },
         {
-          "path": "_next/static/chunks/0lugi_sr8t01e.js",
-          "size": 32997,
-          "sizeHuman": "32.2KB"
+          "path": "_next/static/chunks/09jnssq.gsmu0.js",
+          "size": 34134,
+          "sizeHuman": "33.3KB"
         },
         {
           "path": "_next/static/chunks/0kmsq8u4c8fcu.js",
@@ -86,34 +91,29 @@
           "sizeHuman": "31.2KB"
         },
         {
-          "path": "_next/static/chunks/0e.7e8xmh5~h4.js",
-          "size": 26779,
-          "sizeHuman": "26.2KB"
+          "path": "_next/static/chunks/0ol80guhi6jl7.js",
+          "size": 26539,
+          "sizeHuman": "25.9KB"
         },
         {
-          "path": "_next/static/chunks/0l.u22ld9qhv-.js",
-          "size": 26779,
-          "sizeHuman": "26.2KB"
+          "path": "_next/static/chunks/10g_z5~mkkfkr.js",
+          "size": 22004,
+          "sizeHuman": "21.5KB"
         },
         {
-          "path": "_next/static/chunks/0vunibda.9n31.js",
-          "size": 22270,
-          "sizeHuman": "21.7KB"
-        },
-        {
-          "path": "_next/static/chunks/0m9q58z3_zvbe.js",
-          "size": 19181,
+          "path": "_next/static/chunks/0c0jy98h-ruri.js",
+          "size": 19183,
           "sizeHuman": "18.7KB"
         },
         {
-          "path": "_next/static/chunks/0bfoyewb52mag.js",
-          "size": 16783,
+          "path": "_next/static/chunks/0hae_o513..3l.js",
+          "size": 16824,
           "sizeHuman": "16.4KB"
         },
         {
-          "path": "_next/static/chunks/061j3gagreu7e.js",
-          "size": 14662,
-          "sizeHuman": "14.3KB"
+          "path": "_next/static/chunks/14b74ubbpp._l.js",
+          "size": 15100,
+          "sizeHuman": "14.7KB"
         },
         {
           "path": "_next/static/chunks/turbopack-04ns~5g2mvyln.js",
@@ -121,49 +121,64 @@
           "sizeHuman": "10.4KB"
         },
         {
-          "path": "_next/static/chunks/00.g5gzfe-u6w.js",
-          "size": 8910,
+          "path": "_next/static/chunks/0x4g_3sqb-54r.js",
+          "size": 8995,
+          "sizeHuman": "8.8KB"
+        },
+        {
+          "path": "_next/static/chunks/0w.-sc3e2-peg.js",
+          "size": 8949,
           "sizeHuman": "8.7KB"
         },
         {
-          "path": "_next/static/chunks/0ijm-qxy6hem3.js",
-          "size": 8890,
-          "sizeHuman": "8.7KB"
-        },
-        {
-          "path": "_next/static/chunks/0tr839~ltdtiw.js",
-          "size": 7347,
+          "path": "_next/static/chunks/0r8xi1mkmxf5k.js",
+          "size": 7389,
           "sizeHuman": "7.2KB"
         },
         {
-          "path": "_next/static/chunks/0359xygli9k16.js",
-          "size": 7045,
+          "path": "_next/static/chunks/00rc9yb49re~a.js",
+          "size": 7059,
           "sizeHuman": "6.9KB"
         },
         {
-          "path": "_next/static/chunks/0tu8mreznlfzt.js",
+          "path": "_next/static/chunks/10kp-6-jx_xya.js",
           "size": 6728,
           "sizeHuman": "6.6KB"
         },
         {
-          "path": "_next/static/chunks/00c5b5ghzi7au.js",
-          "size": 6609,
+          "path": "_next/static/chunks/0ngdb~o19lcym.js",
+          "size": 6648,
           "sizeHuman": "6.5KB"
         },
         {
-          "path": "_next/static/chunks/08ftj_apj4~-x.js",
+          "path": "_next/static/chunks/12iwe2zjjpfnx.js",
           "size": 6559,
           "sizeHuman": "6.4KB"
         },
         {
-          "path": "_next/static/chunks/0nwc-q87ncr65.js",
-          "size": 6446,
+          "path": "_next/static/chunks/0cyr01fi.g0z9.js",
+          "size": 6449,
           "sizeHuman": "6.3KB"
         },
         {
-          "path": "_next/static/chunks/09-r5dkpw8.ew.js",
-          "size": 5241,
+          "path": "_next/static/chunks/086zq3e~mp69q.js",
+          "size": 5637,
+          "sizeHuman": "5.5KB"
+        },
+        {
+          "path": "_next/static/chunks/0ll8zwu7m259t.js",
+          "size": 5436,
+          "sizeHuman": "5.3KB"
+        },
+        {
+          "path": "_next/static/chunks/0q0mkxd14b_ao.js",
+          "size": 5272,
           "sizeHuman": "5.1KB"
+        },
+        {
+          "path": "_next/static/chunks/0b37a2yxsn~po.js",
+          "size": 4414,
+          "sizeHuman": "4.3KB"
         },
         {
           "path": "_next/static/chunks/0.6du8yjz.h6y.js",
@@ -171,44 +186,24 @@
           "sizeHuman": "4.3KB"
         },
         {
-          "path": "_next/static/chunks/0jf.3g71mtt--.js",
-          "size": 4372,
-          "sizeHuman": "4.3KB"
-        },
-        {
-          "path": "_next/static/chunks/0v-iznrcvqs0z.js",
-          "size": 4268,
+          "path": "_next/static/chunks/0skj7k~eql~ez.js",
+          "size": 4292,
           "sizeHuman": "4.2KB"
         },
         {
-          "path": "_next/static/chunks/0.q845sfywqtq.js",
-          "size": 3628,
-          "sizeHuman": "3.5KB"
-        },
-        {
-          "path": "_next/static/chunks/001dzvgr~ur.o.js",
-          "size": 3284,
+          "path": "_next/static/chunks/0knmq_3l85e65.js",
+          "size": 3312,
           "sizeHuman": "3.2KB"
         },
         {
-          "path": "_next/static/chunks/0-6u2wtf-6jlb.js",
-          "size": 3184,
-          "sizeHuman": "3.1KB"
-        },
-        {
-          "path": "_next/static/chunks/18au5m.u8-y.n.js",
-          "size": 2050,
+          "path": "_next/static/chunks/0u5xik5s_.xa6.js",
+          "size": 2052,
           "sizeHuman": "2.0KB"
         },
         {
-          "path": "_next/static/chunks/0aa7e_cd9x5s0.js",
-          "size": 1944,
+          "path": "_next/static/chunks/0x92yx.6lto7s.js",
+          "size": 1958,
           "sizeHuman": "1.9KB"
-        },
-        {
-          "path": "_next/static/chunks/06jud5zr~~yca.js",
-          "size": 1299,
-          "sizeHuman": "1.3KB"
         },
         {
           "path": "_next/static/chunks/0sdyl1bemxjzr.js",
@@ -216,56 +211,61 @@
           "sizeHuman": "1.3KB"
         },
         {
-          "path": "_next/static/chunks/0hk-yxn_j6cu6.js",
-          "size": 1005,
-          "sizeHuman": "1005B"
+          "path": "_next/static/chunks/0-3-tm59xng56.js",
+          "size": 1294,
+          "sizeHuman": "1.3KB"
         },
         {
-          "path": "_next/static/chunks/0pdwsc6ih.lg..js",
-          "size": 939,
-          "sizeHuman": "939B"
+          "path": "_next/static/chunks/0i9gsu1lih4ws.js",
+          "size": 1029,
+          "sizeHuman": "1.0KB"
         },
         {
-          "path": "_next/static/chunks/0cub_cz46og16.js",
+          "path": "_next/static/chunks/0--5q0adi7jwv.js",
+          "size": 953,
+          "sizeHuman": "953B"
+        },
+        {
+          "path": "_next/static/chunks/0g~6vlprh_n-9.js",
           "size": 281,
           "sizeHuman": "281B"
         },
         {
-          "path": "_next/static/chunks/0ms-syk2pugwj.js",
+          "path": "_next/static/chunks/0rj79km0ag8tf.js",
           "size": 281,
           "sizeHuman": "281B"
         },
         {
-          "path": "_next/static/chunks/0west58~g8cpe.js",
+          "path": "_next/static/chunks/12wypnmbe3inq.js",
           "size": 281,
           "sizeHuman": "281B"
         },
         {
-          "path": "_next/static/KbSo9yfsbJcE6rFLnft2a/_ssgManifest.js",
+          "path": "_next/static/IPrtxRsir2Ql_XZGxgEo-/_ssgManifest.js",
           "size": 236,
           "sizeHuman": "236B"
         },
         {
-          "path": "_next/static/KbSo9yfsbJcE6rFLnft2a/_buildManifest.js",
+          "path": "_next/static/IPrtxRsir2Ql_XZGxgEo-/_buildManifest.js",
           "size": 219,
           "sizeHuman": "219B"
         },
         {
-          "path": "_next/static/KbSo9yfsbJcE6rFLnft2a/_clientMiddlewareManifest.js",
+          "path": "_next/static/IPrtxRsir2Ql_XZGxgEo-/_clientMiddlewareManifest.js",
           "size": 96,
           "sizeHuman": "96B"
         }
       ],
-      "totalBytes": 2369632,
-      "totalHuman": "2.26MB",
+      "totalBytes": 2689021,
+      "totalHuman": "2.56MB",
       "warnings": []
     },
     "css": {
       "files": [
         {
-          "path": "_next/static/chunks/08otqitw0tbmi.css",
-          "size": 93575,
-          "sizeHuman": "91.4KB"
+          "path": "_next/static/chunks/018_.5dqbnyv0.css",
+          "size": 98497,
+          "sizeHuman": "96.2KB"
         },
         {
           "path": "_next/static/chunks/0f.j-ezqifxhv.css",
@@ -273,201 +273,201 @@
           "sizeHuman": "1.0KB"
         }
       ],
-      "totalBytes": 94640,
-      "totalHuman": "92.4KB",
+      "totalBytes": 99562,
+      "totalHuman": "97.2KB",
       "warnings": []
     },
     "html": {
       "files": [
         {
           "path": "archive/curated/index.html",
-          "size": 145862,
-          "sizeHuman": "142.4KB"
+          "size": 144614,
+          "sizeHuman": "141.2KB"
         },
         {
           "path": "blog/professional-em-sca-facility/index.html",
-          "size": 136579,
-          "sizeHuman": "133.4KB"
+          "size": 136497,
+          "sizeHuman": "133.3KB"
         },
         {
           "path": "blog/sigint-academic-research-overview/index.html",
-          "size": 130425,
-          "sizeHuman": "127.4KB"
+          "size": 130343,
+          "sizeHuman": "127.3KB"
         },
         {
           "path": "blog/research-grade-em-sca-lab/index.html",
-          "size": 123974,
-          "sizeHuman": "121.1KB"
+          "size": 123892,
+          "sizeHuman": "121.0KB"
         },
         {
           "path": "blog/electromagnetic-side-channel-practical-guide/index.html",
-          "size": 115921,
-          "sizeHuman": "113.2KB"
+          "size": 115839,
+          "sizeHuman": "113.1KB"
         },
         {
           "path": "blog/sigint-private-companies-em-intelligence/index.html",
-          "size": 103864,
-          "sizeHuman": "101.4KB"
+          "size": 103782,
+          "sizeHuman": "101.3KB"
         },
         {
           "path": "blog/entry-level-em-sca-setup/index.html",
-          "size": 101925,
+          "size": 101843,
           "sizeHuman": "99.5KB"
         },
         {
           "path": "archive/index.html",
-          "size": 99933,
-          "sizeHuman": "97.6KB"
-        },
-        {
-          "path": "blog/electromagnetic-side-channel-analysis/index.html",
-          "size": 95445,
-          "sizeHuman": "93.2KB"
+          "size": 99051,
+          "sizeHuman": "96.7KB"
         },
         {
           "path": "research/index.html",
-          "size": 95180,
-          "sizeHuman": "92.9KB"
+          "size": 95462,
+          "sizeHuman": "93.2KB"
+        },
+        {
+          "path": "blog/electromagnetic-side-channel-analysis/index.html",
+          "size": 95363,
+          "sizeHuman": "93.1KB"
         },
         {
           "path": "blog/pqc-implementation-security-2026/index.html",
-          "size": 94544,
-          "sizeHuman": "92.3KB"
+          "size": 94462,
+          "sizeHuman": "92.2KB"
         },
         {
           "path": "blog/em-sca-key-players-companies/index.html",
-          "size": 92724,
-          "sizeHuman": "90.6KB"
+          "size": 92642,
+          "sizeHuman": "90.5KB"
         },
         {
           "path": "blog/em-sca-consumer-applications/index.html",
-          "size": 89908,
-          "sizeHuman": "87.8KB"
+          "size": 89826,
+          "sizeHuman": "87.7KB"
         },
         {
           "path": "blog/sdr-tools-landscape-2026/index.html",
-          "size": 84097,
-          "sizeHuman": "82.1KB"
+          "size": 84015,
+          "sizeHuman": "82.0KB"
         },
         {
           "path": "blog/organizations/index.html",
-          "size": 83714,
-          "sizeHuman": "81.8KB"
+          "size": 83632,
+          "sizeHuman": "81.7KB"
         },
         {
           "path": "blog/em-sca-2026-developments/index.html",
-          "size": 82999,
-          "sizeHuman": "81.1KB"
+          "size": 82917,
+          "sizeHuman": "81.0KB"
         },
         {
           "path": "blog/pqc-em-sca/index.html",
-          "size": 80928,
+          "size": 80846,
           "sizeHuman": "79.0KB"
         },
         {
           "path": "learning/index.html",
-          "size": 80473,
-          "sizeHuman": "78.6KB"
+          "size": 80405,
+          "sizeHuman": "78.5KB"
         },
         {
           "path": "blog/sigint-machine-learning-pipeline/index.html",
-          "size": 77504,
-          "sizeHuman": "75.7KB"
+          "size": 77422,
+          "sizeHuman": "75.6KB"
         },
         {
           "path": "blog/rf-fingerprinting-device-identification/index.html",
-          "size": 77276,
-          "sizeHuman": "75.5KB"
+          "size": 77194,
+          "sizeHuman": "75.4KB"
         },
         {
           "path": "subscribe/index.html",
-          "size": 69409,
-          "sizeHuman": "67.8KB"
+          "size": 69620,
+          "sizeHuman": "68.0KB"
         },
         {
           "path": "blog/tempest-standards-reference/index.html",
-          "size": 68089,
-          "sizeHuman": "66.5KB"
+          "size": 68007,
+          "sizeHuman": "66.4KB"
         },
         {
           "path": "blog/em-sca-index/index.html",
-          "size": 66064,
-          "sizeHuman": "64.5KB"
+          "size": 65982,
+          "sizeHuman": "64.4KB"
         },
         {
           "path": "archive/category/em-sca/index.html",
-          "size": 66058,
-          "sizeHuman": "64.5KB"
+          "size": 65273,
+          "sizeHuman": "63.7KB"
         },
         {
           "path": "blog/em-sca-market-analysis-overview/index.html",
-          "size": 64934,
-          "sizeHuman": "63.4KB"
+          "size": 64852,
+          "sizeHuman": "63.3KB"
         },
         {
           "path": "compliance/index.html",
-          "size": 63345,
-          "sizeHuman": "61.9KB"
+          "size": 63289,
+          "sizeHuman": "61.8KB"
         },
         {
           "path": "em-sca/professional-em-sca-facility/index.html",
-          "size": 60077,
-          "sizeHuman": "58.7KB"
+          "size": 60194,
+          "sizeHuman": "58.8KB"
         },
         {
           "path": "blog/sri-lanka-debt-architecture-imf/index.html",
-          "size": 59807,
-          "sizeHuman": "58.4KB"
-        },
-        {
-          "path": "em-sca/index.html",
-          "size": 58949,
-          "sizeHuman": "57.6KB"
+          "size": 59537,
+          "sizeHuman": "58.1KB"
         },
         {
           "path": "sigint/sigint-academic-research-overview/index.html",
-          "size": 58919,
+          "size": 59036,
+          "sizeHuman": "57.7KB"
+        },
+        {
+          "path": "em-sca/index.html",
+          "size": 58867,
           "sizeHuman": "57.5KB"
         },
         {
           "path": "equipment/index.html",
-          "size": 58553,
-          "sizeHuman": "57.2KB"
+          "size": 58474,
+          "sizeHuman": "57.1KB"
         },
         {
           "path": "em-sca/research-grade-em-sca-lab/index.html",
-          "size": 57373,
-          "sizeHuman": "56.0KB"
-        },
-        {
-          "path": "blog/digital-policy-imf-obligations/index.html",
-          "size": 56705,
-          "sizeHuman": "55.4KB"
+          "size": 57490,
+          "sizeHuman": "56.1KB"
         },
         {
           "path": "blog/contacts/index.html",
-          "size": 56529,
-          "sizeHuman": "55.2KB"
+          "size": 56447,
+          "sizeHuman": "55.1KB"
         },
         {
-          "path": "blog/index.html",
-          "size": 54902,
-          "sizeHuman": "53.6KB"
+          "path": "blog/digital-policy-imf-obligations/index.html",
+          "size": 56435,
+          "sizeHuman": "55.1KB"
         },
         {
           "path": "em-sca/electromagnetic-side-channel-practical-guide/index.html",
-          "size": 54553,
+          "size": 54670,
+          "sizeHuman": "53.4KB"
+        },
+        {
+          "path": "blog/index.html",
+          "size": 54625,
           "sizeHuman": "53.3KB"
         },
         {
           "path": "em-sca/pqc-implementation-security-2026/index.html",
-          "size": 48959,
-          "sizeHuman": "47.8KB"
+          "size": 49076,
+          "sizeHuman": "47.9KB"
         },
         {
           "path": "em-sca/entry-level-em-sca-setup/index.html",
-          "size": 48259,
-          "sizeHuman": "47.1KB"
+          "size": 48376,
+          "sizeHuman": "47.2KB"
         },
         {
           "path": "index.html",
@@ -476,253 +476,258 @@
         },
         {
           "path": "blog/coursera-sigint/index.html",
-          "size": 46498,
-          "sizeHuman": "45.4KB"
+          "size": 46416,
+          "sizeHuman": "45.3KB"
         },
         {
           "path": "em-sca/organizations/index.html",
-          "size": 46052,
-          "sizeHuman": "45.0KB"
+          "size": 46169,
+          "sizeHuman": "45.1KB"
         },
         {
           "path": "sigint/sigint-machine-learning-pipeline/index.html",
-          "size": 45753,
-          "sizeHuman": "44.7KB"
-        },
-        {
-          "path": "companies/index.html",
-          "size": 45636,
-          "sizeHuman": "44.6KB"
+          "size": 45870,
+          "sizeHuman": "44.8KB"
         },
         {
           "path": "em-sca/sdr-tools-landscape-2026/index.html",
-          "size": 45597,
-          "sizeHuman": "44.5KB"
+          "size": 45714,
+          "sizeHuman": "44.6KB"
+        },
+        {
+          "path": "companies/index.html",
+          "size": 45694,
+          "sizeHuman": "44.6KB"
         },
         {
           "path": "em-sca/em-sca-2026-developments/index.html",
-          "size": 45232,
-          "sizeHuman": "44.2KB"
+          "size": 45349,
+          "sizeHuman": "44.3KB"
         },
         {
           "path": "sigint/sigint-private-companies-em-intelligence/index.html",
-          "size": 44937,
-          "sizeHuman": "43.9KB"
+          "size": 45054,
+          "sizeHuman": "44.0KB"
         },
         {
           "path": "em-sca/electromagnetic-side-channel-analysis/index.html",
-          "size": 44154,
-          "sizeHuman": "43.1KB"
+          "size": 44271,
+          "sizeHuman": "43.2KB"
         },
         {
           "path": "em-sca/em-sca-key-players-companies/index.html",
-          "size": 43854,
-          "sizeHuman": "42.8KB"
+          "size": 43971,
+          "sizeHuman": "42.9KB"
         },
         {
           "path": "graph/index.html",
-          "size": 43780,
+          "size": 43782,
           "sizeHuman": "42.8KB"
         },
         {
           "path": "em-sca/pqc-em-sca/index.html",
-          "size": 43115,
-          "sizeHuman": "42.1KB"
+          "size": 43232,
+          "sizeHuman": "42.2KB"
         },
         {
           "path": "em-sca/em-sca-consumer-applications/index.html",
-          "size": 43047,
-          "sizeHuman": "42.0KB"
+          "size": 43164,
+          "sizeHuman": "42.2KB"
         },
         {
           "path": "sigint/rf-fingerprinting-device-identification/index.html",
-          "size": 42392,
-          "sizeHuman": "41.4KB"
+          "size": 42509,
+          "sizeHuman": "41.5KB"
         },
         {
           "path": "em-sca/em-sca-index/index.html",
-          "size": 41091,
-          "sizeHuman": "40.1KB"
+          "size": 41208,
+          "sizeHuman": "40.2KB"
         },
         {
           "path": "market/index.html",
-          "size": 40974,
-          "sizeHuman": "40.0KB"
+          "size": 40908,
+          "sizeHuman": "39.9KB"
         },
         {
           "path": "em-sca/tempest-standards-reference/index.html",
-          "size": 40308,
-          "sizeHuman": "39.4KB"
+          "size": 40425,
+          "sizeHuman": "39.5KB"
         },
         {
           "path": "em-sca/em-sca-market-analysis-overview/index.html",
-          "size": 38062,
-          "sizeHuman": "37.2KB"
-        },
-        {
-          "path": "archive/category/sigint/index.html",
-          "size": 37253,
-          "sizeHuman": "36.4KB"
-        },
-        {
-          "path": "archive/tag/geopolitics/index.html",
-          "size": 37217,
-          "sizeHuman": "36.3KB"
-        },
-        {
-          "path": "archive/tag/sri-lanka/index.html",
-          "size": 37197,
-          "sizeHuman": "36.3KB"
-        },
-        {
-          "path": "archive/tag/finance/index.html",
-          "size": 37177,
-          "sizeHuman": "36.3KB"
+          "size": 38179,
+          "sizeHuman": "37.3KB"
         },
         {
           "path": "em-sca/contacts/index.html",
-          "size": 36369,
+          "size": 36486,
+          "sizeHuman": "35.6KB"
+        },
+        {
+          "path": "archive/category/sigint/index.html",
+          "size": 36468,
+          "sizeHuman": "35.6KB"
+        },
+        {
+          "path": "archive/tag/geopolitics/index.html",
+          "size": 36329,
           "sizeHuman": "35.5KB"
         },
         {
+          "path": "archive/tag/sri-lanka/index.html",
+          "size": 36309,
+          "sizeHuman": "35.5KB"
+        },
+        {
+          "path": "archive/tag/finance/index.html",
+          "size": 36289,
+          "sizeHuman": "35.4KB"
+        },
+        {
           "path": "privacy/index.html",
-          "size": 35594,
-          "sizeHuman": "34.8KB"
-        },
-        {
-          "path": "archive/tag/debt-restructuring/index.html",
-          "size": 33927,
-          "sizeHuman": "33.1KB"
-        },
-        {
-          "path": "archive/tag/digital-policy/index.html",
-          "size": 33828,
-          "sizeHuman": "33.0KB"
+          "size": 35512,
+          "sizeHuman": "34.7KB"
         },
         {
           "path": "sigint/index.html",
-          "size": 33620,
+          "size": 33538,
           "sizeHuman": "32.8KB"
         },
         {
-          "path": "archive/category/malindra/index.html",
-          "size": 33329,
-          "sizeHuman": "32.5KB"
+          "path": "learning/coursera-sigint/index.html",
+          "size": 33353,
+          "sizeHuman": "32.6KB"
         },
         {
-          "path": "learning/coursera-sigint/index.html",
-          "size": 33236,
-          "sizeHuman": "32.5KB"
+          "path": "archive/tag/debt-restructuring/index.html",
+          "size": 33082,
+          "sizeHuman": "32.3KB"
         },
         {
           "path": "terms/index.html",
-          "size": 33134,
-          "sizeHuman": "32.4KB"
+          "size": 33052,
+          "sizeHuman": "32.3KB"
+        },
+        {
+          "path": "archive/tag/digital-policy/index.html",
+          "size": 32983,
+          "sizeHuman": "32.2KB"
+        },
+        {
+          "path": "archive/category/malindra/index.html",
+          "size": 32544,
+          "sizeHuman": "31.8KB"
         },
         {
           "path": "archive/tag/china-india-triangulation/index.html",
-          "size": 31167,
-          "sizeHuman": "30.4KB"
+          "size": 30322,
+          "sizeHuman": "29.6KB"
         },
         {
           "path": "archive/tag/renewable-energy/index.html",
-          "size": 31064,
-          "sizeHuman": "30.3KB"
+          "size": 30232,
+          "sizeHuman": "29.5KB"
         },
         {
           "path": "archive/tag/infrastructure/index.html",
-          "size": 31044,
-          "sizeHuman": "30.3KB"
+          "size": 30212,
+          "sizeHuman": "29.5KB"
         },
         {
           "path": "archive/tag/laccadive-sea/index.html",
-          "size": 31034,
-          "sizeHuman": "30.3KB"
+          "size": 30202,
+          "sizeHuman": "29.5KB"
         },
         {
           "path": "archive/tag/tourism/index.html",
-          "size": 30974,
-          "sizeHuman": "30.2KB"
+          "size": 30142,
+          "sizeHuman": "29.4KB"
         },
         {
           "path": "archive/category/learning/index.html",
-          "size": 29780,
-          "sizeHuman": "29.1KB"
+          "size": 29008,
+          "sizeHuman": "28.3KB"
+        },
+        {
+          "path": "contact/index.html",
+          "size": 27606,
+          "sizeHuman": "27.0KB"
         },
         {
           "path": "dashboard/predictions/index.html",
-          "size": 25557,
-          "sizeHuman": "25.0KB"
+          "size": 25475,
+          "sizeHuman": "24.9KB"
         },
         {
           "path": "callback/index.html",
-          "size": 24830,
+          "size": 24808,
           "sizeHuman": "24.2KB"
         },
         {
           "path": "dashboard/articles/new/index.html",
-          "size": 24735,
-          "sizeHuman": "24.2KB"
+          "size": 24653,
+          "sizeHuman": "24.1KB"
         },
         {
           "path": "login/index.html",
-          "size": 24652,
+          "size": 24630,
           "sizeHuman": "24.1KB"
         },
         {
           "path": "forgot-password/index.html",
-          "size": 24588,
+          "size": 24579,
           "sizeHuman": "24.0KB"
         },
         {
           "path": "reset-password/index.html",
-          "size": 24586,
+          "size": 24564,
           "sizeHuman": "24.0KB"
         },
         {
           "path": "register/index.html",
-          "size": 24574,
+          "size": 24552,
           "sizeHuman": "24.0KB"
         },
         {
           "path": "dashboard/articles/index.html",
-          "size": 24242,
-          "sizeHuman": "23.7KB"
+          "size": 24160,
+          "sizeHuman": "23.6KB"
         },
         {
           "path": "dashboard/settings/index.html",
-          "size": 24242,
-          "sizeHuman": "23.7KB"
+          "size": 24160,
+          "sizeHuman": "23.6KB"
         },
         {
           "path": "dashboard/users/index.html",
-          "size": 24236,
-          "sizeHuman": "23.7KB"
+          "size": 24154,
+          "sizeHuman": "23.6KB"
         },
         {
           "path": "dashboard/index.html",
-          "size": 23758,
-          "sizeHuman": "23.2KB"
+          "size": 23676,
+          "sizeHuman": "23.1KB"
         },
         {
           "path": "404/index.html",
-          "size": 23496,
+          "size": 23474,
           "sizeHuman": "22.9KB"
         },
         {
           "path": "404.html",
-          "size": 23496,
+          "size": 23474,
           "sizeHuman": "22.9KB"
         },
         {
           "path": "_not-found/index.html",
-          "size": 23496,
+          "size": 23474,
           "sizeHuman": "22.9KB"
         },
         {
           "path": "account/index.html",
-          "size": 22924,
-          "sizeHuman": "22.4KB"
+          "size": 22842,
+          "sizeHuman": "22.3KB"
         },
         {
           "path": "social/em-sca-2026-developments/brief.html",
@@ -955,8 +960,8 @@
           "sizeHuman": "2.1KB"
         }
       ],
-      "totalBytes": 4993714,
-      "totalHuman": "4.76MB",
+      "totalBytes": 5006673,
+      "totalHuman": "4.77MB",
       "warnings": []
     },
     "images": {
