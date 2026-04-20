@@ -1,10 +1,8 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
-const MarkdownRenderer = dynamic(() => import('./MarkdownRenderer'), { ssr: false });
+import MarkdownRenderer from './MarkdownRenderer';
 
 /* ── Types ───────────────────────────────────────────────── */
 interface Section {

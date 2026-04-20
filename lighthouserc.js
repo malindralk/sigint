@@ -12,7 +12,7 @@ module.exports = {
         'http://localhost/archive/curated/',
         'http://localhost/compliance/',
       ],
-      numberOfRuns: 1,
+      numberOfRuns: 3,
       settings: {
         chromeFlags: '--no-sandbox --disable-dev-shm-usage',
       },

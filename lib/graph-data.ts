@@ -104,20 +104,32 @@ export function buildGraphData(): GraphData {
     }
   }
 
-  // Build nodes — category derived from filesystem directory
-  for (const [slug, content] of Object.entries(fileContents)) {
-    let category: GraphNode['category'] = 'em-sca';
-
-    for (const d of categories) {
-      if (fs.readdirSync(path.join(contentDir, d)).some((f) => f.replace(/\.md$/, '') === slug)) {
-        if (d === 'sigint') category = 'sigint';
-        else if (d === 'learning') category = 'learning';
-        else if (d === 'em-sca') {
-          category = slug === 'contacts' || slug === 'organizations' ? 'reference' : 'em-sca';
-        }
-        break;
-      }
+  // Build a slug → category map once from the already-collected fileContents keys
+  // to avoid repeated readdirSync calls inside the per-node loop.
+  const slugToCategory = new Map<string, GraphNode['category']>();
+  for (const cat of categories) {
+    const catDir = path.join(contentDir, cat);
+    let files: string[];
+    try {
+      files = fs.readdirSync(catDir).filter((f) => f.endsWith('.md'));
+    } catch {
+      continue;
     }
+    for (const file of files) {
+      const slug = file.replace(/\.md$/, '');
+      let category: GraphNode['category'] = 'em-sca';
+      if (cat === 'sigint') category = 'sigint';
+      else if (cat === 'learning') category = 'learning';
+      else if (cat === 'em-sca') {
+        category = slug === 'contacts' || slug === 'organizations' ? 'reference' : 'em-sca';
+      }
+      slugToCategory.set(slug, category);
+    }
+  }
+
+  // Build nodes — category derived from pre-built map (no inner readdirSync)
+  for (const [slug, content] of Object.entries(fileContents)) {
+    const category: GraphNode['category'] = slugToCategory.get(slug) ?? 'em-sca';
 
     nodes.push({
       id: slug,

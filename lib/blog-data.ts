@@ -41,6 +41,9 @@ export interface BlogData {
 
 const CONTENT_ROOT = path.join(process.cwd(), 'content');
 
+// ── Module-level cache (populated once per build process) ─────────────────────
+let _articlesCache: ArticleMeta[] | null = null;
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function extractTitle(content: string, slug: string): string {
@@ -74,6 +77,7 @@ function inferDate(filePath: string): string {
 // ── Local filesystem reader (primary data source) ────────────────────────────
 
 function readArticlesFromFS(): ArticleMeta[] {
+  if (_articlesCache !== null) return _articlesCache;
   if (!fs.existsSync(CONTENT_ROOT)) return [];
 
   const result: ArticleMeta[] = [];
@@ -103,7 +107,8 @@ function readArticlesFromFS(): ArticleMeta[] {
     }
   }
 
-  return result.sort((a, b) => (a.date < b.date ? 1 : -1));
+  _articlesCache = result.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return _articlesCache;
 }
 
 function readArticleFromFS(slug: string): ArticleContent | null {

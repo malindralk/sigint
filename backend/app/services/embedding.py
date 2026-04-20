@@ -5,6 +5,8 @@ semantic similarity search via pgvector (PostgreSQL) or
 in-memory similarity (SQLite fallback).
 """
 
+import asyncio
+import json
 import logging
 from typing import Any
 
@@ -42,7 +44,7 @@ class EmbeddingService:
         self.model = self.get_model()
 
     def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
-        """Generate embeddings for a list of texts."""
+        """Generate embeddings for a list of texts (synchronous, CPU-bound)."""
         embeddings = self.model.encode(
             texts,
             batch_size=settings.embedding_batch_size,
@@ -50,6 +52,11 @@ class EmbeddingService:
             convert_to_numpy=True,
         )
         return [emb.tolist() for emb in embeddings]
+
+    async def generate_embeddings_async(self, texts: list[str]) -> list[list[float]]:
+        """Generate embeddings off the event-loop thread to avoid blocking."""
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, self.generate_embeddings, texts)
 
     def chunk_article(self, article: Article) -> list[dict[str, Any]]:
         """Split article into chunks suitable for embedding."""
@@ -125,17 +132,17 @@ class EmbeddingService:
                     },
                 )
             else:
-                # SQLite - store embedding as JSON string in metadata
+                # SQLite - store embedding as JSON string in vector_json column
                 from datetime import datetime
                 embedding_record = Embedding(
                     id=uuid.uuid4(),
                     article_id=article.id,
                     chunk_index=chunk["index"],
                     chunk_text=chunk["text"],
+                    vector_json=json.dumps(vector),
                     created_at=datetime.utcnow(),
                 )
                 self.db.add(embedding_record)
-                # Store vector in a separate column or metadata for SQLite
 
         return len(chunks)
 
@@ -180,7 +187,10 @@ class EmbeddingService:
         threshold: float,
     ) -> list[dict[str, Any]]:
         """Search using pgvector extension (PostgreSQL)."""
-        query_embedding = self.generate_embeddings([query])[0]
+        query_embedding = (await self.generate_embeddings_async([query]))[0]
+
+        # Increase IVFFlat probes for better recall (default is 1, which misses many results)
+        await self.db.execute(text("SET LOCAL ivfflat.probes = 10"))
 
         result = await self.db.execute(
             text(
@@ -229,12 +239,12 @@ class EmbeddingService:
         """Search using in-memory cosine similarity (SQLite fallback).
 
         For production, use PostgreSQL with pgvector.
-        This fallback re-generates embeddings for stored chunks on-the-fly
-        and computes cosine similarity against the query embedding.
+        Vectors are loaded from the stored vector_json column (set at ingest time);
+        only the query embedding is generated at search time.
         """
         import numpy as np
 
-        # Get all embeddings (without vector column for SQLite)
+        # Get all embeddings with stored vectors
         result = await self.db.execute(
             select(Embedding, Article.slug, Article.title, Article.category)
             .join(Article, Embedding.article_id == Article.id)
@@ -244,18 +254,18 @@ class EmbeddingService:
         if not rows:
             return []
 
-        # Generate query embedding
-        query_embedding = np.array(self.generate_embeddings([query])[0])
+        # Generate query embedding off the event-loop thread to avoid blocking
+        query_embedding = np.array((await self.generate_embeddings_async([query]))[0])
 
-        # Generate embeddings for all chunks and compute cosine similarity
-        chunk_texts = [row[0].chunk_text for row in rows]
-        chunk_vectors = self.generate_embeddings(chunk_texts)
-
-        # Calculate cosine similarity for each chunk
+        # Calculate cosine similarity for each chunk using stored vectors
         results = []
-        for row, chunk_vector in zip(rows, chunk_vectors):
+        for row in rows:
             embedding_record = row[0]
-            chunk_vec = np.array(chunk_vector)
+
+            # Load stored vector; skip rows without a stored vector
+            if not embedding_record.vector_json:
+                continue
+            chunk_vec = np.array(json.loads(embedding_record.vector_json))
 
             # Cosine similarity: dot(a, b) / (||a|| * ||b||)
             dot_product = np.dot(query_embedding, chunk_vec)

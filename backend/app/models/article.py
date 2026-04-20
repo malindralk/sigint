@@ -58,11 +58,13 @@ class Article(Base):
     )
 
     # Relationships
+    # lazy="select" avoids loading all chunks on every Article query.
+    # Use options(selectinload(Article.embeddings)) in embedding-specific queries.
     embeddings: Mapped[list["Embedding"]] = relationship(
         "Embedding",
         back_populates="article",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="select",
     )
     author: Mapped["User | None"] = relationship(
         back_populates="articles",
@@ -81,6 +83,8 @@ class Embedding(Base):
     )
     chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
     chunk_text: Mapped[str] = mapped_column(Text, nullable=False)
+    # JSON-serialised vector for SQLite fallback (pgvector uses its own column via migration)
+    vector_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     # Vector column added via migration with pgvector
     # embedding: Mapped[list[float]] - handled separately for pgvector
     created_at: Mapped[datetime] = mapped_column(

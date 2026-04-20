@@ -449,6 +449,62 @@ sigint/
 | Linting | Clean | Biome: 0 errors, 0 warnings across 113 files |
 | Google OAuth verification | Pending | Submitted for Google review |
 
+## Performance Fixes (Audited 2026-04-20, Applied 2026-04-20)
+
+A full performance audit was completed. 11 issues were identified and all were fixed.
+
+### Critical
+
+**1. SQLite re-encodes embeddings on every search (FIXED)**
+- File: `backend/app/services/embedding.py`, `backend/app/models/article.py`
+- Added `vector_json` column (TEXT) to the `Embedding` model. Vectors are now serialised as JSON and stored at ingest time (`generate_for_article`). `_search_sqlite()` loads stored vectors instead of calling `generate_embeddings()` for all chunks on every search query.
+- CPU-bound encoding is now run in a thread pool via `generate_embeddings_async()` (`asyncio.get_event_loop().run_in_executor`), so the event loop is never blocked.
+
+**2. `Article.embeddings` eagerly loaded globally (FIXED)**
+- File: `backend/app/models/article.py`
+- Changed `lazy="selectin"` → `lazy="select"` on the `embeddings` relationship. Embeddings are no longer auto-loaded on every Article query; use `options(selectinload(Article.embeddings))` in queries that explicitly need them.
+
+### Medium
+
+**3. `buildGraphData()` eliminated inner `readdirSync` per node (FIXED)**
+- File: `lib/graph-data.ts`
+- Built a `slug → category` map once from the already-scanned directory listing. The inner `fs.readdirSync()` call inside the per-node loop was removed entirely.
+
+**4. `getBlogData()` now caches parsed markdown (FIXED)**
+- File: `lib/blog-data.ts`
+- Added a module-level singleton `_articlesCache: ArticleMeta[] | null`. `readArticlesFromFS()` populates it once per build process and returns the cached array on subsequent calls.
+
+**5. OG default image compressed from 987 KB → 6 KB (FIXED)**
+- File: `public/og-default.png`
+- The unoptimised 987 KB PNG was replaced with a regenerated PNG produced by `@resvg/resvg-js` from a minimal, brand-accurate SVG (dark background, gradient accent bar, brand typography). Result: 5.8 KB — well under the 150 KB target.
+
+**6. Removed `mermaid` from dependencies (FIXED)**
+- File: `package.json`
+- `mermaid` (^11.14.0, ~2 MB) was listed in production `dependencies` but never imported. Removed. Gantt rendering uses the custom `GanttChart` component with native SVG.
+
+**7. `MarkdownRenderer` `ssr: false` removed (FIXED)**
+- File: `app/components/ArticleView.tsx`
+- Removed the `dynamic(() => import('./MarkdownRenderer'), { ssr: false })` wrapper. Since `ArticleView` is already `'use client'`, a direct static import is correct and avoids an unnecessary lazy-load waterfall on hydration.
+- Note: `MarkdownRenderer` itself remains `'use client'` (it uses `useState` for the GanttChart expand/collapse toggle). A full SSR conversion would require extracting that interactive toggle into a separate client wrapper; that can be done in a future pass.
+
+### Low
+
+**8. `KnowledgeGraph` simulation held in `useRef` (FIXED)**
+- File: `app/components/KnowledgeGraph.tsx`
+- Added `simulationRef` (`useRef`) to hold the D3 simulation. Previous simulation is stopped before creating a new one on filter change, preventing orphaned simulations.
+
+**9. `edgeCount` wrapped in `useMemo` (FIXED)**
+- File: `app/components/KnowledgeGraph.tsx`
+- The `edgeCount` computation (which built a `Set` from all nodes) was inlined in the render body. Wrapped in `useMemo([data, filter])` so the Set is only rebuilt when data or filter changes.
+
+**10. IVFFlat probes increased to 10 at query time (FIXED)**
+- File: `backend/app/services/embedding.py`
+- Added `SET LOCAL ivfflat.probes = 10` before the pgvector similarity query in `_search_pgvector()`. The default of 1 probe gives poor recall; 10 probes significantly improves result quality with minimal latency cost.
+
+**11. Lighthouse CI `numberOfRuns` increased to 3 (FIXED)**
+- File: `lighthouserc.js`
+- Changed `numberOfRuns: 1` → `numberOfRuns: 3` so scores are averaged across runs, reducing variance from single-run noise.
+
 ## Security Posture (Audited 2026-04-19, Remediated 2026-04-19)
 
 Full security audit completed. 15 of 18 findings remediated in code.

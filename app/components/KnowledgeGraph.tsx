@@ -1,7 +1,7 @@
 'use client';
 
 import type { SimulationNodeDatum } from 'd3';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BRAND } from '@/lib/brand-colors';
 import type { GraphData, GraphNode } from '@/lib/graph-data';
 
@@ -36,6 +36,8 @@ function GraphSkeleton() {
 
 export default function KnowledgeGraph({ data }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
+  // Hold the D3 simulation across renders so filter changes reuse it
+  const simulationRef = useRef<ReturnType<typeof import('d3')['forceSimulation']> | null>(null);
   const [selected, setSelected] = useState<GraphNode | null>(null);
   const [filter, setFilter] = useState('all');
   const [ready, setReady] = useState(false);
@@ -71,6 +73,11 @@ export default function KnowledgeGraph({ data }: Props) {
       const nodes = filteredNodes.map((n) => ({ ...n }));
       const links = filteredEdges.map((e) => ({ ...e }));
 
+      // Stop previous simulation before creating a new one
+      if (simulationRef.current) {
+        simulationRef.current.stop();
+      }
+
       const simulation = d3
         .forceSimulation<SimNode>(nodes as SimNode[])
         .force(
@@ -84,6 +91,9 @@ export default function KnowledgeGraph({ data }: Props) {
         .force('charge', d3.forceManyBody().strength(-220))
         .force('center', d3.forceCenter(W / 2, H / 2))
         .force('collision', d3.forceCollide(28));
+
+      // Store simulation in ref so it persists across filter changes
+      simulationRef.current = simulation as unknown as ReturnType<typeof import('d3')['forceSimulation']>;
 
       const g = svg.append('g');
       const zoom = d3
@@ -175,13 +185,13 @@ export default function KnowledgeGraph({ data }: Props) {
   }, [data, filter]);
 
   const filteredCount = filter === 'all' ? data.nodes.length : data.nodes.filter((n) => n.category === filter).length;
-  const edgeCount =
-    filter === 'all'
-      ? data.edges.length
-      : data.edges.filter((e) => {
-          const ids = new Set(data.nodes.filter((n) => filter === 'all' || n.category === filter).map((n) => n.id));
-          return ids.has(e.source as string) && ids.has(e.target as string);
-        }).length;
+
+  // Wrap edgeCount in useMemo so the filtered Set is not rebuilt on every render
+  const edgeCount = useMemo(() => {
+    if (filter === 'all') return data.edges.length;
+    const ids = new Set(data.nodes.filter((n) => n.category === filter).map((n) => n.id));
+    return data.edges.filter((e) => ids.has(e.source as string) && ids.has(e.target as string)).length;
+  }, [data, filter]);
 
   return (
     <div className="flex flex-col h-full gap-4">

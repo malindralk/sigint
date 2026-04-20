@@ -6,6 +6,7 @@ Verifies that:
 3. Threshold filtering works correctly
 """
 
+import json
 import uuid
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -126,41 +127,36 @@ class TestEmbeddingServiceSearch:
 
     @pytest.mark.asyncio
     async def test_search_sqlite_threshold_filtering(self, embedding_service, mock_db):
-        """Results below threshold should be excluded."""
-        from unittest.mock import PropertyMock
+        """Results below threshold should be excluded.
 
+        Vectors are now stored in vector_json at ingest time; the search
+        path only generates an embedding for the query itself.
+        """
         rng = np.random.default_rng(42)
 
         # Create a query vector and chunk vectors with known similarities
         query_vec = rng.standard_normal(384)
         # Create a very similar chunk (high similarity)
         similar_chunk_vec = query_vec + rng.standard_normal(384) * 0.1
-        # Create a very dissimilar chunk (low similarity)
+        # Create a very dissimilar chunk (low similarity, near-opposite direction)
         dissimilar_chunk_vec = -query_vec + rng.standard_normal(384) * 0.1
 
-        # Mock generate_embeddings to return our controlled vectors
-        call_count = [0]
+        # generate_embeddings_async now only called for the query
+        async def mock_generate_async(texts):
+            return [query_vec.tolist()]
 
-        def mock_generate(texts):
-            nonlocal call_count
-            if call_count[0] == 0:
-                # First call is for the query
-                call_count[0] += 1
-                return [query_vec.tolist()]
-            else:
-                # Second call is for the chunks
-                return [similar_chunk_vec.tolist(), dissimilar_chunk_vec.tolist()]
+        embedding_service.generate_embeddings_async = mock_generate_async
 
-        embedding_service.generate_embeddings = mock_generate
-
-        # Create mock DB rows
+        # Create mock DB rows — vector_json is pre-stored
         mock_embedding_1 = MagicMock()
         mock_embedding_1.chunk_text = "Similar content about signals"
         mock_embedding_1.chunk_index = 0
+        mock_embedding_1.vector_json = json.dumps(similar_chunk_vec.tolist())
 
         mock_embedding_2 = MagicMock()
         mock_embedding_2.chunk_text = "Unrelated content about cooking"
         mock_embedding_2.chunk_index = 1
+        mock_embedding_2.vector_json = json.dumps(dissimilar_chunk_vec.tolist())
 
         # Mock row objects (SQLAlchemy Row-like)
         mock_row_1 = MagicMock()
@@ -175,8 +171,8 @@ class TestEmbeddingServiceSearch:
         mock_row_2.title = "Cooking 101"
         mock_row_2.category = "other"
 
-        # Mock DB execute result
-        mock_result = AsyncMock()
+        # Mock DB execute result — use MagicMock for .all so it's synchronous
+        mock_result = MagicMock()
         mock_result.all.return_value = [mock_row_1, mock_row_2]
         mock_db.execute.return_value = mock_result
 
@@ -203,24 +199,18 @@ class TestEmbeddingServiceSearch:
         query_vec = rng.standard_normal(384)
         chunk_vecs = [rng.standard_normal(384) for _ in range(5)]
 
-        call_count = [0]
+        async def mock_generate_async(texts):
+            return [query_vec.tolist()]
 
-        def mock_generate(texts):
-            nonlocal call_count
-            if call_count[0] == 0:
-                call_count[0] += 1
-                return [query_vec.tolist()]
-            else:
-                return [v.tolist() for v in chunk_vecs]
+        embedding_service.generate_embeddings_async = mock_generate_async
 
-        embedding_service.generate_embeddings = mock_generate
-
-        # Create mock rows
+        # Create mock rows — vector_json pre-stored
         mock_rows = []
-        for i in range(5):
+        for i, chunk_vec in enumerate(chunk_vecs):
             emb = MagicMock()
             emb.chunk_text = f"Chunk {i} about radio frequencies"
             emb.chunk_index = i
+            emb.vector_json = json.dumps(chunk_vec.tolist())
 
             row = MagicMock()
             row.__getitem__ = (lambda e: lambda self, idx: e if idx == 0 else None)(emb)
@@ -229,7 +219,7 @@ class TestEmbeddingServiceSearch:
             row.category = "sigint"
             mock_rows.append(row)
 
-        mock_result = AsyncMock()
+        mock_result = MagicMock()
         mock_result.all.return_value = mock_rows
         mock_db.execute.return_value = mock_result
 
@@ -255,23 +245,17 @@ class TestEmbeddingServiceSearch:
         # Create chunks with varying similarity to query
         chunk_vecs = [rng.standard_normal(384) for _ in range(5)]
 
-        call_count = [0]
+        async def mock_generate_async(texts):
+            return [query_vec.tolist()]
 
-        def mock_generate(texts):
-            nonlocal call_count
-            if call_count[0] == 0:
-                call_count[0] += 1
-                return [query_vec.tolist()]
-            else:
-                return [v.tolist() for v in chunk_vecs]
-
-        embedding_service.generate_embeddings = mock_generate
+        embedding_service.generate_embeddings_async = mock_generate_async
 
         mock_rows = []
-        for i in range(5):
+        for i, chunk_vec in enumerate(chunk_vecs):
             emb = MagicMock()
             emb.chunk_text = f"Chunk {i}"
             emb.chunk_index = i
+            emb.vector_json = json.dumps(chunk_vec.tolist())
 
             row = MagicMock()
             row.__getitem__ = (lambda e: lambda self, idx: e if idx == 0 else None)(emb)
@@ -280,7 +264,7 @@ class TestEmbeddingServiceSearch:
             row.category = "sigint"
             mock_rows.append(row)
 
-        mock_result = AsyncMock()
+        mock_result = MagicMock()
         mock_result.all.return_value = mock_rows
         mock_db.execute.return_value = mock_result
 
